@@ -1,0 +1,12 @@
+---
+source: tests/recipe.rs
+expression: snapshot_content
+---
+Available recipes: chicken-rice-bowl, chicken-salad, spicy-chicken-curry
+$ nutriterm recipe chicken
+Multiple recipes found for 'chicken' (3 matches):
+- chicken-rice-bowl
+- chicken-salad
+- spicy-chicken-curry
+
+Please be more specific with your search term.

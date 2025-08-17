@@ -1,0 +1,355 @@
+use insta::assert_snapshot;
+
+mod common;
+use common::{run_cmd, strip_ansi_codes, temp_dir, write_files};
+
+fn create_test_workspace(ingredients_content: &str, recipes_content: &str) -> tempfile::TempDir {
+    let temp = temp_dir();
+    write_files(temp.path(), ingredients_content, recipes_content);
+    temp
+}
+
+fn format_scaling_snapshot(recipe_name: &str, output: &str) -> String {
+    format!(
+        "Available recipes: {}\n$ nutriterm recipe {}\n{}",
+        recipe_name,
+        recipe_name,
+        strip_ansi_codes(output).trim_end()
+    )
+}
+
+#[test]
+fn test_long_ingredient_names() {
+    // Create ingredients with various name lengths
+    let ingredients_content = r#"{
+  "ingredients": [
+    {
+      "name": "short",
+      "display_name": "Short Name",
+      "carbs_per_100g": 10.0,
+      "protein_per_100g": 5.0,
+      "fat_per_100g": 2.0,
+      "fiber_per_100g": 1.0
+    },
+    {
+      "name": "exactly_twenty_five_chars",
+      "display_name": "Exactly Twenty Five Chars",
+      "carbs_per_100g": 15.0,
+      "protein_per_100g": 8.0,
+      "fat_per_100g": 3.0,
+      "fiber_per_100g": 2.0
+    },
+    {
+      "name": "very_long_ingredient_name_exceeding_twenty_five_characters",
+      "display_name": "Very Long Ingredient Name That Definitely Exceeds Twenty Five Characters And Should Be Truncated With Ellipsis",
+      "carbs_per_100g": 20.0,
+      "protein_per_100g": 12.0,
+      "fat_per_100g": 4.0,
+      "fiber_per_100g": 3.0
+    }
+  ]
+}"#;
+
+    let recipes_content = r#"{
+  "recipes": [
+    {
+      "name": "long-names-test",
+      "description": "Test recipe with various name lengths",
+      "ingredients": [
+        {
+          "name": "short",
+          "grams": 100.0
+        },
+        {
+          "name": "exactly_twenty_five_chars",
+          "grams": 150.0
+        },
+        {
+          "name": "very_long_ingredient_name_exceeding_twenty_five_characters",
+          "grams": 200.0
+        }
+      ]
+    }
+  ]
+}"#;
+
+    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+
+    let output = run_cmd(&["recipe", "long-names-test"], temp_dir.path());
+
+    let content =
+        format_scaling_snapshot("long-names-test", &String::from_utf8_lossy(&output.stdout));
+
+    assert_snapshot!("long_ingredient_names", content);
+}
+
+#[test]
+fn test_extreme_numerical_values() {
+    // Create ingredients with various numerical ranges
+    let ingredients_content = r#"{
+  "ingredients": [
+    {
+      "name": "tiny_values",
+      "display_name": "Tiny Values",
+      "carbs_per_100g": 0.001,
+      "protein_per_100g": 0.005,
+      "fat_per_100g": 0.0001,
+      "fiber_per_100g": 0.0005
+    },
+    {
+      "name": "small_values",
+      "display_name": "Small Values", 
+      "carbs_per_100g": 0.15,
+      "protein_per_100g": 0.25,
+      "fat_per_100g": 0.08,
+      "fiber_per_100g": 0.12
+    },
+    {
+      "name": "large_values",
+      "display_name": "Large Values",
+      "carbs_per_100g": 95.5,
+      "protein_per_100g": 88.8,
+      "fat_per_100g": 77.7,
+      "fiber_per_100g": 66.6
+    }
+  ]
+}"#;
+
+    let recipes_content = r#"{
+  "recipes": [
+    {
+      "name": "extreme-values-test",
+      "description": "Test recipe with extreme numerical values",
+      "ingredients": [
+        {
+          "name": "tiny_values",
+          "grams": 0.01
+        },
+        {
+          "name": "small_values",
+          "grams": 5.5
+        },
+        {
+          "name": "large_values",
+          "grams": 2500.0
+        }
+      ]
+    }
+  ]
+}"#;
+
+    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+
+    let output = run_cmd(&["recipe", "extreme-values-test"], temp_dir.path());
+
+    let content = format_scaling_snapshot(
+        "extreme-values-test",
+        &String::from_utf8_lossy(&output.stdout),
+    );
+
+    assert_snapshot!("extreme_numerical_values", content);
+}
+
+#[test]
+fn test_comma_formatting_boundary() {
+    // Test values around the 1000 boundary for comma formatting
+    let ingredients_content = r#"{
+  "ingredients": [
+    {
+      "name": "below_thousand",
+      "display_name": "Below Thousand",
+      "carbs_per_100g": 50.0,
+      "protein_per_100g": 30.0,
+      "fat_per_100g": 20.0,
+      "fiber_per_100g": 10.0
+    },
+    {
+      "name": "at_thousand",
+      "display_name": "At Thousand",
+      "carbs_per_100g": 80.0,
+      "protein_per_100g": 60.0,
+      "fat_per_100g": 40.0,
+      "fiber_per_100g": 30.0
+    }
+  ]
+}"#;
+
+    let recipes_content = r#"{
+  "recipes": [
+    {
+      "name": "comma-boundary-test",
+      "description": "Test comma formatting boundary",
+      "ingredients": [
+        {
+          "name": "below_thousand",
+          "grams": 999.0
+        },
+        {
+          "name": "at_thousand",
+          "grams": 1000.0
+        }
+      ]
+    }
+  ]
+}"#;
+
+    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+
+    let output = run_cmd(&["recipe", "comma-boundary-test"], temp_dir.path());
+
+    let content = format_scaling_snapshot(
+        "comma-boundary-test",
+        &String::from_utf8_lossy(&output.stdout),
+    );
+
+    assert_snapshot!("comma_formatting_boundary", content);
+}
+
+#[test]
+fn test_precision_levels() {
+    // Test different precision levels based on value ranges
+    let ingredients_content = r#"{
+  "ingredients": [
+    {
+      "name": "precision_test",
+      "display_name": "Precision Test",
+      "carbs_per_100g": 1.2345,
+      "protein_per_100g": 0.6789,
+      "fat_per_100g": 0.0987,
+      "fiber_per_100g": 0.0054
+    }
+  ]
+}"#;
+
+    let recipes_content = r#"{
+  "recipes": [
+    {
+      "name": "precision-test",
+      "description": "Test different precision levels",
+      "ingredients": [
+        {
+          "name": "precision_test",
+          "grams": 123.456
+        }
+      ]
+    }
+  ]
+}"#;
+
+    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+
+    let output = run_cmd(&["recipe", "precision-test"], temp_dir.path());
+
+    let content =
+        format_scaling_snapshot("precision-test", &String::from_utf8_lossy(&output.stdout));
+
+    assert_snapshot!("precision_levels", content);
+}
+
+#[test]
+fn test_zero_values_formatting() {
+    // Test how zero and near-zero values are formatted
+    let ingredients_content = r#"{
+  "ingredients": [
+    {
+      "name": "zero_carbs",
+      "display_name": "Zero Carbs",
+      "carbs_per_100g": 0.0,
+      "protein_per_100g": 25.0,
+      "fat_per_100g": 0.0,
+      "fiber_per_100g": 0.0
+    },
+    {
+      "name": "near_zero",
+      "display_name": "Near Zero",
+      "carbs_per_100g": 0.0001,
+      "protein_per_100g": 0.0002,
+      "fat_per_100g": 0.0000,
+      "fiber_per_100g": 0.00001
+    }
+  ]
+}"#;
+
+    let recipes_content = r#"{
+  "recipes": [
+    {
+      "name": "zero-values-test",
+      "description": "Test zero and near-zero value formatting",
+      "ingredients": [
+        {
+          "name": "zero_carbs",
+          "grams": 100.0
+        },
+        {
+          "name": "near_zero",
+          "grams": 50.0
+        }
+      ]
+    }
+  ]
+}"#;
+
+    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+
+    let output = run_cmd(&["recipe", "zero-values-test"], temp_dir.path());
+
+    let content =
+        format_scaling_snapshot("zero-values-test", &String::from_utf8_lossy(&output.stdout));
+
+    assert_snapshot!("zero_values_formatting", content);
+}
+
+#[test]
+fn test_mixed_extreme_scenarios() {
+    // Combine long names with extreme values
+    let ingredients_content = r#"{
+  "ingredients": [
+    {
+      "name": "extremely_long_ingredient_name_with_many_words_and_descriptive_text_exceeding_limits",
+      "display_name": "Extremely Long Ingredient Name With Many Words And Descriptive Text That Definitely Exceeds Character Limits For Display",
+      "carbs_per_100g": 99.999,
+      "protein_per_100g": 0.001,
+      "fat_per_100g": 50.5555,
+      "fiber_per_100g": 0.0001
+    },
+    {
+      "name": "x",
+      "display_name": "X",
+      "carbs_per_100g": 0.0,
+      "protein_per_100g": 0.0,
+      "fat_per_100g": 0.0,
+      "fiber_per_100g": 0.0
+    }
+  ]
+}"#;
+
+    let recipes_content = r#"{
+  "recipes": [
+    {
+      "name": "mixed-extreme-test",
+      "description": "Mixed extreme scenarios test",
+      "ingredients": [
+        {
+          "name": "extremely_long_ingredient_name_with_many_words_and_descriptive_text_exceeding_limits",
+          "grams": 1234.567
+        },
+        {
+          "name": "x",
+          "grams": 0.001
+        }
+      ]
+    }
+  ]
+}"#;
+
+    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+
+    let output = run_cmd(&["recipe", "mixed-extreme-test"], temp_dir.path());
+
+    let content = format_scaling_snapshot(
+        "mixed-extreme-test",
+        &String::from_utf8_lossy(&output.stdout),
+    );
+
+    assert_snapshot!("mixed_extreme_scenarios", content);
+}

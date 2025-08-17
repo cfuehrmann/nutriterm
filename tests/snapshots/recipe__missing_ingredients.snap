@@ -1,0 +1,7 @@
+---
+source: tests/recipe.rs
+expression: normalized_stderr
+---
+Error: Not in a nutrition calculator workspace (or any parent directory)
+Searched: [TEMP_DIR]/broken-recipe, [TEMP_DIR], /tmp, /
+Run 'nutriterm init' to create a workspace.

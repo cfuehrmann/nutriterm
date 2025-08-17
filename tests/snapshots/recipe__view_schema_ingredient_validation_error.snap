@@ -1,0 +1,8 @@
+---
+source: tests/recipe.rs
+expression: normalized_stderr
+---
+Error: Schema validation failed for ingredients.jsonc:
+- /ingredients/0/carbs_per_100g: -5 is less than the minimum of 0
+
+Tip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.

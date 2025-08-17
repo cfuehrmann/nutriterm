@@ -1,0 +1,42 @@
+{
+  // JSONC format allows comments and trailing commas for better readability  
+  // This file should follow the ingredients.schema.json schema for IDE support
+  "$schema": "./ingredients.schema.json",
+  
+  "ingredients": [
+    {
+      "name": "chicken_breast",
+      "display_name": "Chicken Breast (skinless)",
+      "carbs_per_100g": 0,
+      "protein_per_100g": 31,
+      "fat_per_100g": 3.6,
+      "fiber_per_100g": 0
+    },
+    {
+      "name": "brown_rice",
+      "display_name": "Brown Rice (cooked)",
+      "carbs_per_100g": 23,
+      "protein_per_100g": 2.6,
+      "fat_per_100g": 0.9,
+      "fiber_per_100g": 1.8
+    },
+    {
+      "name": "broccoli",
+      "display_name": "Broccoli (fresh)",
+      "carbs_per_100g": 7,
+      "protein_per_100g": 2.8,
+      "fat_per_100g": 0.4,
+      "fiber_per_100g": 2.6
+    },
+    {
+      "name": "olive_oil",
+      "display_name": "Extra Virgin Olive Oil",
+      "carbs_per_100g": 0,
+      "protein_per_100g": 0,
+      "fat_per_100g": 100,
+      "fiber_per_100g": 0
+    }
+    // Add more ingredients here...
+    // Use reliable nutrition databases like USDA for accurate values
+  ]
+}

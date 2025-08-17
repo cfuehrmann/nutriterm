@@ -1,0 +1,8 @@
+---
+source: tests/recipe.rs
+expression: normalized_stderr
+---
+Error: Schema validation failed for recipes.jsonc:
+- /recipes/0/ingredients/0/grams: -100 is less than or equal to the minimum of 0
+
+Tip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.

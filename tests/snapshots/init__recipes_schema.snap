@@ -1,0 +1,69 @@
+---
+source: tests/init.rs
+expression: recipes_schema
+---
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "recipe": {
+      "description": "A single recipe with ingredients",
+      "properties": {
+        "description": {
+          "description": "Optional recipe description",
+          "type": "string"
+        },
+        "ingredients": {
+          "description": "List of ingredients with amounts",
+          "items": {
+            "$ref": "#/definitions/recipeIngredient"
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "Recipe name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "ingredients"
+      ],
+      "type": "object"
+    },
+    "recipeIngredient": {
+      "description": "An ingredient with amount in grams",
+      "properties": {
+        "grams": {
+          "description": "Amount in grams",
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "name": {
+          "description": "Ingredient name (must be defined in ingredients file)",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "grams"
+      ],
+      "type": "object"
+    }
+  },
+  "description": "Schema for nutriterm recipe files",
+  "properties": {
+    "recipes": {
+      "description": "List of recipes",
+      "items": {
+        "$ref": "#/definitions/recipe"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "recipes"
+  ],
+  "title": "Nutriterm Recipes",
+  "type": "object"
+}

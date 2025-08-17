@@ -1,0 +1,18 @@
+---
+source: tests/scaling.rs
+expression: content
+---
+Available recipes: zero-values-test
+$ nutriterm recipe zero-values-test
+Recipe: zero-values-test
+
+╭────────────┬──────────┬─────────────┬───────────┬───────┬─────────┬────────────╮
+│  Name      │  Weight  │  Net carbs  │  Protein  │  Fat  │  Fiber  │  Calories  │
+├────────────┼──────────┼─────────────┼───────────┼───────┼─────────┼────────────┤
+│ Zero Carbs │  100.0 g │         0 g │    25.0 g │   0 g │     0 g │   100 kcal │
+│  Near Zero │   50.0 g │         0 g │       0 g │   0 g │     0 g │     0 kcal │
+│      Total │  150.0 g │         0 g │    25.0 g │   0 g │     0 g │   100 kcal │
+╰────────────┴──────────┴─────────────┴───────────┴───────┴─────────┴────────────╯
+
+100.0 g  Zero Carbs
+ 50.0 g  Near Zero

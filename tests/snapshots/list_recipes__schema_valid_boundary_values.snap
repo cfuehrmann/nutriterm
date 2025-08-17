@@ -1,0 +1,8 @@
+---
+source: tests/list_recipes.rs
+expression: snapshot_content
+---
+Available recipes: boundary-recipe
+$ nutriterm list-recipes
+Available recipes:
+  boundary-recipe

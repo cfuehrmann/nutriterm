@@ -1,0 +1,18 @@
+---
+source: tests/scaling.rs
+expression: content
+---
+Available recipes: comma-boundary-test
+$ nutriterm recipe comma-boundary-test
+Recipe: comma-boundary-test
+
+╭────────────────┬──────────┬─────────────┬───────────┬─────────┬─────────┬─────────────╮
+│  Name          │  Weight  │  Net carbs  │  Protein  │  Fat    │  Fiber  │  Calories   │
+├────────────────┼──────────┼─────────────┼───────────┼─────────┼─────────┼─────────────┤
+│ Below Thousand │  999.0 g │     499.5 g │   299.7 g │ 199.8 g │  99.9 g │  4,995 kcal │
+│    At Thousand │  1,000 g │     800.0 g │   600.0 g │ 400.0 g │ 300.0 g │  9,200 kcal │
+│          Total │  1,999 g │   1,299.5 g │   899.7 g │ 599.8 g │ 399.9 g │ 14,195 kcal │
+╰────────────────┴──────────┴─────────────┴───────────┴─────────┴─────────┴─────────────╯
+
+999.0 g  Below Thousand
+1000.0 g  At Thousand

@@ -1,0 +1,16 @@
+---
+source: tests/recipe.rs
+expression: snapshot_content
+---
+Available recipes: chicken-rice-bowl, beef-rice-stir-fry, chicken-salad
+$ nutriterm recipe "chicken rice"
+Recipe: chicken-rice-bowl
+
+╭────────────────┬──────────┬─────────────┬───────────┬───────┬─────────┬────────────╮
+│  Name          │  Weight  │  Net carbs  │  Protein  │  Fat  │  Fiber  │  Calories  │
+├────────────────┼──────────┼─────────────┼───────────┼───────┼─────────┼────────────┤
+│ Chicken Breast │  150.0 g │         0 g │    46.5 g │ 5.4 g │     0 g │   235 kcal │
+│          Total │  150.0 g │         0 g │    46.5 g │ 5.4 g │     0 g │   235 kcal │
+╰────────────────┴──────────┴─────────────┴───────────┴───────┴─────────┴────────────╯
+
+150.0 g  Chicken Breast

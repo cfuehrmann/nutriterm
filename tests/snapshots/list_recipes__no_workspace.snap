@@ -1,0 +1,7 @@
+---
+source: tests/list_recipes.rs
+expression: stderr
+---
+Error: Not in a nutrition calculator workspace (or any parent directory)
+Searched: /tmp, /
+Run 'nutriterm init' to create a workspace.

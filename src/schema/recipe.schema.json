@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Nutriterm Recipes",
+  "description": "Schema for nutriterm recipe files",
+  "type": "object",
+  "required": ["recipes"],
+  "properties": {
+    "recipes": {
+      "type": "array",
+      "description": "List of recipes",
+      "items": { "$ref": "#/definitions/recipe" }
+    }
+  },
+  "definitions": {
+    "recipe": {
+      "type": "object",
+      "description": "A single recipe with ingredients",
+      "required": ["name", "ingredients"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Recipe name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional recipe description"
+        },
+        "ingredients": {
+          "type": "array",
+          "description": "List of ingredients with amounts",
+          "items": { "$ref": "#/definitions/recipeIngredient" }
+        }
+      }
+    },
+    "recipeIngredient": {
+      "type": "object",
+      "description": "An ingredient with amount in grams",
+      "required": ["name", "grams"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Ingredient name (must be defined in ingredients file)",
+          "minLength": 1
+        },
+        "grams": {
+          "type": "number",
+          "description": "Amount in grams",
+          "exclusiveMinimum": 0
+        }
+      }
+    }
+  }
+}

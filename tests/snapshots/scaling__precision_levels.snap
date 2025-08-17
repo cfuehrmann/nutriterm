@@ -1,0 +1,16 @@
+---
+source: tests/scaling.rs
+expression: content
+---
+Available recipes: precision-test
+$ nutriterm recipe precision-test
+Recipe: precision-test
+
+╭────────────────┬──────────┬─────────────┬───────────┬───────┬─────────┬────────────╮
+│  Name          │  Weight  │  Net carbs  │  Protein  │  Fat  │  Fiber  │  Calories  │
+├────────────────┼──────────┼─────────────┼───────────┼───────┼─────────┼────────────┤
+│ Precision Test │  123.5 g │       1.5 g │     0.8 g │ 0.1 g │     0 g │    11 kcal │
+│          Total │  123.5 g │       1.5 g │     0.8 g │ 0.1 g │     0 g │    11 kcal │
+╰────────────────┴──────────┴─────────────┴───────────┴───────┴─────────┴────────────╯
+
+123.5 g  Precision Test

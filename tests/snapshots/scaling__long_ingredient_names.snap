@@ -1,0 +1,20 @@
+---
+source: tests/scaling.rs
+expression: content
+---
+Available recipes: long-names-test
+$ nutriterm recipe long-names-test
+Recipe: long-names-test
+
+╭───────────────────────────┬──────────┬─────────────┬───────────┬────────┬─────────┬────────────╮
+│  Name                     │  Weight  │  Net carbs  │  Protein  │  Fat   │  Fiber  │  Calories  │
+├───────────────────────────┼──────────┼─────────────┼───────────┼────────┼─────────┼────────────┤
+│                Short Name │  100.0 g │      10.0 g │     5.0 g │  2.0 g │   1.0 g │    78 kcal │
+│ Exactly Twenty Five Chars │  150.0 g │      22.5 g │    12.0 g │  4.5 g │   3.0 g │   178 kcal │
+│ Very Long Ingredient Nam… │  200.0 g │      40.0 g │    24.0 g │  8.0 g │   6.0 g │   328 kcal │
+│                     Total │  450.0 g │      72.5 g │    41.0 g │ 14.5 g │  10.0 g │   584 kcal │
+╰───────────────────────────┴──────────┴─────────────┴───────────┴────────┴─────────┴────────────╯
+
+100.0 g  Short Name
+150.0 g  Exactly Twenty Five Chars
+200.0 g  Very Long Ingredient Name That Definitely Exceeds Twenty Five Characters And Should Be Truncated With Ellipsis

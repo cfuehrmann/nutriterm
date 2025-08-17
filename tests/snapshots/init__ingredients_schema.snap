@@ -1,0 +1,70 @@
+---
+source: tests/init.rs
+expression: ingredients_schema
+---
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ingredient": {
+      "description": "Nutritional information for an ingredient per 100g",
+      "properties": {
+        "carbs_per_100g": {
+          "description": "Carbohydrates per 100g",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        },
+        "display_name": {
+          "description": "Human-readable ingredient name",
+          "type": "string"
+        },
+        "fat_per_100g": {
+          "description": "Fat per 100g",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        },
+        "fiber_per_100g": {
+          "description": "Fiber per 100g",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        },
+        "name": {
+          "description": "Internal ingredient name (used in recipes)",
+          "type": "string"
+        },
+        "protein_per_100g": {
+          "description": "Protein per 100g",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "display_name",
+        "carbs_per_100g",
+        "protein_per_100g",
+        "fat_per_100g",
+        "fiber_per_100g"
+      ],
+      "type": "object"
+    }
+  },
+  "description": "Schema for nutriterm ingredient definition files",
+  "properties": {
+    "ingredients": {
+      "description": "List of ingredient definitions",
+      "items": {
+        "$ref": "#/definitions/ingredient"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "ingredients"
+  ],
+  "title": "Nutriterm Ingredients",
+  "type": "object"
+}

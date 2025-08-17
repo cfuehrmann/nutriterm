@@ -1,0 +1,18 @@
+---
+source: tests/scaling.rs
+expression: content
+---
+Available recipes: mixed-extreme-test
+$ nutriterm recipe mixed-extreme-test
+Recipe: mixed-extreme-test
+
+╭───────────────────────────┬───────────┬─────────────┬───────────┬─────────┬─────────┬─────────────╮
+│  Name                     │  Weight   │  Net carbs  │  Protein  │  Fat    │  Fiber  │  Calories   │
+├───────────────────────────┼───────────┼─────────────┼───────────┼─────────┼─────────┼─────────────┤
+│ Extremely Long Ingredien… │ 1,234.6 g │   1,234.6 g │     0.0 g │ 624.1 g │     0 g │ 10,556 kcal │
+│                         X │       0 g │         0 g │       0 g │     0 g │     0 g │      0 kcal │
+│                     Total │ 1,234.6 g │   1,234.6 g │     0.0 g │ 624.1 g │     0 g │ 10,556 kcal │
+╰───────────────────────────┴───────────┴─────────────┴───────────┴─────────┴─────────┴─────────────╯
+
+1234.6 g  Extremely Long Ingredient Name With Many Words And Descriptive Text That Definitely Exceeds Character Limits For Display
+  0.0 g  X

@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Nutriterm Ingredients",
+  "description": "Schema for nutriterm ingredient definition files",
+  "type": "object",
+  "required": ["ingredients"],
+  "properties": {
+    "ingredients": {
+      "type": "array",
+      "description": "List of ingredient definitions",
+      "items": { "$ref": "#/definitions/ingredient" }
+    }
+  },
+  "definitions": {
+    "ingredient": {
+      "type": "object",
+      "description": "Nutritional information for an ingredient per 100g",
+      "required": ["name", "display_name", "carbs_per_100g", "protein_per_100g", "fat_per_100g", "fiber_per_100g"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Internal ingredient name (used in recipes)"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Human-readable ingredient name"
+        },
+        "carbs_per_100g": {
+          "type": "number",
+          "description": "Carbohydrates per 100g",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "protein_per_100g": {
+          "type": "number",
+          "description": "Protein per 100g",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fat_per_100g": {
+          "type": "number",
+          "description": "Fat per 100g",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fiber_per_100g": {
+          "type": "number",
+          "description": "Fiber per 100g",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    }
+  }
+}

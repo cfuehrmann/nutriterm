@@ -1,0 +1,5 @@
+---
+source: tests/init.rs
+expression: normalized_stderr
+---
+Error: Directory '[TEMP_DIR]/non-empty' is not empty. Please run init in an empty directory.

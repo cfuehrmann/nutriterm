@@ -1,0 +1,16 @@
+---
+source: tests/cli.rs
+expression: stdout
+---
+Calculate nutritional information for ingredients and recipes
+
+Usage: nutriterm <COMMAND>
+
+Commands:
+  init          Initialize current directory as a recipe workspace
+  recipe        Display nutrition for a specific recipe
+  list-recipes  List all available recipes
+  help          Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help

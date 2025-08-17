@@ -1,0 +1,7 @@
+---
+source: tests/recipe.rs
+expression: snapshot_content
+---
+Available recipes: chicken-rice-bowl
+$ nutriterm recipe pizza
+No matches for 'pizza'. Available recipes: chicken-rice-bowl

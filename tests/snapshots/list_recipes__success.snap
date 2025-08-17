@@ -1,0 +1,8 @@
+---
+source: tests/list_recipes.rs
+expression: snapshot_content
+---
+Available recipes: chicken-rice-bowl
+$ nutriterm list-recipes
+Available recipes:
+  chicken-rice-bowl - A balanced meal with protein, carbs, and vegetables

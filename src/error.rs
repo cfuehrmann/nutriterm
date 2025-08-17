@@ -1,0 +1,116 @@
+use std::path::PathBuf;
+
+#[derive(Debug)]
+pub enum LoadError {
+    FileError {
+        path: PathBuf,
+        source: std::io::Error,
+    },
+    ParseError {
+        filename: String,
+        message: String,
+    },
+    ValidationError {
+        filename: String,
+        message: String,
+    },
+    SchemaValidationError {
+        filename: String,
+        errors: Vec<String>,
+    },
+    UnknownIngredientError {
+        recipe: String,
+        ingredient: String,
+    },
+}
+
+impl std::fmt::Display for LoadError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            LoadError::FileError { path, source } => {
+                write!(f, "Cannot read file {}: {}\n\nTip: Make sure the file exists and you have read permissions. Run 'nutriterm init' to create missing workspace files.", path.display(), source)
+            }
+            LoadError::ParseError { filename, message } => {
+                write!(f, "Invalid JSONC syntax in {}: {}\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.", filename, message)
+            }
+            LoadError::ValidationError { filename, message } => {
+                write!(f, "Invalid {} structure: {}", filename, message)
+            }
+            LoadError::SchemaValidationError { filename, errors } => {
+                write!(
+                    f,
+                    "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",
+                    filename,
+                    errors.join("\n")
+                )
+            }
+            LoadError::UnknownIngredientError { recipe, ingredient } => {
+                write!(
+                    f,
+                    "Recipe '{}' references unknown ingredient '{}'.\n\nTip: Add the ingredient to ingredients.jsonc or check that the name exactly matches (names are case-sensitive).",
+                    recipe, ingredient
+                )
+            }
+        }
+    }
+}
+
+impl std::error::Error for LoadError {}
+
+#[derive(Debug)]
+pub enum AppError {
+    Data(LoadError),
+    DirectoryNotEmpty {
+        path: PathBuf,
+        message: String,
+    },
+    WorkspaceNotFound {
+        searched: Vec<PathBuf>,
+        message: String,
+    },
+    RecipeNotFound {
+        name: String,
+        available: Vec<String>,
+        message: String,
+    },
+
+    Other(String),
+    Io(std::io::Error),
+}
+
+impl std::fmt::Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AppError::Data(error) => write!(f, "{}", error),
+            AppError::Io(error) => write!(f, "{}", error),
+            AppError::DirectoryNotEmpty { message, .. }
+            | AppError::WorkspaceNotFound { message, .. }
+            | AppError::RecipeNotFound { message, .. }
+            | AppError::Other(message) => write!(f, "{}", message),
+        }
+    }
+}
+
+impl std::error::Error for AppError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            AppError::Data(err) => Some(err),
+            AppError::Io(err) => Some(err),
+            _ => None,
+        }
+    }
+}
+
+impl From<LoadError> for AppError {
+    fn from(err: LoadError) -> Self {
+        AppError::Data(err)
+    }
+}
+
+impl From<std::io::Error> for AppError {
+    fn from(err: std::io::Error) -> Self {
+        AppError::Io(err)
+    }
+}
+
+pub type AppResult<T> = Result<T, AppError>;

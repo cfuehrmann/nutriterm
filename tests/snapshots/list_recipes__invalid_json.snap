@@ -1,0 +1,7 @@
+---
+source: tests/list_recipes.rs
+expression: normalized_stderr
+---
+Error: Invalid JSONC syntax in recipes.jsonc: Expected colon after the string or word in object property on line 1 column 11
+
+Tip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.

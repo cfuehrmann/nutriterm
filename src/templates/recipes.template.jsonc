@@ -1,0 +1,32 @@
+{
+  // JSONC format allows comments and trailing commas for better readability
+  // This file should follow the recipes.schema.json schema for IDE support
+  "$schema": "./recipes.schema.json",
+  
+  "recipes": [
+    {
+      "name": "chicken-rice-bowl",
+      "description": "A balanced meal with protein, carbs, and vegetables",
+      "ingredients": [
+        {
+          "name": "chicken_breast",
+          "grams": 120
+        },
+        {
+          "name": "brown_rice",
+          "grams": 80
+        },
+        {
+          "name": "broccoli",
+          "grams": 150
+        },
+        {
+          "name": "olive_oil",
+          "grams": 10
+        }
+      ]
+    }
+    // Add more recipes here...
+    // Remember: ingredient names must be defined in your ingredients.jsonc file
+  ]
+}

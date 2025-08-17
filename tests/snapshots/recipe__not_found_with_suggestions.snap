@@ -1,0 +1,7 @@
+---
+source: tests/recipe.rs
+expression: snapshot_content
+---
+Available recipes: chicken-rice-bowl
+$ nutriterm recipe nonexistent-recipe
+No matches for 'nonexistent-recipe'. Available recipes: chicken-rice-bowl
