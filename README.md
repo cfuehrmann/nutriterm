@@ -102,8 +102,11 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
 # See all your recipes
 nutriterm list-recipes
 
-# Get nutrition for any recipe
-nutriterm recipe recipe-name
+# Get nutrition for any recipe (exact name match)
+nutriterm recipe grilled-chicken
+
+# Search with multiple terms (finds recipes containing ALL terms)
+nutriterm recipe chicken rice  # Finds recipes with both "chicken" AND "rice" in name
 
 # The tool works from anywhere in your recipe directory tree
 cd subfolder
@@ -113,7 +116,7 @@ nutriterm list-recipes  # Still works!
 ### Tips
 
 - **Net carbs** = Total carbs - Fiber (this is what's displayed)
-- **Recipe names** in commands should match the "name" field in your JSON, not the "display_name"
+- **Recipe search** uses the "name" field only, not "description" - search terms must ALL be found in the recipe name
 - **Add comments** to your JSONC files to remember where you got nutritional data
 - **Use descriptive names** like "chicken-rice-bowl" rather than "recipe1"
 
