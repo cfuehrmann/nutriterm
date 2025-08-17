@@ -14,10 +14,10 @@ Terminal-based nutrition calculator for recipes. A Rust CLI application that cal
 
 ### Installation
 
-Download the latest release from GitHub or compile from source with Rust:
+Download the latest release from GitHub or install directly from git:
 
 ```bash
-cargo install --path .
+cargo install --git https://github.com/cfuehrmann/nutriterm
 ```
 
 ### First Steps
