@@ -1,8 +1,8 @@
 use serde_json::Value;
 use std::path::Path;
 
-const RECIPE_SCHEMA: &str = include_str!("recipe.schema.json");
-const INGREDIENT_SCHEMA: &str = include_str!("ingredient.schema.json");
+const RECIPE_SCHEMA: &str = include_str!("recipes.schema.json");
+const INGREDIENT_SCHEMA: &str = include_str!("ingredients.schema.json");
 
 pub fn generate_recipe_schema() -> Value {
     serde_json::from_str(RECIPE_SCHEMA).expect("Embedded recipe schema should be valid JSON")
