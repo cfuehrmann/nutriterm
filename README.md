@@ -58,8 +58,8 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
    {
      "recipes": [
        {
-         "name": "grilled-chicken",
-         "description": "Grilled chicken with brown rice",
+         "name": "Grilled Chicken with Rice",
+         "description": "Healthy protein and carbs meal",
          "ingredients": [
            {
              "name": "chicken_breast",
@@ -77,12 +77,12 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
 
 4. **View nutrition information**:
    ```bash
-    nutriterm recipe grilled-chicken
+    nutriterm recipe "Grilled Chicken with Rice"
    ```
    
    **Example output:**
    ```
-   Recipe: grilled-chicken
+   Recipe: Grilled Chicken with Rice
    
    ╭───────────────────────────┬──────────┬─────────────┬───────────┬───────┬─────────┬────────────╮
    │  Name                     │  Weight  │  Net carbs  │  Protein  │  Fat  │  Fiber  │  Calories  │
@@ -103,7 +103,7 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
 nutriterm list-recipes
 
 # Get nutrition for any recipe (exact name match)
-nutriterm recipe grilled-chicken
+nutriterm recipe "Grilled Chicken with Rice"
 
 # Search with multiple terms (finds recipes containing ALL terms)
 nutriterm recipe chicken rice  # Finds recipes with both "chicken" AND "rice" in name
@@ -118,7 +118,7 @@ nutriterm list-recipes  # Still works!
 - **Net carbs** = Total carbs - Fiber (this is what's displayed)
 - **Recipe search** uses the "name" field only, not "description" - search terms must ALL be found in the recipe name
 - **Add comments** to your JSONC files to remember where you got nutritional data
-- **Use descriptive names** like "chicken-rice-bowl" rather than "recipe1"
+- **Use descriptive names** like "Chicken Rice Bowl" rather than "recipe1" (use quotes in commands for names with spaces)
 
 ## Data Format Reference
 
@@ -154,8 +154,8 @@ This file defines your recipes using ingredients from the database:
 {
   "recipes": [
     {
-      "name": "chicken-rice-bowl",          // Used in commands
-      "description": "Healthy chicken bowl", // Shown when listing recipes
+      "name": "Chicken Rice Bowl",           // Used in commands (requires quotes)
+      "description": "Healthy chicken bowl", // Shown when listing recipes  
       "ingredients": [
         {
           "name": "chicken_breast",         // Must match ingredient "name"
@@ -172,7 +172,7 @@ This file defines your recipes using ingredients from the database:
 }
 ```
 
-**Tip**: Use consistent naming like "chicken-rice-bowl" or "chicken_rice_bowl" for recipe names.
+**Tip**: Use descriptive names like "Chicken Rice Bowl" for better readability (remember to use quotes in commands).
 
 ---
 
