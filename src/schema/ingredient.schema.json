@@ -15,15 +15,15 @@
     "ingredient": {
       "type": "object",
       "description": "Nutritional information for an ingredient per 100g",
-      "required": ["name", "display_name", "carbs_per_100g", "protein_per_100g", "fat_per_100g", "fiber_per_100g"],
+      "required": ["id", "name", "carbs_per_100g", "protein_per_100g", "fat_per_100g", "fiber_per_100g"],
       "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable ingredient identifier (used in recipes)"
+        },
         "name": {
           "type": "string",
-          "description": "Internal ingredient name (used in recipes)"
-        },
-        "display_name": {
-          "type": "string",
-          "description": "Human-readable ingredient name"
+          "description": "Human-readable ingredient name (for display)"
         },
         "carbs_per_100g": {
           "type": "number",

@@ -34,16 +34,16 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
    {
      "ingredients": [
        {
-         "name": "chicken_breast",
-         "display_name": "Chicken Breast",
+         "id": "chicken_breast",
+         "name": "Chicken Breast",
          "carbs_per_100g": 0.0,
          "protein_per_100g": 31.0,
          "fat_per_100g": 3.6,
          "fiber_per_100g": 0.0
        },
        {
-         "name": "brown_rice",
-         "display_name": "Brown Rice (cooked)",
+         "id": "brown_rice",
+         "name": "Brown Rice (cooked)",
          "carbs_per_100g": 23.0,
          "protein_per_100g": 2.6,
          "fat_per_100g": 0.9,
@@ -62,11 +62,11 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
          "description": "Healthy protein and carbs meal",
          "ingredients": [
            {
-             "name": "chicken_breast",
+             "ingredient_id": "chicken_breast",
              "grams": 150
            },
            {
-             "name": "brown_rice",
+             "ingredient_id": "brown_rice",
              "grams": 100
            }
          ]
@@ -132,8 +132,8 @@ This file contains nutritional information for all foods you use. Each ingredien
 {
   "ingredients": [
     {
-      "name": "chicken_breast",           // Internal ID (used in recipes)
-      "display_name": "Chicken Breast",   // What users see in output
+      "id": "chicken_breast",            // Stable ID (used in recipes)
+      "name": "Chicken Breast",          // Display name (shown to users)
       "carbs_per_100g": 0.0,             // Carbohydrates per 100g
       "protein_per_100g": 31.0,          // Protein per 100g  
       "fat_per_100g": 3.6,               // Fat per 100g
@@ -156,16 +156,16 @@ This file defines your recipes using ingredients from the database:
     {
       "name": "Chicken Rice Bowl",           // Used in commands (requires quotes)
       "description": "Healthy chicken bowl", // Shown when listing recipes  
-      "ingredients": [
-        {
-          "name": "chicken_breast",         // Must match ingredient "name"
-          "grams": 150                      // Amount in grams
-        },
-        {
-          "name": "white_rice",
-          "grams": 100
-        }
-      ]
+        "ingredients": [
+          {
+            "ingredient_id": "chicken_breast", // Must match ingredient "id"
+            "grams": 150                       // Amount in grams
+          },
+          {
+            "ingredient_id": "white_rice",
+            "grams": 100
+          }
+        ]
     }
     // Add more recipes...
   ]

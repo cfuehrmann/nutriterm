@@ -9,23 +9,23 @@ expression: recipes_content
   
   "recipes": [
     {
-      "name": "chicken-rice-bowl",
+      "name": "Chicken Rice Bowl",
       "description": "A balanced meal with protein, carbs, and vegetables",
       "ingredients": [
         {
-          "name": "chicken_breast",
+          "ingredient_id": "chicken_breast",
           "grams": 120
         },
         {
-          "name": "brown_rice",
+          "ingredient_id": "brown_rice",
           "grams": 80
         },
         {
-          "name": "broccoli",
+          "ingredient_id": "broccoli",
           "grams": 150
         },
         {
-          "name": "olive_oil",
+          "ingredient_id": "olive_oil",
           "grams": 10
         }
       ]

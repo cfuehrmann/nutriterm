@@ -24,24 +24,24 @@ fn test_long_ingredient_names() {
     let ingredients_content = r#"{
   "ingredients": [
     {
-      "name": "short",
-      "display_name": "Short Name",
+      "id": "short",
+      "name": "Short Name",
       "carbs_per_100g": 10.0,
       "protein_per_100g": 5.0,
       "fat_per_100g": 2.0,
       "fiber_per_100g": 1.0
     },
     {
-      "name": "exactly_twenty_five_chars",
-      "display_name": "Exactly Twenty Five Chars",
+      "id": "exactly_twenty_five_chars",
+      "name": "Exactly Twenty Five Chars",
       "carbs_per_100g": 15.0,
       "protein_per_100g": 8.0,
       "fat_per_100g": 3.0,
       "fiber_per_100g": 2.0
     },
     {
-      "name": "very_long_ingredient_name_exceeding_twenty_five_characters",
-      "display_name": "Very Long Ingredient Name That Definitely Exceeds Twenty Five Characters And Should Be Truncated With Ellipsis",
+      "id": "very_long_ingredient_name_exceeding_twenty_five_characters",
+      "name": "Very Long Ingredient Name That Definitely Exceeds Twenty Five Characters And Should Be Truncated With Ellipsis",
       "carbs_per_100g": 20.0,
       "protein_per_100g": 12.0,
       "fat_per_100g": 4.0,
@@ -57,15 +57,15 @@ fn test_long_ingredient_names() {
       "description": "Test recipe with various name lengths",
       "ingredients": [
         {
-          "name": "short",
+          "ingredient_id": "short",
           "grams": 100.0
         },
         {
-          "name": "exactly_twenty_five_chars",
+          "ingredient_id": "exactly_twenty_five_chars",
           "grams": 150.0
         },
         {
-          "name": "very_long_ingredient_name_exceeding_twenty_five_characters",
+          "ingredient_id": "very_long_ingredient_name_exceeding_twenty_five_characters",
           "grams": 200.0
         }
       ]
@@ -89,24 +89,24 @@ fn test_extreme_numerical_values() {
     let ingredients_content = r#"{
   "ingredients": [
     {
-      "name": "tiny_values",
-      "display_name": "Tiny Values",
+      "id": "tiny_values",
+      "name": "Tiny Values",
       "carbs_per_100g": 0.001,
       "protein_per_100g": 0.005,
       "fat_per_100g": 0.0001,
       "fiber_per_100g": 0.0005
     },
     {
-      "name": "small_values",
-      "display_name": "Small Values", 
+      "id": "small_values",
+      "name": "Small Values", 
       "carbs_per_100g": 0.15,
       "protein_per_100g": 0.25,
       "fat_per_100g": 0.08,
       "fiber_per_100g": 0.12
     },
     {
-      "name": "large_values",
-      "display_name": "Large Values",
+      "id": "large_values",
+      "name": "Large Values",
       "carbs_per_100g": 95.5,
       "protein_per_100g": 88.8,
       "fat_per_100g": 77.7,
@@ -122,15 +122,15 @@ fn test_extreme_numerical_values() {
       "description": "Test recipe with extreme numerical values",
       "ingredients": [
         {
-          "name": "tiny_values",
+          "ingredient_id": "tiny_values",
           "grams": 0.01
         },
         {
-          "name": "small_values",
+          "ingredient_id": "small_values",
           "grams": 5.5
         },
         {
-          "name": "large_values",
+          "ingredient_id": "large_values",
           "grams": 2500.0
         }
       ]
@@ -156,16 +156,16 @@ fn test_comma_formatting_boundary() {
     let ingredients_content = r#"{
   "ingredients": [
     {
-      "name": "below_thousand",
-      "display_name": "Below Thousand",
+      "id": "below_thousand",
+      "name": "Below Thousand",
       "carbs_per_100g": 50.0,
       "protein_per_100g": 30.0,
       "fat_per_100g": 20.0,
       "fiber_per_100g": 10.0
     },
     {
-      "name": "at_thousand",
-      "display_name": "At Thousand",
+      "id": "at_thousand",
+      "name": "At Thousand",
       "carbs_per_100g": 80.0,
       "protein_per_100g": 60.0,
       "fat_per_100g": 40.0,
@@ -181,11 +181,11 @@ fn test_comma_formatting_boundary() {
       "description": "Test comma formatting boundary",
       "ingredients": [
         {
-          "name": "below_thousand",
+          "ingredient_id": "below_thousand",
           "grams": 999.0
         },
         {
-          "name": "at_thousand",
+          "ingredient_id": "at_thousand",
           "grams": 1000.0
         }
       ]
@@ -211,8 +211,8 @@ fn test_precision_levels() {
     let ingredients_content = r#"{
   "ingredients": [
     {
-      "name": "precision_test",
-      "display_name": "Precision Test",
+      "id": "precision_test",
+      "name": "Precision Test",
       "carbs_per_100g": 1.2345,
       "protein_per_100g": 0.6789,
       "fat_per_100g": 0.0987,
@@ -228,7 +228,7 @@ fn test_precision_levels() {
       "description": "Test different precision levels",
       "ingredients": [
         {
-          "name": "precision_test",
+          "ingredient_id": "precision_test",
           "grams": 123.456
         }
       ]
@@ -252,16 +252,16 @@ fn test_zero_values_formatting() {
     let ingredients_content = r#"{
   "ingredients": [
     {
-      "name": "zero_carbs",
-      "display_name": "Zero Carbs",
+      "id": "zero_carbs",
+      "name": "Zero Carbs",
       "carbs_per_100g": 0.0,
       "protein_per_100g": 25.0,
       "fat_per_100g": 0.0,
       "fiber_per_100g": 0.0
     },
     {
-      "name": "near_zero",
-      "display_name": "Near Zero",
+      "id": "near_zero",
+      "name": "Near Zero",
       "carbs_per_100g": 0.0001,
       "protein_per_100g": 0.0002,
       "fat_per_100g": 0.0000,
@@ -277,11 +277,11 @@ fn test_zero_values_formatting() {
       "description": "Test zero and near-zero value formatting",
       "ingredients": [
         {
-          "name": "zero_carbs",
+          "ingredient_id": "zero_carbs",
           "grams": 100.0
         },
         {
-          "name": "near_zero",
+          "ingredient_id": "near_zero",
           "grams": 50.0
         }
       ]
@@ -305,16 +305,16 @@ fn test_mixed_extreme_scenarios() {
     let ingredients_content = r#"{
   "ingredients": [
     {
-      "name": "extremely_long_ingredient_name_with_many_words_and_descriptive_text_exceeding_limits",
-      "display_name": "Extremely Long Ingredient Name With Many Words And Descriptive Text That Definitely Exceeds Character Limits For Display",
+      "id": "extremely_long_ingredient_name_with_many_words_and_descriptive_text_exceeding_limits",
+      "name": "Extremely Long Ingredient Name With Many Words And Descriptive Text That Definitely Exceeds Character Limits For Display",
       "carbs_per_100g": 99.999,
       "protein_per_100g": 0.001,
       "fat_per_100g": 50.5555,
       "fiber_per_100g": 0.0001
     },
     {
-      "name": "x",
-      "display_name": "X",
+      "id": "x",
+      "name": "X",
       "carbs_per_100g": 0.0,
       "protein_per_100g": 0.0,
       "fat_per_100g": 0.0,
@@ -330,11 +330,11 @@ fn test_mixed_extreme_scenarios() {
       "description": "Mixed extreme scenarios test",
       "ingredients": [
         {
-          "name": "extremely_long_ingredient_name_with_many_words_and_descriptive_text_exceeding_limits",
+          "ingredient_id": "extremely_long_ingredient_name_with_many_words_and_descriptive_text_exceeding_limits",
           "grams": 1234.567
         },
         {
-          "name": "x",
+          "ingredient_id": "x",
           "grams": 0.001
         }
       ]

@@ -141,15 +141,15 @@ fn test_search_multiple_terms() {
   "recipes": [
     {
       "name": "chicken-rice-bowl",
-      "ingredients": [{"name": "chicken_breast", "grams": 150}]
+      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 150}]
     },
     {
       "name": "beef-rice-stir-fry", 
-      "ingredients": [{"name": "chicken_breast", "grams": 100}]
+      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 100}]
     },
     {
       "name": "chicken-salad",
-      "ingredients": [{"name": "chicken_breast", "grams": 120}]
+      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 120}]
     }
   ]
 }"#,
@@ -160,8 +160,8 @@ fn test_search_multiple_terms() {
         workspace_dir.join("ingredients.jsonc"),
         r#"{
   "ingredients": [{
-    "name": "chicken_breast",
-    "display_name": "Chicken Breast",
+    "id": "chicken_breast",
+    "name": "Chicken Breast",
     "carbs_per_100g": 0,
     "protein_per_100g": 31,
     "fat_per_100g": 3.6,
@@ -202,16 +202,16 @@ fn test_search_multiple_matches() {
     {
       "name": "chicken-rice-bowl",
       "description": "A balanced meal",
-      "ingredients": [{"name": "chicken_breast", "grams": 150}]
+      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 150}]
     },
     {
       "name": "chicken-salad",
       "description": "Fresh salad", 
-      "ingredients": [{"name": "chicken_breast", "grams": 120}]
+      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 120}]
     },
     {
       "name": "spicy-chicken-curry",
-      "ingredients": [{"name": "chicken_breast", "grams": 200}]
+      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 200}]
     }
   ]
 }"#,
@@ -222,8 +222,8 @@ fn test_search_multiple_matches() {
         workspace_dir.join("ingredients.jsonc"),
         r#"{
   "ingredients": [{
-    "name": "chicken_breast",
-    "display_name": "Chicken Breast",
+    "id": "chicken_breast",
+    "name": "Chicken Breast",
     "carbs_per_100g": 0,
     "protein_per_100g": 31,
     "fat_per_100g": 3.6,
@@ -298,8 +298,8 @@ fn test_view_with_invalid_ingredient_data() {
         &workspace,
         r#"{
         "ingredients": [{
-            "name": "invalid_ingredient",
-            "display_name": "Invalid Ingredient",
+            "id": "invalid_ingredient",
+            "name": "Invalid Ingredient",
             "carbs_per_100g": -5,
             "protein_per_100g": 25,
             "fat_per_100g": 10,
@@ -309,7 +309,7 @@ fn test_view_with_invalid_ingredient_data() {
         r#"{
         "recipes": [{
             "name": "test-recipe",
-            "ingredients": [{"name": "invalid_ingredient", "grams": 100}]
+            "ingredients": [{"ingredient_id": "invalid_ingredient", "grams": 100}]
         }]
     }"#,
     );
@@ -336,8 +336,8 @@ fn test_view_with_invalid_recipe_data() {
         &workspace,
         r#"{
         "ingredients": [{
-            "name": "test_ingredient",
-            "display_name": "Test Ingredient",
+            "id": "test_ingredient",
+            "name": "Test Ingredient",
             "carbs_per_100g": 50,
             "protein_per_100g": 25,
             "fat_per_100g": 10,
@@ -348,7 +348,7 @@ fn test_view_with_invalid_recipe_data() {
         "recipes": [{
             "name": "invalid-recipe",
             "ingredients": [{
-                "name": "test_ingredient",
+                "ingredient_id": "test_ingredient",
                 "grams": -100
             }]
         }]

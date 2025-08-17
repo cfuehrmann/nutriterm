@@ -127,7 +127,7 @@ fn test_with_unknown_ingredient_reference() {
         r#"{
         "recipes": [{
             "name": "test-recipe",
-            "ingredients": [{"name": "nonexistent_ingredient", "grams": 100}]
+            "ingredients": [{"ingredient_id": "nonexistent_ingredient", "grams": 100}]
         }]
     }"#,
     )
@@ -160,8 +160,8 @@ fn test_with_invalid_ingredient_negative_values() {
     let (temp_dir, workspace) = schema_workspace(
         r#"{
         "ingredients": [{
-            "name": "invalid_ingredient",
-            "display_name": "Invalid Ingredient",
+            "id": "invalid_ingredient",
+            "name": "Invalid Ingredient",
             "carbs_per_100g": -5,
             "protein_per_100g": 25,
             "fat_per_100g": 10,
@@ -190,8 +190,8 @@ fn test_with_invalid_ingredient_excessive_values() {
     let (temp_dir, workspace) = schema_workspace(
         r#"{
         "ingredients": [{
-            "name": "impossible_ingredient",
-            "display_name": "Impossible Ingredient",
+            "id": "impossible_ingredient",
+            "name": "Impossible Ingredient",
             "carbs_per_100g": 50,
             "protein_per_100g": 150,
             "fat_per_100g": 10,
@@ -220,8 +220,8 @@ fn test_with_zero_grams_recipe() {
     let (temp_dir, workspace) = schema_workspace(
         r#"{
         "ingredients": [{
-            "name": "test_ingredient",
-            "display_name": "Test Ingredient",
+            "id": "test_ingredient",
+            "name": "Test Ingredient",
             "carbs_per_100g": 50,
             "protein_per_100g": 25,
             "fat_per_100g": 10,
@@ -233,7 +233,7 @@ fn test_with_zero_grams_recipe() {
         "recipes": [{
             "name": "invalid-recipe",
             "ingredients": [{
-                "name": "test_ingredient",
+                "ingredient_id": "test_ingredient",
                 "grams": 0
             }]
         }]
@@ -260,8 +260,8 @@ fn test_with_negative_grams_recipe() {
     let (temp_dir, workspace) = schema_workspace(
         r#"{
         "ingredients": [{
-            "name": "test_ingredient",
-            "display_name": "Test Ingredient",
+            "id": "test_ingredient",
+            "name": "Test Ingredient",
             "carbs_per_100g": 50,
             "protein_per_100g": 25,
             "fat_per_100g": 10,
@@ -273,7 +273,7 @@ fn test_with_negative_grams_recipe() {
         "recipes": [{
             "name": "invalid-recipe",
             "ingredients": [{
-                "name": "test_ingredient",
+                "ingredient_id": "test_ingredient",
                 "grams": -100
             }]
         }]
@@ -300,8 +300,8 @@ fn test_with_multiple_schema_errors() {
     let (temp_dir, workspace) = schema_workspace(
         r#"{
         "ingredients": [{
-            "name": "multi_error_ingredient",
-            "display_name": "Multi Error Ingredient",
+            "id": "multi_error_ingredient",
+            "name": "Multi Error Ingredient",
             "carbs_per_100g": -10,
             "protein_per_100g": 200,
             "fat_per_100g": -5,
@@ -330,8 +330,8 @@ fn test_with_valid_boundary_values() {
     let (_temp_dir, workspace) = schema_workspace(
         r#"{
         "ingredients": [{
-            "name": "boundary_ingredient",
-            "display_name": "Boundary Test Ingredient",
+            "id": "boundary_ingredient",
+            "name": "Boundary Test Ingredient",
             "carbs_per_100g": 0,
             "protein_per_100g": 100,
             "fat_per_100g": 0,
@@ -341,9 +341,9 @@ fn test_with_valid_boundary_values() {
         Some(
             r#"{
         "recipes": [{
-            "name": "boundary-recipe",
+            "name": "boundary-recipe", 
             "ingredients": [{
-                "name": "boundary_ingredient",
+                "ingredient_id": "boundary_ingredient",
                 "grams": 0.1
             }]
         }]

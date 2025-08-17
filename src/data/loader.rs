@@ -21,7 +21,7 @@ struct JsonRecipe {
 
 #[derive(Deserialize)]
 struct JsonRecipeIngredient {
-    name: String,
+    ingredient_id: String,
     grams: f64,
 }
 
@@ -32,8 +32,8 @@ struct JsonIngredients {
 
 #[derive(Deserialize)]
 struct JsonIngredient {
+    id: String,
     name: String,
-    display_name: String,
     carbs_per_100g: f64,
     protein_per_100g: f64,
     fat_per_100g: f64,
@@ -108,9 +108,9 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
         .into_iter()
         .map(|json_ing| {
             (
-                json_ing.name,
+                json_ing.id,
                 Ingredient {
-                    name: json_ing.display_name,
+                    name: json_ing.name,
                     carbs_per_100g: json_ing.carbs_per_100g,
                     protein_per_100g: json_ing.protein_per_100g,
                     fat_per_100g: json_ing.fat_per_100g,
@@ -126,10 +126,10 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
         let mut recipe_ingredients = Vec::new();
 
         for json_ingredient in json_recipe.ingredients {
-            let ingredient = ingredient_map.get(&json_ingredient.name).ok_or_else(|| {
+            let ingredient = ingredient_map.get(&json_ingredient.ingredient_id).ok_or_else(|| {
                 LoadError::UnknownIngredientError {
                     recipe: json_recipe.name.clone(),
-                    ingredient: json_ingredient.name.clone(),
+                    ingredient: json_ingredient.ingredient_id.clone(),
                 }
             })?;
 

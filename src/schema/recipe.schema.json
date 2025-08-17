@@ -35,11 +35,11 @@
     "recipeIngredient": {
       "type": "object",
       "description": "An ingredient with amount in grams",
-      "required": ["name", "grams"],
+      "required": ["ingredient_id", "grams"],
       "properties": {
-        "name": {
+        "ingredient_id": {
           "type": "string",
-          "description": "Ingredient name (must be defined in ingredients file)",
+          "description": "Ingredient ID (must match an ingredient id in ingredients file)",
           "minLength": 1
         },
         "grams": {

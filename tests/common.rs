@@ -110,15 +110,15 @@ pub fn create_workspace_files(workspace_dir: &std::path::Path) {
       "description": "A balanced meal with protein, carbs, and vegetables",
       "ingredients": [
         {
-          "name": "chicken_breast",
+          "ingredient_id": "chicken_breast",
           "grams": 150
         },
         {
-          "name": "brown_rice",
+          "ingredient_id": "brown_rice",
           "grams": 100
         },
         {
-          "name": "broccoli",
+          "ingredient_id": "broccoli",
           "grams": 80
         }
       ]
@@ -135,24 +135,24 @@ pub fn create_workspace_files(workspace_dir: &std::path::Path) {
   
   "ingredients": [
     {
-      "name": "chicken_breast",
-      "display_name": "Chicken Breast (skinless)",
+      "id": "chicken_breast",
+      "name": "Chicken Breast (skinless)",
       "carbs_per_100g": 0,
       "protein_per_100g": 31,
       "fat_per_100g": 3.6,
       "fiber_per_100g": 0
     },
     {
-      "name": "brown_rice",
-      "display_name": "Brown Rice (cooked)",
+      "id": "brown_rice",
+      "name": "Brown Rice (cooked)",
       "carbs_per_100g": 23,
       "protein_per_100g": 2.6,
       "fat_per_100g": 0.9,
       "fiber_per_100g": 1.8
     },
     {
-      "name": "broccoli",
-      "display_name": "Broccoli (steamed)",
+      "id": "broccoli",
+      "name": "Broccoli (steamed)",
       "carbs_per_100g": 7,
       "protein_per_100g": 3,
       "fat_per_100g": 0.4,

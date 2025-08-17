@@ -14,10 +14,6 @@ expression: ingredients_schema
           "minimum": 0,
           "type": "number"
         },
-        "display_name": {
-          "description": "Human-readable ingredient name",
-          "type": "string"
-        },
         "fat_per_100g": {
           "description": "Fat per 100g",
           "maximum": 100,
@@ -30,8 +26,12 @@ expression: ingredients_schema
           "minimum": 0,
           "type": "number"
         },
+        "id": {
+          "description": "Stable ingredient identifier (used in recipes)",
+          "type": "string"
+        },
         "name": {
-          "description": "Internal ingredient name (used in recipes)",
+          "description": "Human-readable ingredient name (for display)",
           "type": "string"
         },
         "protein_per_100g": {
@@ -42,8 +42,8 @@ expression: ingredients_schema
         }
       },
       "required": [
+        "id",
         "name",
-        "display_name",
         "carbs_per_100g",
         "protein_per_100g",
         "fat_per_100g",
