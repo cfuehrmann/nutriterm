@@ -1,0 +1,16 @@
+---
+source: tests/recipe.rs
+expression: snapshot_content
+---
+Available recipes: rice, rice-bowl
+$ nutriterm recipe rice
+Recipe: rice
+
+╭─────────────────────┬──────────┬─────────────┬───────────┬───────┬─────────┬────────────╮
+│  Name               │  Weight  │  Net carbs  │  Protein  │  Fat  │  Fiber  │  Calories  │
+├─────────────────────┼──────────┼─────────────┼───────────┼───────┼─────────┼────────────┤
+│ White Rice (cooked) │  200.0 g │      56.0 g │     5.4 g │ 0.6 g │   0.8 g │   251 kcal │
+│               Total │  200.0 g │      56.0 g │     5.4 g │ 0.6 g │   0.8 g │   251 kcal │
+╰─────────────────────┴──────────┴─────────────┴───────────┴───────┴─────────┴────────────╯
+
+200.0 g  White Rice (cooked)
