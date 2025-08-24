@@ -55,7 +55,7 @@ fn validate_with_schema(
             .map(|error| format!("- {}: {}", error.instance_path, error))
             .collect();
 
-        return Err(LoadError::SchemaValidationError {
+        return Err(LoadError::SchemaViolationError {
             filename: filename.to_string(),
             errors: error_messages,
         });
@@ -86,14 +86,14 @@ fn load_jsonc_file<T: DeserializeOwned>(
         })?;
 
     let schema_json = schema_generator();
-    let schema = Validator::new(&schema_json).map_err(|e| LoadError::ValidationError {
+    let schema = Validator::new(&schema_json).map_err(|e| LoadError::ProcessingError {
         filename: filename.to_string(),
         message: format!("Failed to compile schema: {}", e),
     })?;
 
     validate_with_schema(&json_value, &schema, filename)?;
 
-    serde_json::from_value(json_value).map_err(|e| LoadError::ValidationError {
+    serde_json::from_value(json_value).map_err(|e| LoadError::ProcessingError {
         filename: filename.to_string(),
         message: format!("{}", e),
     })
