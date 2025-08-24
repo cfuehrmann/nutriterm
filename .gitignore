@@ -1,4 +1,8 @@
 /target
 **/*.rs.bk
 Cargo.lock
+
+# Mutation testing output directories (cargo-mutants)
+# Contains test results, logs, and diff files from mutation testing runs
 mutants.out/
+mutants.out.old/
