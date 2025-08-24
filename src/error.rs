@@ -165,15 +165,7 @@ impl std::fmt::Display for AppError {
     }
 }
 
-impl std::error::Error for AppError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            AppError::Data(err) => Some(err),
-            AppError::Io(err) => Some(err),
-            _ => None,
-        }
-    }
-}
+
 
 impl From<LoadError> for AppError {
     fn from(err: LoadError) -> Self {
