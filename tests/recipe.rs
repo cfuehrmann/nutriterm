@@ -370,13 +370,13 @@ fn test_view_with_invalid_recipe_data() {
 
 // Validation tests - ensure that the recipe command validates workspace before execution
 
-#[test] 
+#[test]
 fn test_recipe_validates_unknown_ingredient() {
     // Recipe command should validate and fail with unknown ingredient error (not proceed to recipe lookup)
     let temp_dir = TempDir::new().unwrap();
     let workspace = temp_dir.path().join("validation-workspace");
     fs::create_dir_all(&workspace).unwrap();
-    
+
     // Create ingredients with 'chicken_breast'
     std::fs::write(
         workspace.join("ingredients.jsonc"),
@@ -392,8 +392,8 @@ fn test_recipe_validates_unknown_ingredient() {
     }"#,
     )
     .unwrap();
-    
-    // Recipe with typo 'chiken_breast' 
+
+    // Recipe with typo 'chiken_breast'
     std::fs::write(
         workspace.join("recipes.jsonc"),
         r#"{
@@ -416,7 +416,7 @@ fn test_recipe_validates_unknown_ingredient() {
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);
     let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
-    
+
     // Should show suggestion error, proving validation happened before recipe lookup
     assert!(normalized_stderr.contains("Did you mean 'chicken_breast'?"));
     assert!(normalized_stderr.contains("Available ingredient IDs: chicken_breast"));
@@ -429,14 +429,14 @@ fn test_recipe_validates_with_any_recipe_name() {
     let temp_dir = TempDir::new().unwrap();
     let workspace = temp_dir.path().join("validation-workspace");
     fs::create_dir_all(&workspace).unwrap();
-    
+
     // Empty ingredients list
     std::fs::write(
         workspace.join("ingredients.jsonc"),
         r#"{"ingredients": []}"#,
     )
     .unwrap();
-    
+
     // Recipe with unknown ingredient
     std::fs::write(
         workspace.join("recipes.jsonc"),
@@ -459,7 +459,7 @@ fn test_recipe_validates_with_any_recipe_name() {
 
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);
-    
+
     // Should show validation error, not "recipe not found" - proves validation runs first
     assert!(stderr.contains("Recipe 'existing-recipe' references unknown ingredient"));
     assert!(stderr.contains("nonexistent_ingredient"));
@@ -471,7 +471,7 @@ fn test_recipe_validates_schema_errors() {
     let temp_dir = TempDir::new().unwrap();
     let workspace = temp_dir.path().join("schema-workspace");
     fs::create_dir_all(&workspace).unwrap();
-    
+
     // Valid ingredients
     std::fs::write(
         workspace.join("ingredients.jsonc"),
@@ -487,7 +487,7 @@ fn test_recipe_validates_schema_errors() {
     }"#,
     )
     .unwrap();
-    
+
     // Invalid recipe schema (negative grams)
     std::fs::write(
         workspace.join("recipes.jsonc"),
@@ -513,7 +513,7 @@ fn test_recipe_validates_schema_errors() {
 
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);
-    
+
     // Should show schema validation error, proving validation runs before recipe lookup
     assert!(stderr.contains("Schema validation failed"));
     assert!(stderr.contains("grams"));
@@ -523,11 +523,11 @@ fn test_recipe_validates_schema_errors() {
 fn test_recipe_command_comprehensive_validation_coverage() {
     // This test documents and verifies that recipe command validates ALL workspace issues before execution
     // It serves as a comprehensive check that no validation is skipped
-    
+
     let temp_dir = TempDir::new().unwrap();
     let workspace = temp_dir.path().join("comprehensive-workspace");
     fs::create_dir_all(&workspace).unwrap();
-    
+
     // Create a workspace with MULTIPLE validation issues
     std::fs::write(
         workspace.join("ingredients.jsonc"),
@@ -543,7 +543,7 @@ fn test_recipe_command_comprehensive_validation_coverage() {
     }"#,
     )
     .unwrap();
-    
+
     std::fs::write(
         workspace.join("recipes.jsonc"),
         r#"{
@@ -564,19 +564,19 @@ fn test_recipe_command_comprehensive_validation_coverage() {
     // Try to access any recipe - validation should catch unknown ingredient before recipe processing
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
-        .args(&["recipe", "valid-recipe"])  // Even requesting valid recipe should fail validation
+        .args(&["recipe", "valid-recipe"]) // Even requesting valid recipe should fail validation
         .current_dir(&workspace)
         .assert()
         .failure();
 
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);
-    
+
     // Validation should find the unknown ingredient issue and fail before recipe processing
     assert!(stderr.contains("unknown ingredient"));
     assert!(stderr.contains("unknown_ingredient"));
     assert!(stderr.contains("invalid-recipe-with-unknown-ingredient"));
-    
+
     // Validation is working: it found workspace issues before trying to process the requested recipe
 }
 
@@ -586,7 +586,7 @@ fn test_exact_match_disambiguates_substring_conflicts() {
     // Without exact match priority, "rice" would be ambiguous between "rice" and "rice-bowl"
     let temp_dir = temp_dir();
     let workspace = workspace_dir(&temp_dir, "substring-conflict-test");
-    
+
     write_files(
         &workspace,
         r#"{
@@ -652,4 +652,56 @@ fn test_exact_match_disambiguates_substring_conflicts() {
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content = format_test_snapshot(&["rice", "rice-bowl"], "rice", &stdout);
     assert_snapshot!("exact_match_disambiguates_substring", snapshot_content);
+}
+
+#[test]
+fn test_duplicate_recipe_names_search_behavior() {
+    let temp_dir = temp_dir();
+    let workspace = workspace_dir(&temp_dir, "duplicate-names-test");
+
+    write_files(
+        &workspace,
+        r#"{
+        "ingredients": [{
+            "id": "rice",
+            "name": "White Rice",
+            "carbs_per_100g": 28,
+            "protein_per_100g": 3,
+            "fat_per_100g": 0.3,
+            "fiber_per_100g": 0.4
+        }]
+    }"#,
+        r#"{
+        "recipes": [
+            {
+                "name": "rice-bowl",
+                "description": "First rice bowl (150g rice)",
+                "ingredients": [{
+                    "ingredient_id": "rice",
+                    "grams": 150
+                }]
+            },
+            {
+                "name": "rice-bowl", 
+                "description": "Second rice bowl (200g rice)",
+                "ingredients": [{
+                    "ingredient_id": "rice",
+                    "grams": 200
+                }]
+            }
+        ]
+    }"#,
+    );
+
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["recipe", "rice-bowl"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
+    assert_snapshot!("duplicate_recipe_names_search", normalized_stderr);
 }

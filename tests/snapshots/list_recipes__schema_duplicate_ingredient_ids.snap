@@ -1,0 +1,10 @@
+---
+source: tests/list_recipes.rs
+expression: normalized_stderr
+---
+Error: Duplicate ingredient ID found in ingredients.jsonc:
+Duplicate ingredient ID 'rice' found:
+  - White Rice (first definition)
+  - Brown Rice (second definition - overwrites first)
+
+Tip: Each ingredient ID must be unique. Rename the duplicates to use different values.
