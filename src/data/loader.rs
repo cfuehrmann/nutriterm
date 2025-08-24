@@ -1,6 +1,7 @@
 use crate::error::LoadError;
 use crate::models::{Ingredient, Recipe, WeightedIngredient};
 use crate::schema::generator::{generate_ingredient_schema, generate_recipe_schema};
+use crate::utils::suggestions::find_best_suggestion;
 use jsonschema::Validator;
 use serde::{Deserialize, de::DeserializeOwned};
 use serde_json::Value;
@@ -127,9 +128,14 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
 
         for json_ingredient in json_recipe.ingredients {
             let ingredient = ingredient_map.get(&json_ingredient.ingredient_id).ok_or_else(|| {
+                let available_ids: Vec<String> = ingredient_map.keys().cloned().collect();
+                let suggestion = find_best_suggestion(&json_ingredient.ingredient_id, &available_ids);
+                
                 LoadError::UnknownIngredientError {
                     recipe: json_recipe.name.clone(),
                     ingredient: json_ingredient.ingredient_id.clone(),
+                    suggestion,
+                    available_ids,
                 }
             })?;
 
