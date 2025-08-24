@@ -15,10 +15,10 @@ pub fn find_best_suggestion(target: &str, candidates: &[String]) -> Option<Strin
 
     for candidate in candidates {
         let distance = levenshtein_distance(target, candidate);
-        
+
         // Only suggest if the distance is reasonable (not more than half the length)
         let max_distance = std::cmp::max(target.len(), candidate.len()) / 2;
-        
+
         if distance < best_distance && distance <= max_distance {
             best_distance = distance;
             best_suggestion = Some(candidate.clone());
@@ -55,12 +55,12 @@ mod tests {
             find_best_suggestion("chiken_breast", &candidates),
             Some("chicken_breast".to_string())
         );
-        
+
         assert_eq!(
             find_best_suggestion("oliv_oil", &candidates),
             Some("olive_oil".to_string())
         );
-        
+
         assert_eq!(
             find_best_suggestion("completely_different", &candidates),
             None

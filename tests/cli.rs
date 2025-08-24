@@ -26,10 +26,7 @@ fn test_user_requests_help() {
 #[test]
 fn test_user_runs_without_command() {
     // User runs command without arguments and gets usage guidance
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
-        .assert()
-        .failure();
+    let assert = Command::cargo_bin("nutriterm").unwrap().assert().failure();
 
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);

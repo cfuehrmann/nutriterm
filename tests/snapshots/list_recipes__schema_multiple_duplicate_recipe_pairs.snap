@@ -1,0 +1,14 @@
+---
+source: tests/list_recipes.rs
+expression: normalized_stderr
+---
+Error: Duplicate recipe name found in recipes.jsonc:
+Duplicate recipe name 'breakfast' found:
+  - "Morning rice bowl"
+  - "Different morning bowl"
+
+Duplicate recipe name 'dinner' found:
+  - "Evening rice dish"
+  - "Alternative evening meal"
+
+Tip: Each recipe name must be unique. Rename the duplicates to use different values.

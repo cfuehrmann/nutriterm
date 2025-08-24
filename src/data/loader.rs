@@ -1,4 +1,4 @@
-use crate::error::LoadError;
+use crate::error::{DuplicateGroup, LoadError};
 use crate::models::{Ingredient, Recipe, WeightedIngredient};
 use crate::schema::generator::{generate_ingredient_schema, generate_recipe_schema};
 use crate::utils::suggestions::find_best_suggestion;
@@ -103,6 +103,8 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
     let json_recipes: JsonRecipes =
         load_jsonc_file(data_dir, "recipes.jsonc", generate_recipe_schema)?;
 
+    validate_recipe_uniqueness(&json_recipes.recipes)?;
+
     let json_ingredients = load_json_ingredients(data_dir)?;
     let ingredient_map: HashMap<String, Ingredient> = json_ingredients
         .ingredients
@@ -127,17 +129,20 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
         let mut recipe_ingredients = Vec::new();
 
         for json_ingredient in json_recipe.ingredients {
-            let ingredient = ingredient_map.get(&json_ingredient.ingredient_id).ok_or_else(|| {
-                let available_ids: Vec<String> = ingredient_map.keys().cloned().collect();
-                let suggestion = find_best_suggestion(&json_ingredient.ingredient_id, &available_ids);
-                
-                LoadError::UnknownIngredientError {
-                    recipe: json_recipe.name.clone(),
-                    ingredient: json_ingredient.ingredient_id.clone(),
-                    suggestion,
-                    available_ids,
-                }
-            })?;
+            let ingredient = ingredient_map
+                .get(&json_ingredient.ingredient_id)
+                .ok_or_else(|| {
+                    let available_ids: Vec<String> = ingredient_map.keys().cloned().collect();
+                    let suggestion =
+                        find_best_suggestion(&json_ingredient.ingredient_id, &available_ids);
+
+                    LoadError::UnknownIngredientError {
+                        recipe: json_recipe.name.clone(),
+                        ingredient: json_ingredient.ingredient_id.clone(),
+                        suggestion,
+                        available_ids,
+                    }
+                })?;
 
             recipe_ingredients.push(WeightedIngredient {
                 ingredient: ingredient.clone(),
@@ -155,6 +160,70 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
     Ok(recipes)
 }
 
+fn validate_uniqueness<T, K, F>(
+    items: &[T],
+    filename: &str,
+    key_type: &str,
+    key_extractor: F,
+) -> Result<(), LoadError>
+where
+    F: Fn(&T) -> (&K, String),
+    K: Eq + std::hash::Hash + Clone + std::fmt::Display,
+{
+    let mut key_groups: HashMap<&K, Vec<String>> = HashMap::new();
+
+    for item in items {
+        let (key, display_name) = key_extractor(item);
+        key_groups.entry(key).or_default().push(display_name);
+    }
+
+    let mut duplicates = Vec::new();
+    for (key, items) in key_groups {
+        if items.len() > 1 {
+            duplicates.push(DuplicateGroup {
+                key: key.to_string(),
+                items,
+            });
+        }
+    }
+
+    // Sort duplicates by key for deterministic output
+    duplicates.sort_by(|a, b| a.key.cmp(&b.key));
+
+    if !duplicates.is_empty() {
+        return Err(LoadError::DuplicateKeyError {
+            filename: filename.to_string(),
+            key_type: key_type.to_string(),
+            duplicates,
+        });
+    }
+
+    Ok(())
+}
+
+fn validate_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), LoadError> {
+    validate_uniqueness(
+        ingredients,
+        "ingredients.jsonc",
+        "ingredient ID",
+        |ingredient| (&ingredient.id, ingredient.name.clone()),
+    )
+}
+
+fn validate_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
+    validate_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
+        let description = recipe
+            .description
+            .as_ref()
+            .map(|desc| format!("\"{}\"", desc))
+            .unwrap_or_else(|| "no description".to_string());
+        (&recipe.name, description)
+    })
+}
+
 fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, LoadError> {
-    load_jsonc_file(data_dir, "ingredients.jsonc", generate_ingredient_schema)
+    let ingredients: JsonIngredients =
+        load_jsonc_file(data_dir, "ingredients.jsonc", generate_ingredient_schema)?;
+    validate_ingredient_uniqueness(&ingredients.ingredients)?;
+    Ok(ingredients)
 }

@@ -157,7 +157,7 @@ fn test_with_unknown_ingredient_suggestion() {
     let temp_dir = TempDir::new().unwrap();
     let workspace = temp_dir.path().join("suggestion-workspace");
     fs::create_dir_all(&workspace).unwrap();
-    
+
     // Create ingredients with 'chicken_breast'
     std::fs::write(
         workspace.join("ingredients.jsonc"),
@@ -173,7 +173,7 @@ fn test_with_unknown_ingredient_suggestion() {
     }"#,
     )
     .unwrap();
-    
+
     // Recipe with typo 'chiken_breast'
     std::fs::write(
         workspace.join("recipes.jsonc"),
@@ -410,4 +410,237 @@ fn test_with_valid_boundary_values() {
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content = format_list_test_snapshot(&["boundary-recipe"], &[], &stdout);
     assert_snapshot!("schema_valid_boundary_values", snapshot_content);
+}
+
+#[test]
+fn test_with_duplicate_ingredient_ids() {
+    let (_temp_dir, workspace) = schema_workspace(
+        r#"{
+        "ingredients": [
+            {
+                "id": "rice",
+                "name": "White Rice (first definition)",
+                "carbs_per_100g": 28,
+                "protein_per_100g": 3,
+                "fat_per_100g": 0.3,
+                "fiber_per_100g": 0.4
+            },
+            {
+                "id": "rice",
+                "name": "Brown Rice (second definition - overwrites first)",
+                "carbs_per_100g": 23,
+                "protein_per_100g": 2.6,
+                "fat_per_100g": 0.9,
+                "fiber_per_100g": 1.8
+            },
+            {
+                "id": "chicken",
+                "name": "Chicken Breast",
+                "carbs_per_100g": 0,
+                "protein_per_100g": 31,
+                "fat_per_100g": 3.6,
+                "fiber_per_100g": 0
+            }
+        ]
+    }"#,
+        Some(
+            r#"{
+        "recipes": [{
+            "name": "rice-bowl",
+            "description": "Recipe showing ingredient data loss - only Brown Rice data exists",
+            "ingredients": [
+                {
+                    "ingredient_id": "rice",
+                    "grams": 100
+                },
+                {
+                    "ingredient_id": "chicken",
+                    "grams": 150
+                }
+            ]
+        }]
+    }"#,
+        ),
+    );
+
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["recipe", "rice-bowl"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, workspace.as_path());
+    assert_snapshot!("schema_duplicate_ingredient_ids", normalized_stderr);
+}
+
+#[test]
+fn test_with_duplicate_recipe_names() {
+    let (_temp_dir, workspace) = schema_workspace(
+        r#"{
+        "ingredients": [{
+            "id": "rice",
+            "name": "White Rice",
+            "carbs_per_100g": 28,
+            "protein_per_100g": 3,
+            "fat_per_100g": 0.3,
+            "fiber_per_100g": 0.4
+        }]
+    }"#,
+        Some(
+            r#"{
+        "recipes": [
+            {
+                "name": "rice-bowl",
+                "description": "First rice bowl recipe",
+                "ingredients": [{
+                    "ingredient_id": "rice",
+                    "grams": 150
+                }]
+            },
+            {
+                "name": "rice-bowl",
+                "description": "Second rice bowl recipe (duplicate name)",
+                "ingredients": [{
+                    "ingredient_id": "rice",
+                    "grams": 200
+                }]
+            }
+        ]
+    }"#,
+        ),
+    );
+
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["list-recipes"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, workspace.as_path());
+    assert_snapshot!("schema_duplicate_recipe_names", normalized_stderr);
+}
+
+#[test]
+fn test_with_multiple_duplicate_pairs() {
+    let (_temp_dir, workspace) = schema_workspace(
+        r#"{
+        "ingredients": [
+            {
+                "id": "rice",
+                "name": "White Rice",
+                "carbs_per_100g": 28,
+                "protein_per_100g": 3,
+                "fat_per_100g": 0.3,
+                "fiber_per_100g": 0.4
+            },
+            {
+                "id": "rice",
+                "name": "Brown Rice",
+                "carbs_per_100g": 23,
+                "protein_per_100g": 2.6,
+                "fat_per_100g": 0.9,
+                "fiber_per_100g": 1.8
+            },
+            {
+                "id": "chicken",
+                "name": "Chicken Breast (skinless)",
+                "carbs_per_100g": 0,
+                "protein_per_100g": 31,
+                "fat_per_100g": 3.6,
+                "fiber_per_100g": 0
+            },
+            {
+                "id": "chicken",
+                "name": "Chicken Thigh (with skin)",
+                "carbs_per_100g": 0,
+                "protein_per_100g": 26,
+                "fat_per_100g": 15.5,
+                "fiber_per_100g": 0
+            }
+        ]
+    }"#,
+        Some(
+            r#"{
+        "recipes": [{
+            "name": "test-recipe",
+            "ingredients": [{
+                "ingredient_id": "rice",
+                "grams": 100
+            }]
+        }]
+    }"#,
+        ),
+    );
+
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["list-recipes"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, workspace.as_path());
+    assert_snapshot!("schema_multiple_duplicate_pairs", normalized_stderr);
+}
+
+#[test]
+fn test_with_multiple_duplicate_recipe_pairs() {
+    let (_temp_dir, workspace) = schema_workspace(
+        r#"{
+        "ingredients": [{
+            "id": "rice",
+            "name": "Rice",
+            "carbs_per_100g": 28,
+            "protein_per_100g": 3,
+            "fat_per_100g": 0.3,
+            "fiber_per_100g": 0.4
+        }]
+    }"#,
+        Some(
+            r#"{
+        "recipes": [
+            {
+                "name": "breakfast",
+                "description": "Morning rice bowl",
+                "ingredients": [{"ingredient_id": "rice", "grams": 100}]
+            },
+            {
+                "name": "breakfast", 
+                "description": "Different morning bowl",
+                "ingredients": [{"ingredient_id": "rice", "grams": 150}]
+            },
+            {
+                "name": "dinner",
+                "description": "Evening rice dish",
+                "ingredients": [{"ingredient_id": "rice", "grams": 200}]
+            },
+            {
+                "name": "dinner",
+                "description": "Alternative evening meal", 
+                "ingredients": [{"ingredient_id": "rice", "grams": 180}]
+            }
+        ]
+    }"#,
+        ),
+    );
+
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["list-recipes"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, workspace.as_path());
+    assert_snapshot!("schema_multiple_duplicate_recipe_pairs", normalized_stderr);
 }

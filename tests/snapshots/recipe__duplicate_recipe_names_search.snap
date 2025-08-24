@@ -1,0 +1,10 @@
+---
+source: tests/recipe.rs
+expression: normalized_stderr
+---
+Error: Duplicate recipe name found in recipes.jsonc:
+Duplicate recipe name 'rice-bowl' found:
+  - "First rice bowl (150g rice)"
+  - "Second rice bowl (200g rice)"
+
+Tip: Each recipe name must be unique. Rename the duplicates to use different values.
