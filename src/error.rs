@@ -16,11 +16,11 @@ pub enum LoadError {
         filename: String,
         message: String,
     },
-    ValidationError {
+    ProcessingError {
         filename: String,
         message: String,
     },
-    SchemaValidationError {
+    SchemaViolationError {
         filename: String,
         errors: Vec<String>,
     },
@@ -55,10 +55,10 @@ impl std::fmt::Display for LoadError {
                     filename, message
                 )
             }
-            LoadError::ValidationError { filename, message } => {
+            LoadError::ProcessingError { filename, message } => {
                 write!(f, "Invalid {} structure: {}", filename, message)
             }
-            LoadError::SchemaValidationError { filename, errors } => {
+            LoadError::SchemaViolationError { filename, errors } => {
                 write!(
                     f,
                     "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",
