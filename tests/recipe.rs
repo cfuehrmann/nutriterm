@@ -579,3 +579,77 @@ fn test_recipe_command_comprehensive_validation_coverage() {
     
     // Validation is working: it found workspace issues before trying to process the requested recipe
 }
+
+#[test]
+fn test_exact_match_disambiguates_substring_conflicts() {
+    // Test case where exact match is crucial: recipe names have substring relationships
+    // Without exact match priority, "rice" would be ambiguous between "rice" and "rice-bowl"
+    let temp_dir = temp_dir();
+    let workspace = workspace_dir(&temp_dir, "substring-conflict-test");
+    
+    write_files(
+        &workspace,
+        r#"{
+        "ingredients": [
+            {
+                "id": "rice",
+                "name": "White Rice (cooked)",
+                "carbs_per_100g": 28,
+                "protein_per_100g": 2.7,
+                "fat_per_100g": 0.3,
+                "fiber_per_100g": 0.4
+            },
+            {
+                "id": "chicken_breast",
+                "name": "Chicken Breast (skinless)",
+                "carbs_per_100g": 0,
+                "protein_per_100g": 31,
+                "fat_per_100g": 3.6,
+                "fiber_per_100g": 0
+            }
+        ]
+    }"#,
+        r#"{
+        "recipes": [
+            {
+                "name": "rice",
+                "description": "Simple rice dish",
+                "ingredients": [
+                    {
+                        "ingredient_id": "rice",
+                        "grams": 200
+                    }
+                ]
+            },
+            {
+                "name": "rice-bowl",
+                "description": "Rice bowl with protein",
+                "ingredients": [
+                    {
+                        "ingredient_id": "rice",
+                        "grams": 150
+                    },
+                    {
+                        "ingredient_id": "chicken_breast",
+                        "grams": 100
+                    }
+                ]
+            }
+        ]
+    }"#,
+    );
+
+    // User searches for exact "rice" - should find "rice" recipe, not be ambiguous
+    // This test would fail if exact match were removed (would show "Multiple recipes found")
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["recipe", "rice"])
+        .current_dir(&workspace)
+        .assert()
+        .success();
+
+    let output = assert.get_output();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let snapshot_content = format_test_snapshot(&["rice", "rice-bowl"], "rice", &stdout);
+    assert_snapshot!("exact_match_disambiguates_substring", snapshot_content);
+}
