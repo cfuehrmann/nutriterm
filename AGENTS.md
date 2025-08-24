@@ -4,9 +4,9 @@
 
 1. **Write tests first** - Add comprehensive tests before implementing features
 2. **Run `cargo test`** before committing to ensure all tests pass
-3. **Check for unused dependencies** when reviewing code changes
+3. **Format code** using `cargo fmt` for consistency
 4. **Run `cargo clippy -- -D warnings`** to ensure no lint warnings
-5. **Format code** using `cargo fmt` for consistency
+5. **Check for unused dependencies** when reviewing code changes
 6. **Check module structure and organization** for coherence and proper separation of concerns
 7. **Keep README.md up to date** - always verify README accuracy and completeness
 8. **Review snapshot updates** with `cargo insta review` when needed

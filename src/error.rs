@@ -165,8 +165,6 @@ impl std::fmt::Display for AppError {
     }
 }
 
-
-
 impl From<LoadError> for AppError {
     fn from(err: LoadError) -> Self {
         AppError::Data(err)
