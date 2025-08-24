@@ -367,3 +367,215 @@ fn test_view_with_invalid_recipe_data() {
     let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
     assert_snapshot!("view_schema_recipe_validation_error", normalized_stderr);
 }
+
+// Validation tests - ensure that the recipe command validates workspace before execution
+
+#[test] 
+fn test_recipe_validates_unknown_ingredient() {
+    // Recipe command should validate and fail with unknown ingredient error (not proceed to recipe lookup)
+    let temp_dir = TempDir::new().unwrap();
+    let workspace = temp_dir.path().join("validation-workspace");
+    fs::create_dir_all(&workspace).unwrap();
+    
+    // Create ingredients with 'chicken_breast'
+    std::fs::write(
+        workspace.join("ingredients.jsonc"),
+        r#"{
+        "ingredients": [{
+            "id": "chicken_breast",
+            "name": "Chicken Breast",
+            "carbs_per_100g": 0,
+            "protein_per_100g": 31,
+            "fat_per_100g": 3.6,
+            "fiber_per_100g": 0
+        }]
+    }"#,
+    )
+    .unwrap();
+    
+    // Recipe with typo 'chiken_breast' 
+    std::fs::write(
+        workspace.join("recipes.jsonc"),
+        r#"{
+        "recipes": [{
+            "name": "test-recipe",
+            "ingredients": [{"ingredient_id": "chiken_breast", "grams": 100}]
+        }]
+    }"#,
+    )
+    .unwrap();
+
+    // Try to view the recipe - should fail with validation error, not "recipe not found"
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["recipe", "test-recipe"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
+    
+    // Should show suggestion error, proving validation happened before recipe lookup
+    assert!(normalized_stderr.contains("Did you mean 'chicken_breast'?"));
+    assert!(normalized_stderr.contains("Available ingredient IDs: chicken_breast"));
+    assert_snapshot!("unknown_ingredient", normalized_stderr);
+}
+
+#[test]
+fn test_recipe_validates_with_any_recipe_name() {
+    // Validation should happen even for non-existent recipes (validation runs first)
+    let temp_dir = TempDir::new().unwrap();
+    let workspace = temp_dir.path().join("validation-workspace");
+    fs::create_dir_all(&workspace).unwrap();
+    
+    // Empty ingredients list
+    std::fs::write(
+        workspace.join("ingredients.jsonc"),
+        r#"{"ingredients": []}"#,
+    )
+    .unwrap();
+    
+    // Recipe with unknown ingredient
+    std::fs::write(
+        workspace.join("recipes.jsonc"),
+        r#"{
+        "recipes": [{
+            "name": "existing-recipe",
+            "ingredients": [{"ingredient_id": "nonexistent_ingredient", "grams": 100}]
+        }]
+    }"#,
+    )
+    .unwrap();
+
+    // Try to view a DIFFERENT recipe name - should still fail validation before recipe lookup
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["recipe", "completely-different-recipe"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    
+    // Should show validation error, not "recipe not found" - proves validation runs first
+    assert!(stderr.contains("Recipe 'existing-recipe' references unknown ingredient"));
+    assert!(stderr.contains("nonexistent_ingredient"));
+}
+
+#[test]
+fn test_recipe_validates_schema_errors() {
+    // Recipe command should validate schema before trying to process recipes
+    let temp_dir = TempDir::new().unwrap();
+    let workspace = temp_dir.path().join("schema-workspace");
+    fs::create_dir_all(&workspace).unwrap();
+    
+    // Valid ingredients
+    std::fs::write(
+        workspace.join("ingredients.jsonc"),
+        r#"{
+        "ingredients": [{
+            "id": "test_ingredient",
+            "name": "Test Ingredient", 
+            "carbs_per_100g": 10,
+            "protein_per_100g": 20,
+            "fat_per_100g": 5,
+            "fiber_per_100g": 2
+        }]
+    }"#,
+    )
+    .unwrap();
+    
+    // Invalid recipe schema (negative grams)
+    std::fs::write(
+        workspace.join("recipes.jsonc"),
+        r#"{
+        "recipes": [{
+            "name": "invalid-recipe",
+            "ingredients": [{
+                "ingredient_id": "test_ingredient",
+                "grams": -100
+            }]
+        }]
+    }"#,
+    )
+    .unwrap();
+
+    // Try to view any recipe - should fail schema validation first
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["recipe", "any-recipe"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    
+    // Should show schema validation error, proving validation runs before recipe lookup
+    assert!(stderr.contains("Schema validation failed"));
+    assert!(stderr.contains("grams"));
+}
+
+#[test]
+fn test_recipe_command_comprehensive_validation_coverage() {
+    // This test documents and verifies that recipe command validates ALL workspace issues before execution
+    // It serves as a comprehensive check that no validation is skipped
+    
+    let temp_dir = TempDir::new().unwrap();
+    let workspace = temp_dir.path().join("comprehensive-workspace");
+    fs::create_dir_all(&workspace).unwrap();
+    
+    // Create a workspace with MULTIPLE validation issues
+    std::fs::write(
+        workspace.join("ingredients.jsonc"),
+        r#"{
+        "ingredients": [{
+            "id": "valid_ingredient", 
+            "name": "Valid Ingredient",
+            "carbs_per_100g": 10,
+            "protein_per_100g": 20,
+            "fat_per_100g": 5,
+            "fiber_per_100g": 2
+        }]
+    }"#,
+    )
+    .unwrap();
+    
+    std::fs::write(
+        workspace.join("recipes.jsonc"),
+        r#"{
+        "recipes": [
+            {
+                "name": "valid-recipe",
+                "ingredients": [{"ingredient_id": "valid_ingredient", "grams": 100}]
+            },
+            {
+                "name": "invalid-recipe-with-unknown-ingredient",
+                "ingredients": [{"ingredient_id": "unknown_ingredient", "grams": 100}]
+            }
+        ]
+    }"#,
+    )
+    .unwrap();
+
+    // Try to access any recipe - validation should catch unknown ingredient before recipe processing
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["recipe", "valid-recipe"])  // Even requesting valid recipe should fail validation
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    
+    // Validation should find the unknown ingredient issue and fail before recipe processing
+    assert!(stderr.contains("unknown ingredient"));
+    assert!(stderr.contains("unknown_ingredient"));
+    assert!(stderr.contains("invalid-recipe-with-unknown-ingredient"));
+    
+    // Validation is working: it found workspace issues before trying to process the requested recipe
+}

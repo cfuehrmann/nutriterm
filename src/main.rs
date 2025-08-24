@@ -4,6 +4,7 @@ pub mod display;
 pub mod error;
 pub mod models;
 pub mod schema;
+pub mod utils;
 pub mod workspace;
 
 use clap::{Parser, Subcommand};

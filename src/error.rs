@@ -21,6 +21,8 @@ pub enum LoadError {
     UnknownIngredientError {
         recipe: String,
         ingredient: String,
+        suggestion: Option<String>,
+        available_ids: Vec<String>,
     },
 }
 
@@ -44,12 +46,18 @@ impl std::fmt::Display for LoadError {
                     errors.join("\n")
                 )
             }
-            LoadError::UnknownIngredientError { recipe, ingredient } => {
-                write!(
-                    f,
-                    "Recipe '{}' references unknown ingredient '{}'.\n\nTip: Add the ingredient to ingredients.jsonc or check that the name exactly matches (names are case-sensitive).",
-                    recipe, ingredient
-                )
+            LoadError::UnknownIngredientError { recipe, ingredient, suggestion, available_ids } => {
+                write!(f, "Recipe '{}' references unknown ingredient '{}'", recipe, ingredient)?;
+                
+                if let Some(suggested) = suggestion {
+                    write!(f, ".\n\nDid you mean '{}'?", suggested)?;
+                }
+                
+                if !available_ids.is_empty() {
+                    write!(f, "\n\nAvailable ingredient IDs: {}", available_ids.join(", "))?;
+                }
+                
+                write!(f, "\n\nTip: Fix ingredient references in recipes.jsonc before running commands.")
             }
         }
     }

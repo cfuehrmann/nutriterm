@@ -151,6 +151,54 @@ fn test_with_unknown_ingredient_reference() {
     assert_snapshot!("unknown_ingredient", normalized_stderr);
 }
 
+#[test]
+fn test_with_unknown_ingredient_suggestion() {
+    // User makes typo in ingredient reference, should get helpful suggestion
+    let temp_dir = TempDir::new().unwrap();
+    let workspace = temp_dir.path().join("suggestion-workspace");
+    fs::create_dir_all(&workspace).unwrap();
+    
+    // Create ingredients with 'chicken_breast'
+    std::fs::write(
+        workspace.join("ingredients.jsonc"),
+        r#"{
+        "ingredients": [{
+            "id": "chicken_breast",
+            "name": "Chicken Breast",
+            "carbs_per_100g": 0,
+            "protein_per_100g": 31,
+            "fat_per_100g": 3.6,
+            "fiber_per_100g": 0
+        }]
+    }"#,
+    )
+    .unwrap();
+    
+    // Recipe with typo 'chiken_breast'
+    std::fs::write(
+        workspace.join("recipes.jsonc"),
+        r#"{
+        "recipes": [{
+            "name": "test-recipe",
+            "ingredients": [{"ingredient_id": "chiken_breast", "grams": 100}]
+        }]
+    }"#,
+    )
+    .unwrap();
+
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["list-recipes"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
+    assert_snapshot!("unknown_ingredient_with_suggestion", normalized_stderr);
+}
+
 // Schema validation tests ensure users get clear feedback when their data files have validation errors
 // This prevents silent failures and helps users fix data quality issues quickly
 
