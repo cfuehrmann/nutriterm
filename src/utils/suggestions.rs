@@ -19,6 +19,7 @@ pub fn find_best_suggestion(target: &str, candidates: &[String]) -> Option<Strin
         // Only suggest if the distance is reasonable (not more than half the length)
         let max_distance = std::cmp::max(target.len(), candidate.len()) / 2;
 
+        // Note: mutants may change < to <= here, but we don't care whether ties return first or last candidate
         if distance < best_distance && distance <= max_distance {
             best_distance = distance;
             best_suggestion = Some(candidate.clone());
@@ -66,4 +67,8 @@ mod tests {
             None
         );
     }
+
+
+
+
 }
