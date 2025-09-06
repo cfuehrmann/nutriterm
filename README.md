@@ -91,11 +91,8 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
    │ Chicken Breast (skinless) │  150.0 g │         0 g │    46.5 g │ 5.4 g │     0 g │   235 kcal │
    │       Brown Rice (cooked) │  100.0 g │      23.0 g │     2.6 g │ 0.9 g │   1.8 g │   110 kcal │
    │                     Total │  250.0 g │      23.0 g │    49.1 g │ 6.3 g │   1.8 g │   345 kcal │
-   ╰───────────────────────────┴──────────┴─────────────┴───────────┴───────┴─────────┴────────────╯
-   
-   150.0 g  Chicken Breast (skinless)
-   100.0 g  Brown Rice (cooked)
-   ```
+    ╰───────────────────────────┴──────────┴─────────────┴───────────┴───────┴─────────┴────────────╯
+    ```
 
 ### Daily Usage
 
