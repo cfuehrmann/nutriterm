@@ -1,0 +1,18 @@
+---
+source: tests/kitchen_ref.rs
+expression: stdout
+---
+# Kitchen Reference
+
+## Chicken Rice Bowl
+
+- 150.0 g  Chicken Breast (skinless)
+- 100.0 g  Brown Rice (cooked)
+- 80.0 g  Broccoli (steamed)
+
+## Greek Salad
+
+- 100.0 g  Mixed Greens
+- 50.0 g  Feta Cheese
+- 75.0 g  Cherry Tomatoes
+- 60.0 g  Cucumber
