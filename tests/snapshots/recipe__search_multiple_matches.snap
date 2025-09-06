@@ -2,11 +2,11 @@
 source: tests/recipe.rs
 expression: snapshot_content
 ---
-Available recipes: chicken-rice-bowl, chicken-salad, spicy-chicken-curry
+Available recipes: Chicken Rice Bowl, Chicken Salad, Spicy Chicken Curry
 $ nutriterm recipe chicken
 Multiple recipes found for 'chicken' (3 matches):
-- chicken-rice-bowl
-- chicken-salad
-- spicy-chicken-curry
+- Chicken Rice Bowl
+- Chicken Salad
+- Spicy Chicken Curry
 
 Please be more specific with your search term.

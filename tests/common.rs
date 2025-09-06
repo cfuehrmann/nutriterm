@@ -106,7 +106,7 @@ pub fn create_workspace_files(workspace_dir: &std::path::Path) {
   
   "recipes": [
     {
-      "name": "chicken-rice-bowl",
+      "name": "Chicken Rice Bowl",
       "description": "A balanced meal with protein, carbs, and vegetables",
       "ingredients": [
         {
