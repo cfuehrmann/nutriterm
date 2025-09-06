@@ -127,8 +127,16 @@ nutriterm kitchen-ref
 
 **Create a PDF for printing:**
 ```bash
-# Requires pandoc (install with your package manager)
+# Option 1: Direct PDF via pandoc (requires LaTeX)
 nutriterm kitchen-ref | pandoc -o kitchen-reference.pdf
+
+# Option 2: Via HTML (more reliable, no LaTeX needed)
+nutriterm kitchen-ref | pandoc -t html -s -o kitchen-reference.html
+# Then open kitchen-reference.html in your browser and print to PDF
+
+# Option 3: HTML to PDF with wkhtmltopdf
+# Install wkhtmltopdf with your package manager first
+nutriterm kitchen-ref | pandoc -t html -s | wkhtmltopdf - kitchen-reference.pdf
 ```
 
 **Example output:**
