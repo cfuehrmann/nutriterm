@@ -2,9 +2,9 @@
 source: tests/recipe.rs
 expression: snapshot_content
 ---
-Available recipes: chicken-rice-bowl, beef-rice-stir-fry, chicken-salad
+Available recipes: Chicken Rice Bowl, Beef Rice Stir Fry, Chicken Salad
 $ nutriterm recipe "chicken rice"
-Recipe: chicken-rice-bowl
+Recipe: Chicken Rice Bowl
 
 ╭────────────────┬──────────┬─────────────┬───────────┬───────┬─────────┬────────────╮
 │  Name          │  Weight  │  Net carbs  │  Protein  │  Fat  │  Fiber  │  Calories  │

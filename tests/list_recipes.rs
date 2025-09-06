@@ -40,7 +40,7 @@ fn test_in_valid_workspace() {
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content = format_list_test_snapshot(
-        &["chicken-rice-bowl"],
+        &["Chicken Rice Bowl"],
         &[], // No additional args for basic list-recipes
         &stdout,
     );

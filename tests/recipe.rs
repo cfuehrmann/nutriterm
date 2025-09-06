@@ -24,7 +24,7 @@ fn test_view_valid_recipe() {
     // User views nutrition for valid recipe
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
-        .args(&["recipe", "chicken-rice-bowl"])
+        .args(&["recipe", "Chicken Rice Bowl"])
         .current_dir(&workspace_dir)
         .assert()
         .success();
@@ -32,7 +32,7 @@ fn test_view_valid_recipe() {
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content =
-        format_test_snapshot(&["chicken-rice-bowl"], "chicken-rice-bowl", &stdout);
+        format_test_snapshot(&["Chicken Rice Bowl"], "Chicken Rice Bowl", &stdout);
     assert_snapshot!("nutrition_display", snapshot_content);
 }
 
@@ -51,7 +51,7 @@ fn test_view_invalid_recipe() {
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content =
-        format_test_snapshot(&["chicken-rice-bowl"], "nonexistent-recipe", &stdout);
+        format_test_snapshot(&["Chicken Rice Bowl"], "nonexistent-recipe", &stdout);
     assert_snapshot!("not_found_with_suggestions", snapshot_content);
 }
 
@@ -99,7 +99,7 @@ fn test_search_exact_match() {
     // User searches with exact recipe name - should work as before
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
-        .args(&["recipe", "chicken-rice-bowl"])
+        .args(&["recipe", "Chicken Rice Bowl"])
         .current_dir(&workspace_dir)
         .assert()
         .success();
@@ -107,7 +107,7 @@ fn test_search_exact_match() {
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content =
-        format_test_snapshot(&["chicken-rice-bowl"], "chicken-rice-bowl", &stdout);
+        format_test_snapshot(&["Chicken Rice Bowl"], "Chicken Rice Bowl", &stdout);
     assert_snapshot!("search_exact_match", snapshot_content);
 }
 
@@ -125,7 +125,7 @@ fn test_search_substring_match() {
 
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
-    let snapshot_content = format_test_snapshot(&["chicken-rice-bowl"], "chicken", &stdout);
+    let snapshot_content = format_test_snapshot(&["Chicken Rice Bowl"], "chicken", &stdout);
     assert_snapshot!("search_single_substring_match", snapshot_content);
 }
 
@@ -140,15 +140,15 @@ fn test_search_multiple_terms() {
         r#"{
   "recipes": [
     {
-      "name": "chicken-rice-bowl",
+      "name": "Chicken Rice Bowl",
       "ingredients": [{"ingredient_id": "chicken_breast", "grams": 150}]
     },
     {
-      "name": "beef-rice-stir-fry", 
+      "name": "Beef Rice Stir Fry", 
       "ingredients": [{"ingredient_id": "chicken_breast", "grams": 100}]
     },
     {
-      "name": "chicken-salad",
+      "name": "Chicken Salad",
       "ingredients": [{"ingredient_id": "chicken_breast", "grams": 120}]
     }
   ]
@@ -182,7 +182,7 @@ fn test_search_multiple_terms() {
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content = format_test_snapshot(
-        &["chicken-rice-bowl", "beef-rice-stir-fry", "chicken-salad"],
+        &["Chicken Rice Bowl", "Beef Rice Stir Fry", "Chicken Salad"],
         "\"chicken rice\"",
         &stdout,
     );
@@ -200,17 +200,17 @@ fn test_search_multiple_matches() {
         r#"{
   "recipes": [
     {
-      "name": "chicken-rice-bowl",
+      "name": "Chicken Rice Bowl",
       "description": "A balanced meal",
       "ingredients": [{"ingredient_id": "chicken_breast", "grams": 150}]
     },
     {
-      "name": "chicken-salad",
+      "name": "Chicken Salad",
       "description": "Fresh salad", 
       "ingredients": [{"ingredient_id": "chicken_breast", "grams": 120}]
     },
     {
-      "name": "spicy-chicken-curry",
+      "name": "Spicy Chicken Curry",
       "ingredients": [{"ingredient_id": "chicken_breast", "grams": 200}]
     }
   ]
@@ -244,7 +244,7 @@ fn test_search_multiple_matches() {
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content = format_test_snapshot(
-        &["chicken-rice-bowl", "chicken-salad", "spicy-chicken-curry"],
+        &["Chicken Rice Bowl", "Chicken Salad", "Spicy Chicken Curry"],
         "chicken",
         &stdout,
     );
@@ -265,7 +265,7 @@ fn test_search_no_matches() {
 
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
-    let snapshot_content = format_test_snapshot(&["chicken-rice-bowl"], "pizza", &stdout);
+    let snapshot_content = format_test_snapshot(&["Chicken Rice Bowl"], "pizza", &stdout);
     assert_snapshot!("search_no_matches", snapshot_content);
 }
 
@@ -283,7 +283,7 @@ fn test_search_case_insensitive() {
 
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
-    let snapshot_content = format_test_snapshot(&["chicken-rice-bowl"], "CHICKEN", &stdout);
+    let snapshot_content = format_test_snapshot(&["Chicken Rice Bowl"], "CHICKEN", &stdout);
     assert_snapshot!("search_case_insensitive", snapshot_content);
 }
 
@@ -622,7 +622,7 @@ fn test_exact_match_disambiguates_substring_conflicts() {
                 ]
             },
             {
-                "name": "rice-bowl",
+                "name": "Rice Bowl",
                 "description": "Rice bowl with protein",
                 "ingredients": [
                     {
@@ -674,7 +674,7 @@ fn test_duplicate_recipe_names_search_behavior() {
         r#"{
         "recipes": [
             {
-                "name": "rice-bowl",
+                "name": "Rice Bowl",
                 "description": "First rice bowl (150g rice)",
                 "ingredients": [{
                     "ingredient_id": "rice",
@@ -682,7 +682,7 @@ fn test_duplicate_recipe_names_search_behavior() {
                 }]
             },
             {
-                "name": "rice-bowl", 
+                "name": "Rice Bowl", 
                 "description": "Second rice bowl (200g rice)",
                 "ingredients": [{
                     "ingredient_id": "rice",
