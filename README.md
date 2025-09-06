@@ -7,6 +7,7 @@ Terminal-based nutrition calculator for recipes. A Rust CLI application that cal
 - **Calculate Nutrition** - Get detailed nutritional breakdown for any recipe including net carbs, protein, fat, fiber, and calories
 - **Multiple Ingredients** - Create recipes with multiple ingredients and see combined nutritional values
 - **Easy Recipe Management** - List all your recipes and view nutrition for specific ones
+- **Kitchen Reference** - Generate a printable markdown reference with all recipes and ingredient weights
 - **Smart Workspace** - Works from any directory - automatically finds your recipe data like git does
 - **Human-Readable Format** - Uses JSONC (JSON with comments) so you can easily read and edit your data files
 
@@ -108,10 +109,50 @@ nutriterm recipe "Grilled Chicken with Rice"
 # Search with multiple terms (finds recipes containing ALL terms)
 nutriterm recipe chicken rice  # Finds recipes with both "chicken" AND "rice" in name
 
+# Generate kitchen reference with all recipes (great for printing)
+nutriterm kitchen-ref
+
 # The tool works from anywhere in your recipe directory tree
 cd subfolder
 nutriterm list-recipes  # Still works!
 ```
+
+### Kitchen Reference
+
+Generate a clean markdown reference of all your recipes with ingredient weights:
+
+```bash
+nutriterm kitchen-ref
+```
+
+**Create a PDF for printing:**
+```bash
+# Requires pandoc (install with your package manager)
+nutriterm kitchen-ref | pandoc -o kitchen-reference.pdf
+```
+
+**Example output:**
+```markdown
+# Kitchen Reference
+
+## Chicken Rice Bowl
+
+- 150.0 g  Chicken Breast (skinless)
+- 100.0 g  Brown Rice (cooked)
+- 80.0 g  Broccoli (steamed)
+
+## Greek Salad
+
+- 100.0 g  Mixed Greens
+- 50.0 g  Feta Cheese
+- 75.0 g  Cherry Tomatoes
+- 60.0 g  Cucumber
+```
+
+This is perfect for:
+- **Printing** for kitchen reference while cooking
+- **Shopping lists** when you know the recipes you want to make
+- **Recipe sharing** in a clean, readable format
 
 ### Tips
 
@@ -219,7 +260,7 @@ cargo fmt
 - `src/data/loader.rs` - JSONC loading, parsing, and validation with comprehensive error handling
 - `src/schema/generator.rs` - JSON schema generation for IDE autocompletion support
 - `src/workspace.rs` - Workspace detection and validation logic
-- `src/commands/` - Command implementations (init, recipe, list-recipes)
+- `src/commands/` - Command implementations (init, recipe, list-recipes, kitchen-ref)
 - `src/display/nutrition.rs` - Nutrition table formatting and display logic
 - `src/error.rs` - Centralized error handling and user-friendly error messages
 
