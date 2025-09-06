@@ -151,15 +151,5 @@ pub fn render_nutrition_table<W: Write>(
 
     writeln!(writer, "{}", table)?;
 
-    writeln!(writer)?;
-    for ingredient in recipe {
-        writeln!(
-            writer,
-            "{weight:5.1} g  {name}",
-            weight = ingredient.grams,
-            name = ingredient.ingredient.name,
-        )?;
-    }
-
     Ok(())
 }
