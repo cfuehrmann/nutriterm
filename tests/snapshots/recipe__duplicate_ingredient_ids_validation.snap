@@ -1,0 +1,14 @@
+---
+source: tests/recipe.rs
+expression: normalized_stderr
+---
+Error: Duplicate ingredient ID found in ingredients.jsonc:
+Duplicate ingredient ID 'brown_rice' found:
+  - Brown Rice (cooked)
+  - Brown Rice (uncooked)
+
+Duplicate ingredient ID 'chicken_breast' found:
+  - Chicken Breast (skinless)
+  - Chicken Breast (with skin)
+
+Tip: Each ingredient ID must be unique. Rename the duplicates to use different values.
