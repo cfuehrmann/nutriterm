@@ -46,22 +46,7 @@ pub fn format_test_snapshot(recipes: &[&str], command: &str, output: &str) -> St
     )
 }
 
-/// Helper function to format test snapshots for list-recipes command
-#[allow(dead_code)] // Used in list_recipes.rs tests, but Rust can't track cross-module test usage
-pub fn format_list_test_snapshot(recipes: &[&str], args: &[&str], output: &str) -> String {
-    let command = if args.is_empty() {
-        "list-recipes".to_string()
-    } else {
-        format!("list-recipes {}", args.join(" "))
-    };
 
-    format!(
-        "Available recipes: {}\n$ nutriterm {}\n{}",
-        recipes.join(", "),
-        command,
-        strip_ansi_codes(output).trim_end()
-    )
-}
 
 /// Create a temp directory for testing
 #[allow(dead_code)]

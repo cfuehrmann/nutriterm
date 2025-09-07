@@ -29,7 +29,7 @@ enum Commands {
         name: String,
     },
     #[command(about = "List all available recipes")]
-    ListRecipes,
+
     #[command(about = "Generate kitchen reference with all recipes in markdown format")]
     KitchenRef,
 }
@@ -46,10 +46,7 @@ fn run_app() -> AppResult<()> {
             let workspace = find_workspace()?;
             commands::recipe::handle_recipe_command(&workspace, name)?;
         }
-        Commands::ListRecipes => {
-            let workspace = find_workspace()?;
-            commands::list_recipes::handle_list_recipes_command(&workspace)?;
-        }
+
         Commands::KitchenRef => {
             let workspace = find_workspace()?;
             commands::kitchen_ref::handle_kitchen_ref_command(&workspace)?;

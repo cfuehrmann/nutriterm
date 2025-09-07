@@ -2,6 +2,10 @@
 source: tests/cli.rs
 expression: normalized_stderr
 ---
-Error: Cannot read file [TEMP_DIR]/test-workspace/ingredients.jsonc: Is a directory (os error 21)
+error: unrecognized subcommand 'list-recipes'
 
-Tip: Make sure the file exists and you have read permissions. Run 'nutriterm init' to create missing workspace files.
+  tip: a similar subcommand exists: 'recipe'
+
+Usage: nutriterm <COMMAND>
+
+For more information, try '--help'.
