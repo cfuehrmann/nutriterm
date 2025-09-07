@@ -6,7 +6,6 @@
   "recipes": [
     {
       "name": "Chicken Rice Bowl",
-      "description": "A balanced meal with protein, carbs, and vegetables",
       "ingredients": [
         {
           "ingredient_id": "chicken_breast",

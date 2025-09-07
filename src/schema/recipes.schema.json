@@ -21,10 +21,7 @@
           "type": "string",
           "description": "Recipe name"
         },
-        "description": {
-          "type": "string",
-          "description": "Optional recipe description"
-        },
+
         "ingredients": {
           "type": "array",
           "description": "List of ingredients with amounts",

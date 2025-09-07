@@ -7,6 +7,5 @@ pub use weighted_ingredient::WeightedIngredient;
 #[derive(Debug, Clone)]
 pub struct Recipe {
     pub name: String,
-    pub description: Option<String>,
     pub ingredients: Vec<WeightedIngredient>,
 }
