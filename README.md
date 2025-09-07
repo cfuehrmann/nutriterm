@@ -6,7 +6,7 @@ Terminal-based nutrition calculator for recipes. A Rust CLI application that cal
 
 - **Calculate Nutrition** - Get detailed nutritional breakdown for any recipe including net carbs, protein, fat, fiber, and calories
 - **Multiple Ingredients** - Create recipes with multiple ingredients and see combined nutritional values
-- **Easy Recipe Management** - List all your recipes and view nutrition for specific ones
+- **Recipe Analysis** - View detailed nutrition for any recipe with smart search
 - **Kitchen Reference** - Generate a printable markdown reference with all recipes and ingredient weights
 - **Smart Workspace** - Works from any directory - automatically finds your recipe data like git does
 - **Human-Readable Format** - Uses JSONC (JSON with comments) so you can easily read and edit your data files
@@ -97,9 +97,6 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
 ### Daily Usage
 
 ```bash
-# See all your recipes
-nutriterm list-recipes
-
 # Get nutrition for any recipe (exact name match)
 nutriterm recipe "Grilled Chicken with Rice"
 
@@ -111,7 +108,7 @@ nutriterm kitchen-ref
 
 # The tool works from anywhere in your recipe directory tree
 cd subfolder
-nutriterm list-recipes  # Still works!
+nutriterm recipe "My Recipe"  # Still works!
 ```
 
 ### Kitchen Reference

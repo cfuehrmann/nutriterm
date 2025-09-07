@@ -705,3 +705,74 @@ fn test_duplicate_recipe_names_search_behavior() {
     let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
     assert_snapshot!("duplicate_recipe_names_search", normalized_stderr);
 }
+
+#[test]
+fn test_duplicate_ingredient_ids_validation() {
+    let temp_dir = temp_dir();
+    let workspace = workspace_dir(&temp_dir, "duplicate-ingredients-test");
+
+    write_files(
+        &workspace,
+        r#"{
+        "ingredients": [
+            {
+                "id": "chicken_breast",
+                "name": "Chicken Breast (skinless)",
+                "carbs_per_100g": 0,
+                "protein_per_100g": 31,
+                "fat_per_100g": 3.6,
+                "fiber_per_100g": 0
+            },
+            {
+                "id": "chicken_breast",
+                "name": "Chicken Breast (with skin)",
+                "carbs_per_100g": 0,
+                "protein_per_100g": 25,
+                "fat_per_100g": 7.4,
+                "fiber_per_100g": 0
+            },
+            {
+                "id": "brown_rice",
+                "name": "Brown Rice (cooked)",
+                "carbs_per_100g": 23,
+                "protein_per_100g": 2.6,
+                "fat_per_100g": 0.9,
+                "fiber_per_100g": 1.8
+            },
+            {
+                "id": "brown_rice",
+                "name": "Brown Rice (uncooked)",
+                "carbs_per_100g": 77,
+                "protein_per_100g": 8,
+                "fat_per_100g": 2.9,
+                "fiber_per_100g": 4
+            }
+        ]
+    }"#,
+        r#"{
+        "recipes": [
+            {
+                "name": "Test Recipe",
+                "description": "Simple test recipe",
+                "ingredients": [{
+                    "ingredient_id": "chicken_breast",
+                    "grams": 150
+                }]
+            }
+        ]
+    }"#,
+    );
+
+    // User tries to view recipe with duplicate ingredient IDs - should get validation error
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(&["recipe", "Test Recipe"])
+        .current_dir(&workspace)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
+    assert_snapshot!("duplicate_ingredient_ids_validation", normalized_stderr);
+}

@@ -1,7 +1,0 @@
----
-source: tests/list_recipes.rs
-expression: normalized_stderr
----
-Error: Recipe 'test-recipe' references unknown ingredient 'nonexistent_ingredient'
-
-Tip: Fix ingredient references in recipes.jsonc before running commands.

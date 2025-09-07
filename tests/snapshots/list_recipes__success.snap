@@ -1,8 +1,0 @@
----
-source: tests/list_recipes.rs
-expression: snapshot_content
----
-Available recipes: Chicken Rice Bowl
-$ nutriterm list-recipes
-Available recipes:
-  Chicken Rice Bowl - A balanced meal with protein, carbs, and vegetables
