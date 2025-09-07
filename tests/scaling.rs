@@ -54,18 +54,17 @@ fn test_long_ingredient_names() {
   "recipes": [
     {
       "name": "long-names-test",
-      "description": "Test recipe with various name lengths",
       "ingredients": [
         {
-          "ingredient_id": "short",
+          "id": "short",
           "grams": 100.0
         },
         {
-          "ingredient_id": "exactly_twenty_five_chars",
+          "id": "exactly_twenty_five_chars",
           "grams": 150.0
         },
         {
-          "ingredient_id": "very_long_ingredient_name_exceeding_twenty_five_characters",
+          "id": "very_long_ingredient_name_exceeding_twenty_five_characters",
           "grams": 200.0
         }
       ]
@@ -119,18 +118,17 @@ fn test_extreme_numerical_values() {
   "recipes": [
     {
       "name": "extreme-values-test",
-      "description": "Test recipe with extreme numerical values",
       "ingredients": [
         {
-          "ingredient_id": "tiny_values",
+          "id": "tiny_values",
           "grams": 0.01
         },
         {
-          "ingredient_id": "small_values",
+          "id": "small_values",
           "grams": 5.5
         },
         {
-          "ingredient_id": "large_values",
+          "id": "large_values",
           "grams": 2500.0
         }
       ]
@@ -178,14 +176,13 @@ fn test_comma_formatting_boundary() {
   "recipes": [
     {
       "name": "comma-boundary-test",
-      "description": "Test comma formatting boundary",
       "ingredients": [
         {
-          "ingredient_id": "below_thousand",
+          "id": "below_thousand",
           "grams": 999.0
         },
         {
-          "ingredient_id": "at_thousand",
+          "id": "at_thousand",
           "grams": 1000.0
         }
       ]
@@ -225,10 +222,9 @@ fn test_precision_levels() {
   "recipes": [
     {
       "name": "precision-test",
-      "description": "Test different precision levels",
       "ingredients": [
         {
-          "ingredient_id": "precision_test",
+          "id": "precision_test",
           "grams": 123.456
         }
       ]
@@ -274,14 +270,13 @@ fn test_zero_values_formatting() {
   "recipes": [
     {
       "name": "zero-values-test",
-      "description": "Test zero and near-zero value formatting",
       "ingredients": [
         {
-          "ingredient_id": "zero_carbs",
+          "id": "zero_carbs",
           "grams": 100.0
         },
         {
-          "ingredient_id": "near_zero",
+          "id": "near_zero",
           "grams": 50.0
         }
       ]
@@ -327,14 +322,13 @@ fn test_mixed_extreme_scenarios() {
   "recipes": [
     {
       "name": "mixed-extreme-test",
-      "description": "Mixed extreme scenarios test",
       "ingredients": [
         {
-          "ingredient_id": "extremely_long_ingredient_name_with_many_words_and_descriptive_text_exceeding_limits",
+          "id": "extremely_long_ingredient_name_with_many_words_and_descriptive_text_exceeding_limits",
           "grams": 1234.567
         },
         {
-          "ingredient_id": "x",
+          "id": "x",
           "grams": 0.001
         }
       ]

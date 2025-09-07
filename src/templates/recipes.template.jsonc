@@ -8,24 +8,24 @@
       "name": "Chicken Rice Bowl",
       "ingredients": [
         {
-          "ingredient_id": "chicken_breast",
+          "id": "chicken_breast",
           "grams": 120
         },
         {
-          "ingredient_id": "brown_rice",
+          "id": "brown_rice",
           "grams": 80
         },
         {
-          "ingredient_id": "broccoli",
+          "id": "broccoli",
           "grams": 150
         },
         {
-          "ingredient_id": "olive_oil",
+          "id": "olive_oil",
           "grams": 10
         }
       ]
     }
     // Add more recipes here...
-    // Remember: ingredient names must be defined in your ingredients.jsonc file
+    // Remember: ingredient IDs must be defined in your ingredients.jsonc file
   ]
 }

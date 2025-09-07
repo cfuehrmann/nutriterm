@@ -34,14 +34,14 @@ expression: recipes_schema
           "exclusiveMinimum": 0,
           "type": "number"
         },
-        "ingredient_id": {
+        "id": {
           "description": "Ingredient ID (must match an ingredient id in ingredients file)",
           "minLength": 1,
           "type": "string"
         }
       },
       "required": [
-        "ingredient_id",
+        "id",
         "grams"
       ],
       "type": "object"

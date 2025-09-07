@@ -32,40 +32,38 @@ fn create_kitchen_ref_workspace(workspace_dir: &std::path::Path) {
   "recipes": [
     {
       "name": "Chicken Rice Bowl",
-      "description": "A balanced meal with protein, carbs, and vegetables",
       "ingredients": [
         {
-          "ingredient_id": "chicken_breast",
+          "id": "chicken_breast",
           "grams": 150
         },
         {
-          "ingredient_id": "brown_rice",
+          "id": "brown_rice",
           "grams": 100
         },
         {
-          "ingredient_id": "broccoli",
+          "id": "broccoli",
           "grams": 80
         }
       ]
     },
     {
       "name": "Greek Salad",
-      "description": "Fresh Mediterranean salad with feta and olives",
       "ingredients": [
         {
-          "ingredient_id": "mixed_greens",
+          "id": "mixed_greens",
           "grams": 100
         },
         {
-          "ingredient_id": "feta_cheese",
+          "id": "feta_cheese",
           "grams": 50
         },
         {
-          "ingredient_id": "cherry_tomatoes",
+          "id": "cherry_tomatoes",
           "grams": 75
         },
         {
-          "ingredient_id": "cucumber",
+          "id": "cucumber",
           "grams": 60
         }
       ]

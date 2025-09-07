@@ -92,18 +92,18 @@ pub fn create_workspace_files(workspace_dir: &std::path::Path) {
   "recipes": [
     {
       "name": "Chicken Rice Bowl",
-      "description": "A balanced meal with protein, carbs, and vegetables",
+
       "ingredients": [
         {
-          "ingredient_id": "chicken_breast",
+          "id": "chicken_breast",
           "grams": 150
         },
         {
-          "ingredient_id": "brown_rice",
+          "id": "brown_rice",
           "grams": 100
         },
         {
-          "ingredient_id": "broccoli",
+          "id": "broccoli",
           "grams": 80
         }
       ]
