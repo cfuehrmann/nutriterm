@@ -16,7 +16,6 @@ struct JsonRecipes {
 #[derive(Deserialize)]
 struct JsonRecipe {
     name: String,
-    description: Option<String>,
     ingredients: Vec<JsonRecipeIngredient>,
 }
 
@@ -152,7 +151,6 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
 
         recipes.push(Recipe {
             name: json_recipe.name,
-            description: json_recipe.description,
             ingredients: recipe_ingredients,
         });
     }
@@ -212,12 +210,7 @@ fn validate_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), 
 
 fn validate_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
     validate_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
-        let description = recipe
-            .description
-            .as_ref()
-            .map(|desc| format!("\"{}\"", desc))
-            .unwrap_or_else(|| "no description".to_string());
-        (&recipe.name, description)
+        (&recipe.name, format!("recipe '{}'", recipe.name))
     })
 }
 

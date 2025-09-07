@@ -4,7 +4,7 @@ expression: normalized_stderr
 ---
 Error: Duplicate recipe name found in recipes.jsonc:
 Duplicate recipe name 'Rice Bowl' found:
-  - "First rice bowl (150g rice)"
-  - "Second rice bowl (200g rice)"
+  - recipe 'Rice Bowl'
+  - recipe 'Rice Bowl'
 
 Tip: Each recipe name must be unique. Rename the duplicates to use different values.

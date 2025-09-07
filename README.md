@@ -58,10 +58,9 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
    ```jsonc
    {
      "recipes": [
-       {
-         "name": "Grilled Chicken with Rice",
-         "description": "Healthy protein and carbs meal",
-         "ingredients": [
+        {
+          "name": "Grilled Chicken with Rice",
+          "ingredients": [
            {
              "ingredient_id": "chicken_breast",
              "grams": 150
@@ -159,7 +158,7 @@ This is perfect for:
 ### Tips
 
 - **Net carbs** = Total carbs - Fiber (this is what's displayed)
-- **Recipe search** uses the "name" field only, not "description" - search terms must ALL be found in the recipe name
+- **Recipe search** uses the "name" field - search terms must ALL be found in the recipe name
 - **Add comments** to your JSONC files to remember where you got nutritional data
 - **Use descriptive names** like "Chicken Rice Bowl" rather than "recipe1" (use quotes in commands for names with spaces)
 
@@ -197,8 +196,7 @@ This file defines your recipes using ingredients from the database:
 {
   "recipes": [
     {
-      "name": "Chicken Rice Bowl",           // Used in commands (requires quotes)
-      "description": "Healthy chicken bowl", // Shown when listing recipes  
+      "name": "Chicken Rice Bowl",           // Used in commands (requires quotes)  
         "ingredients": [
           {
             "ingredient_id": "chicken_breast", // Must match ingredient "id"

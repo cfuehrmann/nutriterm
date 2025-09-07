@@ -8,10 +8,6 @@ expression: recipes_schema
     "recipe": {
       "description": "A single recipe with ingredients",
       "properties": {
-        "description": {
-          "description": "Optional recipe description",
-          "type": "string"
-        },
         "ingredients": {
           "description": "List of ingredients with amounts",
           "items": {
