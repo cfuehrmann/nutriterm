@@ -123,7 +123,9 @@ nutriterm kitchen-ref
 nutriterm kitchen-ref | pandoc -t html -s -o kitchen-reference.html
 ```
 
-The HTML output is self-contained and works great for viewing in browsers or printing to PDF. For PDF conversion, tools like **pandoc** and **wkhtmltopdf** can be used.
+The HTML output is self-contained and works great for viewing in browsers. To create a PDF, simply open the HTML file in your browser and print to PDF. 
+
+For automated PDF conversion, tools like **pandoc** and **wkhtmltopdf** can be used.
 
 **Example output:**
 ```markdown
