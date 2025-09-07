@@ -22,5 +22,10 @@ pub fn handle_kitchen_ref_command(data_dir: &Path) -> AppResult<()> {
         println!();
     }
 
+    // Add bottom padding so users can scroll any recipe to the top of their screen
+    // This is especially important for recipes near the end of the list
+    // Using <br/> tags for reliable spacing across all markdown processors
+    println!("{}", "<br/>".repeat(30));
+
     Ok(())
 }
