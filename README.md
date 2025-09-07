@@ -62,11 +62,11 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
           "name": "Grilled Chicken with Rice",
           "ingredients": [
            {
-             "ingredient_id": "chicken_breast",
+             "id": "chicken_breast",
              "grams": 150
            },
            {
-             "ingredient_id": "brown_rice",
+             "id": "brown_rice",
              "grams": 100
            }
          ]
@@ -199,11 +199,11 @@ This file defines your recipes using ingredients from the database:
       "name": "Chicken Rice Bowl",           // Used in commands (requires quotes)  
         "ingredients": [
           {
-            "ingredient_id": "chicken_breast", // Must match ingredient "id"
+            "id": "chicken_breast", // Must match ingredient "id"
             "grams": 150                       // Amount in grams
           },
           {
-            "ingredient_id": "white_rice",
+            "id": "white_rice",
             "grams": 100
           }
         ]

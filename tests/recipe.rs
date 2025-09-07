@@ -141,15 +141,15 @@ fn test_search_multiple_terms() {
   "recipes": [
     {
       "name": "Chicken Rice Bowl",
-      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 150}]
+      "ingredients": [{"id": "chicken_breast", "grams": 150}]
     },
     {
       "name": "Beef Rice Stir Fry", 
-      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 100}]
+      "ingredients": [{"id": "chicken_breast", "grams": 100}]
     },
     {
       "name": "Chicken Salad",
-      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 120}]
+      "ingredients": [{"id": "chicken_breast", "grams": 120}]
     }
   ]
 }"#,
@@ -201,17 +201,15 @@ fn test_search_multiple_matches() {
   "recipes": [
     {
       "name": "Chicken Rice Bowl",
-      "description": "A balanced meal",
-      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 150}]
+      "ingredients": [{"id": "chicken_breast", "grams": 150}]
     },
     {
       "name": "Chicken Salad",
-      "description": "Fresh salad", 
-      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 120}]
+      "ingredients": [{"id": "chicken_breast", "grams": 120}]
     },
     {
       "name": "Spicy Chicken Curry",
-      "ingredients": [{"ingredient_id": "chicken_breast", "grams": 200}]
+      "ingredients": [{"id": "chicken_breast", "grams": 200}]
     }
   ]
 }"#,
@@ -309,7 +307,7 @@ fn test_view_with_invalid_ingredient_data() {
         r#"{
         "recipes": [{
             "name": "test-recipe",
-            "ingredients": [{"ingredient_id": "invalid_ingredient", "grams": 100}]
+            "ingredients": [{"id": "invalid_ingredient", "grams": 100}]
         }]
     }"#,
     );
@@ -348,7 +346,7 @@ fn test_view_with_invalid_recipe_data() {
         "recipes": [{
             "name": "invalid-recipe",
             "ingredients": [{
-                "ingredient_id": "test_ingredient",
+                "id": "test_ingredient",
                 "grams": -100
             }]
         }]
@@ -399,7 +397,7 @@ fn test_recipe_validates_unknown_ingredient() {
         r#"{
         "recipes": [{
             "name": "test-recipe",
-            "ingredients": [{"ingredient_id": "chiken_breast", "grams": 100}]
+            "ingredients": [{"id": "chiken_breast", "grams": 100}]
         }]
     }"#,
     )
@@ -443,7 +441,7 @@ fn test_recipe_validates_with_any_recipe_name() {
         r#"{
         "recipes": [{
             "name": "existing-recipe",
-            "ingredients": [{"ingredient_id": "nonexistent_ingredient", "grams": 100}]
+            "ingredients": [{"id": "nonexistent_ingredient", "grams": 100}]
         }]
     }"#,
     )
@@ -495,7 +493,7 @@ fn test_recipe_validates_schema_errors() {
         "recipes": [{
             "name": "invalid-recipe",
             "ingredients": [{
-                "ingredient_id": "test_ingredient",
+                "id": "test_ingredient",
                 "grams": -100
             }]
         }]
@@ -550,11 +548,11 @@ fn test_recipe_command_comprehensive_validation_coverage() {
         "recipes": [
             {
                 "name": "valid-recipe",
-                "ingredients": [{"ingredient_id": "valid_ingredient", "grams": 100}]
+                "ingredients": [{"id": "valid_ingredient", "grams": 100}]
             },
             {
                 "name": "invalid-recipe-with-unknown-ingredient",
-                "ingredients": [{"ingredient_id": "unknown_ingredient", "grams": 100}]
+                "ingredients": [{"id": "unknown_ingredient", "grams": 100}]
             }
         ]
     }"#,
@@ -613,24 +611,22 @@ fn test_exact_match_disambiguates_substring_conflicts() {
         "recipes": [
             {
                 "name": "rice",
-                "description": "Simple rice dish",
                 "ingredients": [
                     {
-                        "ingredient_id": "rice",
+                        "id": "rice",
                         "grams": 200
                     }
                 ]
             },
             {
                 "name": "Rice Bowl",
-                "description": "Rice bowl with protein",
                 "ingredients": [
                     {
-                        "ingredient_id": "rice",
+                        "id": "rice",
                         "grams": 150
                     },
                     {
-                        "ingredient_id": "chicken_breast",
+                        "id": "chicken_breast",
                         "grams": 100
                     }
                 ]
@@ -675,17 +671,15 @@ fn test_duplicate_recipe_names_search_behavior() {
         "recipes": [
             {
                 "name": "Rice Bowl",
-                "description": "First rice bowl (150g rice)",
                 "ingredients": [{
-                    "ingredient_id": "rice",
+                    "id": "rice",
                     "grams": 150
                 }]
             },
             {
                 "name": "Rice Bowl", 
-                "description": "Second rice bowl (200g rice)",
                 "ingredients": [{
-                    "ingredient_id": "rice",
+                    "id": "rice",
                     "grams": 200
                 }]
             }
@@ -753,9 +747,8 @@ fn test_duplicate_ingredient_ids_validation() {
         "recipes": [
             {
                 "name": "Test Recipe",
-                "description": "Simple test recipe",
                 "ingredients": [{
-                    "ingredient_id": "chicken_breast",
+                    "id": "chicken_breast",
                     "grams": 150
                 }]
             }
