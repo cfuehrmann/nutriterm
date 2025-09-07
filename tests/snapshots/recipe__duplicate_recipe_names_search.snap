@@ -3,6 +3,6 @@ source: tests/recipe.rs
 expression: normalized_stderr
 ---
 Error: Duplicate recipe name found in recipes.jsonc:
-Duplicate recipe name 'Rice Bowl' found (2 occurrences)
+Duplicate recipe name 'Rice Bowl' found!
 
 Tip: Each recipe name must be unique. Rename the duplicates to use different values.

@@ -3,8 +3,8 @@ source: tests/recipe.rs
 expression: normalized_stderr
 ---
 Error: Duplicate ingredient ID found in ingredients.jsonc:
-Duplicate ingredient ID 'brown_rice' found (2 occurrences)
+Duplicate ingredient ID 'brown_rice' found!
 
-Duplicate ingredient ID 'chicken_breast' found (2 occurrences)
+Duplicate ingredient ID 'chicken_breast' found!
 
 Tip: Each ingredient ID must be unique. Rename the duplicates to use different values.

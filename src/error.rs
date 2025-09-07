@@ -75,8 +75,8 @@ impl std::fmt::Display for LoadError {
                     .iter()
                     .map(|group| {
                         format!(
-                            "Duplicate {} '{}' found ({} occurrences)",
-                            key_type, group.key, group.items.len()
+                            "Duplicate {} '{}' found!",
+                            key_type, group.key
                         )
                     })
                     .collect();
