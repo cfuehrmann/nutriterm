@@ -128,20 +128,17 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
         let mut recipe_ingredients = Vec::new();
 
         for json_ingredient in json_recipe.ingredients {
-            let ingredient = ingredient_map
-                .get(&json_ingredient.id)
-                .ok_or_else(|| {
-                    let available_ids: Vec<String> = ingredient_map.keys().cloned().collect();
-                    let suggestion =
-                        find_best_suggestion(&json_ingredient.id, &available_ids);
+            let ingredient = ingredient_map.get(&json_ingredient.id).ok_or_else(|| {
+                let available_ids: Vec<String> = ingredient_map.keys().cloned().collect();
+                let suggestion = find_best_suggestion(&json_ingredient.id, &available_ids);
 
-                    LoadError::UnknownIngredientError {
-                        recipe: json_recipe.name.clone(),
-                        ingredient: json_ingredient.id.clone(),
-                        suggestion,
-                        available_ids,
-                    }
-                })?;
+                LoadError::UnknownIngredientError {
+                    recipe: json_recipe.name.clone(),
+                    ingredient: json_ingredient.id.clone(),
+                    suggestion,
+                    available_ids,
+                }
+            })?;
 
             recipe_ingredients.push(WeightedIngredient {
                 ingredient: ingredient.clone(),

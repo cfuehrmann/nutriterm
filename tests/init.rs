@@ -16,7 +16,7 @@ fn test_init_in_empty_directory() {
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
-        .args(&["init"])
+        .args(["init"])
         .current_dir(&workspace_dir)
         .assert()
         .success();
@@ -60,7 +60,7 @@ fn test_init_in_non_empty_directory() {
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
-        .args(&["init"])
+        .args(["init"])
         .current_dir(&non_empty_dir)
         .assert()
         .failure();

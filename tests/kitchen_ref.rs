@@ -1,9 +1,9 @@
 mod common;
 
 use assert_cmd::Command;
-use common::{temp_dir, workspace_dir, normalize_temp_paths};
-use std::fs;
+use common::{normalize_temp_paths, temp_dir, workspace_dir};
 use insta::assert_snapshot;
+use std::fs;
 
 #[test]
 fn test_kitchen_ref_outside_workspace() {
@@ -16,7 +16,7 @@ fn test_kitchen_ref_outside_workspace() {
         .arg("kitchen-ref")
         .assert()
         .failure();
-        
+
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);
     let normalized_stderr = normalize_temp_paths(&stderr, temp.path());
@@ -141,7 +141,7 @@ fn create_kitchen_ref_workspace(workspace_dir: &std::path::Path) {
     .unwrap();
 }
 
-#[test]  
+#[test]
 fn test_kitchen_ref_success() {
     let temp = temp_dir();
     let workspace = workspace_dir(&temp, "workspace");

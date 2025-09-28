@@ -13,7 +13,7 @@ pub fn strip_ansi_codes(output: &str) -> String {
         if ch == '\x1b' && chars.peek() == Some(&'[') {
             // Skip the escape sequence
             chars.next(); // consume '['
-            while let Some(seq_char) = chars.next() {
+            for seq_char in chars.by_ref() {
                 if seq_char.is_ascii_alphabetic() {
                     break; // End of escape sequence
                 }
@@ -45,8 +45,6 @@ pub fn format_test_snapshot(recipes: &[&str], command: &str, output: &str) -> St
         strip_ansi_codes(output).trim_end()
     )
 }
-
-
 
 /// Create a temp directory for testing
 #[allow(dead_code)]
