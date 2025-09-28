@@ -46,8 +46,6 @@ pub fn format_test_snapshot(recipes: &[&str], command: &str, output: &str) -> St
     )
 }
 
-
-
 /// Create a temp directory for testing
 #[allow(dead_code)]
 pub fn temp_dir() -> TempDir {

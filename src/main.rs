@@ -29,7 +29,6 @@ enum Commands {
         name: String,
     },
     #[command(about = "List all available recipes")]
-
     #[command(about = "Generate kitchen reference with all recipes in markdown format")]
     KitchenRef,
 }

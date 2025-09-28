@@ -73,12 +73,7 @@ impl std::fmt::Display for LoadError {
             } => {
                 let duplicate_descriptions: Vec<String> = duplicates
                     .iter()
-                    .map(|group| {
-                        format!(
-                            "Duplicate {} '{}' found!",
-                            key_type, group.key
-                        )
-                    })
+                    .map(|group| format!("Duplicate {} '{}' found!", key_type, group.key))
                     .collect();
 
                 write!(
