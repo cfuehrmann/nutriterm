@@ -1,0 +1,15 @@
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer"]
+
+[language-server.rust-analyzer]
+command = "rust-analyzer"
+
+[language-server.rust-analyzer.config]
+checkOnSave = true
+
+[language-server.rust-analyzer.config.check]
+command = "clippy"
+allTargets = true
+allFeatures = true
+extraArgs = ["--", "-D", "warnings"]

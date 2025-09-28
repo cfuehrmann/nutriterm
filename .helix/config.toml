@@ -1,1 +1,2 @@
-theme = "tokyonight"
+[editor.lsp]
+display-messages = true # This is the default
