@@ -298,7 +298,33 @@ For more information, visit the [insta documentation](https://insta.rs/docs/).
 
 ## Contributing
 
-1. Run tests: `cargo test`
-2. Check formatting: `cargo fmt --check`  
-3. Check linting: `cargo clippy -- -D warnings`
-4. Review snapshot changes: `cargo insta review`
+### Quality Gates
+
+All changes to the main branch must go through pull requests and pass automated quality gates:
+
+- **Tests**: `cargo test` - All 37 tests must pass
+- **Formatting**: `cargo fmt --check` - Code must be properly formatted  
+- **Linting**: `cargo clippy -- -D warnings` - No lint warnings allowed
+- **Build**: `cargo check` and `cargo build --release` - Must build successfully
+
+### Development Workflow
+
+1. **Create feature branch**: `git checkout -b feature/your-change`
+2. **Make changes** and ensure quality gates pass locally:
+   ```bash
+   cargo test
+   cargo fmt --check
+   cargo clippy -- -D warnings
+   cargo insta review  # for snapshot changes
+   ```
+3. **Create pull request**: All CI checks must pass before merging
+4. **Automated checks**: GitHub Actions runs all quality gates
+5. **Merge**: Only possible when all required status checks pass
+
+### Branch Protection
+
+The main branch is protected with:
+- ✅ Required status checks (tests, formatting, linting, build)
+- ✅ No direct pushes allowed - PRs only
+- ✅ Strict status checks - branches must be up to date
+- ✅ Applies to administrators
