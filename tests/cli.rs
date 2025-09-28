@@ -49,7 +49,7 @@ fn test_improved_file_error_unreadable_recipes_file() {
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
-        .args(&["list-recipes"])
+        .args(["list-recipes"])
         .current_dir(&workspace)
         .assert()
         .failure();
@@ -72,7 +72,7 @@ fn test_improved_file_error_unreadable_ingredients_file() {
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
-        .args(&["list-recipes"])
+        .args(["list-recipes"])
         .current_dir(&workspace)
         .assert()
         .failure();
@@ -102,7 +102,7 @@ fn test_early_return_error_propagation_consistency() {
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
-        .args(&["recipe", "test"])
+        .args(["recipe", "test"])
         .current_dir(&workspace)
         .assert()
         .failure();
