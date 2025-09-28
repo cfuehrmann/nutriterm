@@ -5,7 +5,7 @@
 1. **Write tests first** - Add comprehensive tests before implementing features
 2. **Run `cargo test`** before committing to ensure all tests pass
 3. **Format code** using `cargo fmt` for consistency
-4. **NEVER create or merge PRs** - Only create pull requests when explicitly instructed by the user
+4. **Follow PR workflow** - All changes to main branch must go through pull requests with CI validation
 5. **NEVER commit automatically** - Only create commits when explicitly asked by the user
 6. **Run `cargo clippy -- -D warnings`** to ensure no lint warnings
 7. **Check for unused dependencies** when reviewing code changes
