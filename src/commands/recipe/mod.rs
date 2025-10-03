@@ -46,34 +46,29 @@ pub fn handle_recipe_command(data_dir: &Path, recipe_name: &str) -> AppResult<()
         }
         _ => {
             let available: Vec<String> = matches.iter().map(|r| r.name.clone()).collect();
-            let display_count = std::cmp::min(3, matches.len());
-            let example_recipes: Vec<String> =
-                available.iter().take(display_count).cloned().collect();
+            const MAX_DISPLAYED: usize = 3;
 
-            if matches.len() <= 3 {
-                println!(
-                    "Multiple recipes found for '{}' ({} matches):\n{}\n\nPlease be more specific with your search term.",
-                    recipe_name,
-                    matches.len(),
-                    example_recipes
-                        .iter()
-                        .map(|name| format!("- {}", name))
-                        .collect::<Vec<_>>()
-                        .join("\n")
-                );
+            let displayed_count = std::cmp::min(MAX_DISPLAYED, matches.len());
+            let recipe_list = available
+                .iter()
+                .take(displayed_count)
+                .map(|name| format!("- {}", name))
+                .collect::<Vec<_>>()
+                .join("\n");
+
+            let more_text = if matches.len() > MAX_DISPLAYED {
+                format!("\n... and {} more", matches.len() - MAX_DISPLAYED)
             } else {
-                println!(
-                    "Multiple recipes found for '{}' ({} matches):\n{}\n... and {} more\n\nPlease be more specific with your search term.",
-                    recipe_name,
-                    matches.len(),
-                    example_recipes
-                        .iter()
-                        .map(|name| format!("- {}", name))
-                        .collect::<Vec<_>>()
-                        .join("\n"),
-                    matches.len() - display_count
-                );
-            }
+                String::new()
+            };
+
+            println!(
+                "Multiple recipes found for '{}' ({} matches):\n{}{}\n\nPlease be more specific with your search term.",
+                recipe_name,
+                matches.len(),
+                recipe_list,
+                more_text
+            );
             Ok(())
         }
     }
