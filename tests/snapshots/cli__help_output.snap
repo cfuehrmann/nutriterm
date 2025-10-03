@@ -9,7 +9,7 @@ Usage: nutriterm <COMMAND>
 Commands:
   init         Initialize current directory as a recipe workspace
   recipe       Display nutrition for a specific recipe
-  kitchen-ref  Generate kitchen reference with all recipes in markdown format
+  kitchen-ref  Generate kitchen reference with all recipes in HTML format
   help         Print this message or the help of the given subcommand(s)
 
 Options:

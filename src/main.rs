@@ -28,8 +28,7 @@ enum Commands {
         #[arg(help = "Recipe name (e.g., chicken-rice-bowl)")]
         name: String,
     },
-    #[command(about = "List all available recipes")]
-    #[command(about = "Generate kitchen reference with all recipes in markdown format")]
+    #[command(about = "Generate kitchen reference with all recipes in HTML format")]
     KitchenRef,
 }
 

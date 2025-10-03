@@ -156,5 +156,5 @@ fn test_kitchen_ref_success() {
 
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert_snapshot!("markdown_output", stdout);
+    assert_snapshot!("output", stdout);
 }
