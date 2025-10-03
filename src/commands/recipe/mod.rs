@@ -1,29 +1,12 @@
+mod display;
+mod search;
+
 use crate::data::loader;
-use crate::display::render_nutrition_table;
 use crate::error::AppResult;
-use crate::models::Recipe;
+use display::render_nutrition_table;
+use search::{find_exact_match, find_substring_matches, parse_search_terms};
 use std::io;
 use std::path::Path;
-
-fn find_exact_match<'a>(recipes: &'a [Recipe], name: &str) -> Option<&'a Recipe> {
-    recipes.iter().find(|r| r.name == name)
-}
-
-fn find_substring_matches<'a>(recipes: &'a [Recipe], search_terms: &[&str]) -> Vec<&'a Recipe> {
-    recipes
-        .iter()
-        .filter(|recipe| {
-            let recipe_name_lower = recipe.name.to_lowercase();
-            search_terms
-                .iter()
-                .all(|term| recipe_name_lower.contains(&term.to_lowercase()))
-        })
-        .collect()
-}
-
-fn parse_search_terms(input: &str) -> Vec<&str> {
-    input.split_whitespace().collect()
-}
 
 pub fn handle_recipe_command(data_dir: &Path, recipe_name: &str) -> AppResult<()> {
     let recipes = loader::load_recipes(data_dir)?;

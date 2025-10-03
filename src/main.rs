@@ -1,6 +1,5 @@
 pub mod commands;
 pub mod data;
-pub mod display;
 pub mod error;
 pub mod models;
 pub mod schema;
