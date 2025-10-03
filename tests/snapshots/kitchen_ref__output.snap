@@ -1,0 +1,29 @@
+---
+source: tests/kitchen_ref.rs
+expression: stdout
+---
+<!DOCTYPE html>
+<html>
+<head><title>Kitchen Reference</title></head>
+<body>
+<h1>Kitchen Reference</h1>
+
+<h2>Chicken Rice Bowl</h2>
+<ul>
+<li>150.0 g  Chicken Breast (skinless)</li>
+<li>100.0 g  Brown Rice (cooked)</li>
+<li>80.0 g  Broccoli (steamed)</li>
+</ul>
+
+<h2>Greek Salad</h2>
+<ul>
+<li>100.0 g  Mixed Greens</li>
+<li>50.0 g  Feta Cheese</li>
+<li>75.0 g  Cherry Tomatoes</li>
+<li>60.0 g  Cucumber</li>
+</ul>
+
+<div style="height: 50vh;"></div>
+
+</body>
+</html>

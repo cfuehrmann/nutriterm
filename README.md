@@ -7,7 +7,7 @@ Terminal-based nutrition calculator for recipes. A Rust CLI application that cal
 - **Calculate Nutrition** - Get detailed nutritional breakdown for any recipe including net carbs, protein, fat, fiber, and calories
 - **Multiple Ingredients** - Create recipes with multiple ingredients and see combined nutritional values
 - **Recipe Analysis** - View detailed nutrition for any recipe with smart search
-- **Kitchen Reference** - Generate a printable markdown reference with all recipes and ingredient weights
+- **Kitchen Reference** - Generate a printable HTML reference with all recipes and ingredient weights
 - **Smart Workspace** - Works from any directory - automatically finds your recipe data like git does
 - **Human-Readable Format** - Uses JSONC (JSON with comments) so you can easily read and edit your data files
 
@@ -112,37 +112,38 @@ nutriterm recipe "My Recipe"  # Still works!
 
 ### Kitchen Reference
 
-Generate a clean markdown reference of all your recipes with ingredient weights:
+Generate a clean HTML reference of all your recipes with ingredient weights:
 
 ```bash
-nutriterm kitchen-ref
+nutriterm kitchen-ref > kitchen-reference.html
 ```
 
-**Convert to HTML (recommended):**
-```bash
-nutriterm kitchen-ref | pandoc -t html -s -o kitchen-reference.html
-```
-
-The HTML output is self-contained and works great for viewing in browsers. To create a PDF, simply open the HTML file in your browser and print to PDF. 
-
-For automated PDF conversion, tools like **pandoc** and **wkhtmltopdf** can be used.
+The HTML output is self-contained and works great for viewing in browsers. To create a PDF, simply open the HTML file in your browser and print to PDF.
 
 **Example output:**
-```markdown
-# Kitchen Reference
+```html
+<!DOCTYPE html>
+<html>
+<head><title>Kitchen Reference</title></head>
+<body>
+<h1>Kitchen Reference</h1>
 
-## Chicken Rice Bowl
+<h2>Chicken Rice Bowl</h2>
+<ul>
+<li>150.0 g  Chicken Breast (skinless)</li>
+<li>100.0 g  Brown Rice (cooked)</li>
+<li>80.0 g  Broccoli (steamed)</li>
+</ul>
 
-- 150.0 g  Chicken Breast (skinless)
-- 100.0 g  Brown Rice (cooked)
-- 80.0 g  Broccoli (steamed)
-
-## Greek Salad
-
-- 100.0 g  Mixed Greens
-- 50.0 g  Feta Cheese
-- 75.0 g  Cherry Tomatoes
-- 60.0 g  Cucumber
+<h2>Greek Salad</h2>
+<ul>
+<li>100.0 g  Mixed Greens</li>
+<li>50.0 g  Feta Cheese</li>
+<li>75.0 g  Cherry Tomatoes</li>
+<li>60.0 g  Cucumber</li>
+</ul>
+</body>
+</html>
 ```
 
 This is perfect for:
