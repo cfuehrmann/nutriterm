@@ -33,6 +33,6 @@ pub fn find_workspace() -> AppResult<PathBuf> {
 }
 
 /// Check if a directory is a valid workspace (contains both required files)
-pub fn is_workspace(path: &Path) -> bool {
+fn is_workspace(path: &Path) -> bool {
     path.join("ingredients.jsonc").exists() && path.join("recipes.jsonc").exists()
 }
