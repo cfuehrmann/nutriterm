@@ -1,4 +1,4 @@
-use crate::models::Recipe;
+use crate::catalog::items::Recipe;
 
 pub(super) fn find_exact_match<'a>(recipes: &'a [Recipe], name: &str) -> Option<&'a Recipe> {
     recipes.iter().find(|r| r.name == name)

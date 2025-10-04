@@ -14,7 +14,7 @@ pub fn run(path: &Path) -> AppResult<()> {
     }
 
     std::fs::create_dir_all(path)?;
-    crate::schema::generate_all_schemas(path)?;
+    crate::catalog::schema::generate_all_schemas(path)?;
     create_example_recipes_file(path)?;
     create_example_ingredients_file(path)?;
 

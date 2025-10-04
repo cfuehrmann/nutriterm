@@ -1,4 +1,4 @@
-use crate::models::WeightedIngredient;
+use crate::catalog::items::WeightedIngredient;
 use std::io::Write;
 use tabled::{
     Table, Tabled,

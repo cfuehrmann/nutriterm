@@ -1,6 +1,6 @@
 use crate::error::{DuplicateGroup, LoadError};
-use crate::models::{Ingredient, Recipe, WeightedIngredient};
-use crate::schema::generator::{generate_ingredient_schema, generate_recipe_schema};
+use crate::catalog::items::{Ingredient, Recipe, WeightedIngredient};
+use crate::catalog::schema::generator::{generate_ingredient_schema, generate_recipe_schema};
 use crate::utils::suggestions::find_best_suggestion;
 use jsonschema::Validator;
 use serde::{Deserialize, de::DeserializeOwned};
