@@ -18,7 +18,7 @@ pub fn run(path: &Path) -> AppResult<()> {
     create_example_recipes_file(path)?;
     create_example_ingredients_file(path)?;
 
-    println!("✅ Initialized recipe workspace in {}", path.display());
+    println!("✅ Initialized recipe catalog in {}", path.display());
     println!("📄 Created schemas, recipes, and ingredients files");
     println!("🍽️  Ready to use!");
     Ok(())

@@ -5,27 +5,27 @@ use tempfile::TempDir;
 
 mod common;
 use common::{
-    create_workspace_files, format_test_snapshot, normalize_temp_paths, temp_dir, workspace_dir,
+    create_catalog_files, format_test_snapshot, normalize_temp_paths, temp_dir, catalog_dir,
     write_files,
 };
 
-// Helper for recipe tests that need the standard workspace with chicken-rice-bowl
-fn recipe_workspace() -> (TempDir, std::path::PathBuf) {
+// Helper for recipe tests that need the standard catalog_dir with chicken-rice-bowl
+fn recipe_catalog_dir() -> (TempDir, std::path::PathBuf) {
     let temp = temp_dir();
-    let workspace = workspace_dir(&temp, "workspace");
-    create_workspace_files(&workspace);
-    (temp, workspace)
+    let catalog_dir = catalog_dir(&temp, "catalog_dir");
+    create_catalog_files(&catalog_dir);
+    (temp, catalog_dir)
 }
 
 #[test]
 fn test_view_valid_recipe() {
-    let (_temp_dir, workspace_dir) = recipe_workspace();
+    let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User views nutrition for valid recipe
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "Chicken Rice Bowl"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -38,13 +38,13 @@ fn test_view_valid_recipe() {
 
 #[test]
 fn test_view_invalid_recipe() {
-    let (_temp_dir, workspace_dir) = recipe_workspace();
+    let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User tries to view nutrition for invalid recipe and gets helpful suggestions
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "nonexistent-recipe"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -56,7 +56,7 @@ fn test_view_invalid_recipe() {
 }
 
 #[test]
-fn test_view_outside_workspace() {
+fn test_view_outside_catalog_dir() {
     // User tries to view recipe outside workspace
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
@@ -67,22 +67,22 @@ fn test_view_outside_workspace() {
 
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert_snapshot!("no_workspace", stderr);
+    assert_snapshot!("no_catalog", stderr);
 }
 
 #[test]
-fn test_view_with_broken_workspace() {
+fn test_view_with_broken_catalog_dir() {
     let temp_dir = TempDir::new().unwrap();
 
     // User tries to view recipe with missing ingredients file
-    let broken_workspace = temp_dir.path().join("broken-recipe");
-    fs::create_dir_all(&broken_workspace).unwrap();
-    std::fs::write(broken_workspace.join("recipes.jsonc"), r#"{"recipes": []}"#).unwrap();
+    let broken_catalog_dir = temp_dir.path().join("broken-recipe");
+    fs::create_dir_all(&broken_catalog_dir).unwrap();
+    std::fs::write(broken_catalog_dir.join("recipes.jsonc"), r#"{"recipes": []}"#).unwrap();
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "anything"])
-        .current_dir(&broken_workspace)
+        .current_dir(&broken_catalog_dir)
         .assert()
         .failure();
 
@@ -94,13 +94,13 @@ fn test_view_with_broken_workspace() {
 
 #[test]
 fn test_search_exact_match() {
-    let (_temp_dir, workspace_dir) = recipe_workspace();
+    let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User searches with exact recipe name - should work as before
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "Chicken Rice Bowl"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -113,13 +113,13 @@ fn test_search_exact_match() {
 
 #[test]
 fn test_search_substring_match() {
-    let (_temp_dir, workspace_dir) = recipe_workspace();
+    let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User searches with partial term - should find unique match
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "chicken"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -132,11 +132,11 @@ fn test_search_substring_match() {
 #[test]
 fn test_search_multiple_terms() {
     let temp_dir = temp_dir();
-    let workspace_dir = workspace_dir(&temp_dir, "workspace");
+    let catalog_dir = catalog_dir(&temp_dir, "catalog_dir");
 
     // Tests AND logic: multi-word searches should only match recipes containing ALL terms
     std::fs::write(
-        workspace_dir.join("recipes.jsonc"),
+        catalog_dir.join("recipes.jsonc"),
         r#"{
   "recipes": [
     {
@@ -157,7 +157,7 @@ fn test_search_multiple_terms() {
     .unwrap();
 
     std::fs::write(
-        workspace_dir.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{
   "ingredients": [{
     "id": "chicken_breast",
@@ -175,7 +175,7 @@ fn test_search_multiple_terms() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "chicken rice"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -192,11 +192,11 @@ fn test_search_multiple_terms() {
 #[test]
 fn test_search_multiple_matches() {
     let temp_dir = temp_dir();
-    let workspace_dir = workspace_dir(&temp_dir, "workspace");
+    let catalog_dir = catalog_dir(&temp_dir, "catalog_dir");
 
     // Tests user guidance when search is ambiguous - should show examples and suggest refinement
     std::fs::write(
-        workspace_dir.join("recipes.jsonc"),
+        catalog_dir.join("recipes.jsonc"),
         r#"{
   "recipes": [
     {
@@ -217,7 +217,7 @@ fn test_search_multiple_matches() {
     .unwrap();
 
     std::fs::write(
-        workspace_dir.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{
   "ingredients": [{
     "id": "chicken_breast",
@@ -235,7 +235,7 @@ fn test_search_multiple_matches() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "chicken"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -251,13 +251,13 @@ fn test_search_multiple_matches() {
 
 #[test]
 fn test_search_no_matches() {
-    let (_temp_dir, workspace_dir) = recipe_workspace();
+    let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User searches for non-existent recipe
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "pizza"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -269,13 +269,13 @@ fn test_search_no_matches() {
 
 #[test]
 fn test_search_case_insensitive() {
-    let (_temp_dir, workspace_dir) = recipe_workspace();
+    let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User searches with different case - should still match
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "CHICKEN"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -291,9 +291,9 @@ fn test_search_case_insensitive() {
 fn test_view_with_invalid_ingredient_data() {
     // User tries to view recipe when ingredients file has schema violations
     let temp_dir = temp_dir();
-    let workspace = workspace_dir(&temp_dir, "schema-test");
+    let catalog_dir = catalog_dir(&temp_dir, "schema-test");
     write_files(
-        &workspace,
+        &catalog_dir,
         r#"{
         "ingredients": [{
             "id": "invalid_ingredient",
@@ -315,7 +315,7 @@ fn test_view_with_invalid_ingredient_data() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "test-recipe"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -329,9 +329,9 @@ fn test_view_with_invalid_ingredient_data() {
 fn test_view_with_invalid_recipe_data() {
     // User tries to view recipe when recipe itself has schema violations
     let temp_dir = temp_dir();
-    let workspace = workspace_dir(&temp_dir, "schema-test");
+    let catalog_dir = catalog_dir(&temp_dir, "schema-test");
     write_files(
-        &workspace,
+        &catalog_dir,
         r#"{
         "ingredients": [{
             "id": "test_ingredient",
@@ -356,7 +356,7 @@ fn test_view_with_invalid_recipe_data() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "invalid-recipe"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -366,18 +366,18 @@ fn test_view_with_invalid_recipe_data() {
     assert_snapshot!("view_schema_recipe_validation_error", normalized_stderr);
 }
 
-// Validation tests - ensure that the recipe command validates workspace before execution
+// Validation tests - ensure that the recipe command validates catalog_dir before execution
 
 #[test]
 fn test_recipe_validates_unknown_ingredient() {
     // Recipe command should validate and fail with unknown ingredient error (not proceed to recipe lookup)
     let temp_dir = TempDir::new().unwrap();
-    let workspace = temp_dir.path().join("validation-workspace");
-    fs::create_dir_all(&workspace).unwrap();
+    let catalog_dir = temp_dir.path().join("validation-catalog_dir");
+    fs::create_dir_all(&catalog_dir).unwrap();
 
     // Create ingredients with 'chicken_breast'
     std::fs::write(
-        workspace.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{
         "ingredients": [{
             "id": "chicken_breast",
@@ -393,7 +393,7 @@ fn test_recipe_validates_unknown_ingredient() {
 
     // Recipe with typo 'chiken_breast'
     std::fs::write(
-        workspace.join("recipes.jsonc"),
+        catalog_dir.join("recipes.jsonc"),
         r#"{
         "recipes": [{
             "name": "test-recipe",
@@ -407,7 +407,7 @@ fn test_recipe_validates_unknown_ingredient() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "test-recipe"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -425,19 +425,19 @@ fn test_recipe_validates_unknown_ingredient() {
 fn test_recipe_validates_with_any_recipe_name() {
     // Validation should happen even for non-existent recipes (validation runs first)
     let temp_dir = TempDir::new().unwrap();
-    let workspace = temp_dir.path().join("validation-workspace");
-    fs::create_dir_all(&workspace).unwrap();
+    let catalog_dir = temp_dir.path().join("validation-catalog_dir");
+    fs::create_dir_all(&catalog_dir).unwrap();
 
     // Empty ingredients list
     std::fs::write(
-        workspace.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{"ingredients": []}"#,
     )
     .unwrap();
 
     // Recipe with unknown ingredient
     std::fs::write(
-        workspace.join("recipes.jsonc"),
+        catalog_dir.join("recipes.jsonc"),
         r#"{
         "recipes": [{
             "name": "existing-recipe",
@@ -451,7 +451,7 @@ fn test_recipe_validates_with_any_recipe_name() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "completely-different-recipe"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -467,12 +467,12 @@ fn test_recipe_validates_with_any_recipe_name() {
 fn test_recipe_validates_schema_errors() {
     // Recipe command should validate schema before trying to process recipes
     let temp_dir = TempDir::new().unwrap();
-    let workspace = temp_dir.path().join("schema-workspace");
-    fs::create_dir_all(&workspace).unwrap();
+    let catalog_dir = temp_dir.path().join("schema-catalog_dir");
+    fs::create_dir_all(&catalog_dir).unwrap();
 
     // Valid ingredients
     std::fs::write(
-        workspace.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{
         "ingredients": [{
             "id": "test_ingredient",
@@ -488,7 +488,7 @@ fn test_recipe_validates_schema_errors() {
 
     // Invalid recipe schema (negative grams)
     std::fs::write(
-        workspace.join("recipes.jsonc"),
+        catalog_dir.join("recipes.jsonc"),
         r#"{
         "recipes": [{
             "name": "invalid-recipe",
@@ -505,7 +505,7 @@ fn test_recipe_validates_schema_errors() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "any-recipe"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -519,16 +519,16 @@ fn test_recipe_validates_schema_errors() {
 
 #[test]
 fn test_recipe_command_comprehensive_validation_coverage() {
-    // This test documents and verifies that recipe command validates ALL workspace issues before execution
+    // This test documents and verifies that recipe command validates ALL catalog_dir issues before execution
     // It serves as a comprehensive check that no validation is skipped
 
     let temp_dir = TempDir::new().unwrap();
-    let workspace = temp_dir.path().join("comprehensive-workspace");
-    fs::create_dir_all(&workspace).unwrap();
+    let catalog_dir = temp_dir.path().join("comprehensive-catalog_dir");
+    fs::create_dir_all(&catalog_dir).unwrap();
 
-    // Create a workspace with MULTIPLE validation issues
+    // Create a catalog_dir with MULTIPLE validation issues
     std::fs::write(
-        workspace.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{
         "ingredients": [{
             "id": "valid_ingredient", 
@@ -543,7 +543,7 @@ fn test_recipe_command_comprehensive_validation_coverage() {
     .unwrap();
 
     std::fs::write(
-        workspace.join("recipes.jsonc"),
+        catalog_dir.join("recipes.jsonc"),
         r#"{
         "recipes": [
             {
@@ -563,7 +563,7 @@ fn test_recipe_command_comprehensive_validation_coverage() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "valid-recipe"]) // Even requesting valid recipe should fail validation
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -575,7 +575,7 @@ fn test_recipe_command_comprehensive_validation_coverage() {
     assert!(stderr.contains("unknown_ingredient"));
     assert!(stderr.contains("invalid-recipe-with-unknown-ingredient"));
 
-    // Validation is working: it found workspace issues before trying to process the requested recipe
+    // Validation is working: it found catalog_dir issues before trying to process the requested recipe
 }
 
 #[test]
@@ -583,10 +583,10 @@ fn test_exact_match_disambiguates_substring_conflicts() {
     // Test case where exact match is crucial: recipe names have substring relationships
     // Without exact match priority, "rice" would be ambiguous between "rice" and "rice-bowl"
     let temp_dir = temp_dir();
-    let workspace = workspace_dir(&temp_dir, "substring-conflict-test");
+    let catalog_dir = catalog_dir(&temp_dir, "substring-conflict-test");
 
     write_files(
-        &workspace,
+        &catalog_dir,
         r#"{
         "ingredients": [
             {
@@ -640,7 +640,7 @@ fn test_exact_match_disambiguates_substring_conflicts() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "rice"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -653,10 +653,10 @@ fn test_exact_match_disambiguates_substring_conflicts() {
 #[test]
 fn test_duplicate_recipe_names_search_behavior() {
     let temp_dir = temp_dir();
-    let workspace = workspace_dir(&temp_dir, "duplicate-names-test");
+    let catalog_dir = catalog_dir(&temp_dir, "duplicate-names-test");
 
     write_files(
-        &workspace,
+        &catalog_dir,
         r#"{
         "ingredients": [{
             "id": "rice",
@@ -690,7 +690,7 @@ fn test_duplicate_recipe_names_search_behavior() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "rice-bowl"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -703,10 +703,10 @@ fn test_duplicate_recipe_names_search_behavior() {
 #[test]
 fn test_duplicate_ingredient_ids_validation() {
     let temp_dir = temp_dir();
-    let workspace = workspace_dir(&temp_dir, "duplicate-ingredients-test");
+    let catalog_dir = catalog_dir(&temp_dir, "duplicate-ingredients-test");
 
     write_files(
-        &workspace,
+        &catalog_dir,
         r#"{
         "ingredients": [
             {
@@ -760,7 +760,7 @@ fn test_duplicate_ingredient_ids_validation() {
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "Test Recipe"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 

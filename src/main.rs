@@ -3,7 +3,7 @@ pub mod commands;
 pub mod error;
 pub mod utils;
 
-use catalog::find_workspace;
+use catalog::find_catalog_dir;
 use clap::{Parser, Subcommand};
 use error::AppResult;
 
@@ -17,7 +17,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    #[command(about = "Initialize current directory as a recipe workspace")]
+    #[command(about = "Initialize current directory as a recipe catalog")]
     Init,
     #[command(about = "Display nutrition for a specific recipe")]
     Recipe {
@@ -44,13 +44,13 @@ fn run_app() -> AppResult<()> {
             commands::init::run(&current_dir)?;
         }
         Commands::Recipe { name } => {
-            let workspace = find_workspace()?;
-            commands::recipe::run(&workspace, name)?;
+            let catalog_dir = find_catalog_dir()?;
+            commands::recipe::run(&catalog_dir, name)?;
         }
 
         Commands::KitchenRef => {
-            let workspace = find_workspace()?;
-            commands::kitchen_ref::run(&workspace)?;
+            let catalog_dir = find_catalog_dir()?;
+            commands::kitchen_ref::run(&catalog_dir)?;
         }
     }
     Ok(())

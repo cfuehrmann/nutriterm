@@ -43,7 +43,7 @@ impl std::fmt::Display for LoadError {
             LoadError::FileError { path, source } => {
                 write!(
                     f,
-                    "Cannot read file {}: {}\n\nTip: Make sure the file exists and you have read permissions. Run 'nutriterm init' to create missing workspace files.",
+                    "Cannot read file {}: {}\n\nTip: Make sure the file exists and you have read permissions. Run 'nutriterm init' to create missing catalog files.",
                     path.display(),
                     source
                 )

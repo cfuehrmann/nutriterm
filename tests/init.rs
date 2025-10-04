@@ -10,14 +10,14 @@ use common::normalize_temp_paths;
 fn test_init_in_empty_directory() {
     let temp_dir = TempDir::new().unwrap();
 
-    // User successfully initializes workspace in empty directory
-    let workspace_dir = temp_dir.path().join("recipes");
-    fs::create_dir_all(&workspace_dir).unwrap();
+    // User successfully initializes catalog_dir in empty directory
+    let catalog_dir = temp_dir.path().join("recipes");
+    fs::create_dir_all(&catalog_dir).unwrap();
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["init"])
-        .current_dir(&workspace_dir)
+        .current_dir(&catalog_dir)
         .assert()
         .success();
 
@@ -27,25 +27,25 @@ fn test_init_in_empty_directory() {
     assert_snapshot!("success", normalized_stdout);
 
     // Verify all expected files were created
-    assert!(workspace_dir.join("recipes.schema.json").exists());
-    assert!(workspace_dir.join("ingredients.schema.json").exists());
-    assert!(workspace_dir.join("recipes.jsonc").exists());
-    assert!(workspace_dir.join("ingredients.jsonc").exists());
+    assert!(catalog_dir.join("recipes.schema.json").exists());
+    assert!(catalog_dir.join("ingredients.schema.json").exists());
+    assert!(catalog_dir.join("recipes.jsonc").exists());
+    assert!(catalog_dir.join("ingredients.jsonc").exists());
 
     // Snapshot the content of created files to ensure they're properly formatted
     let ingredients_content =
-        std::fs::read_to_string(workspace_dir.join("ingredients.jsonc")).unwrap();
+        std::fs::read_to_string(catalog_dir.join("ingredients.jsonc")).unwrap();
     assert_snapshot!("ingredients_content", ingredients_content);
 
-    let recipes_content = std::fs::read_to_string(workspace_dir.join("recipes.jsonc")).unwrap();
+    let recipes_content = std::fs::read_to_string(catalog_dir.join("recipes.jsonc")).unwrap();
     assert_snapshot!("recipes_content", recipes_content);
 
     let ingredients_schema =
-        std::fs::read_to_string(workspace_dir.join("ingredients.schema.json")).unwrap();
+        std::fs::read_to_string(catalog_dir.join("ingredients.schema.json")).unwrap();
     assert_snapshot!("ingredients_schema", ingredients_schema);
 
     let recipes_schema =
-        std::fs::read_to_string(workspace_dir.join("recipes.schema.json")).unwrap();
+        std::fs::read_to_string(catalog_dir.join("recipes.schema.json")).unwrap();
     assert_snapshot!("recipes_schema", recipes_schema);
 }
 
