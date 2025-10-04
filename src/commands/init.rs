@@ -1,27 +1,6 @@
 use crate::error::{AppError, AppResult};
 use std::path::Path;
 
-fn is_empty_or_safe_to_initialize(path: &Path) -> AppResult<bool> {
-    if !path.exists() {
-        return Ok(true);
-    }
-
-    let entries = std::fs::read_dir(path)?;
-    for entry in entries {
-        let entry = entry?;
-        let filename = entry.file_name();
-        let filename_str = filename.to_string_lossy();
-
-        if filename_str.starts_with('.') {
-            continue;
-        }
-
-        return Ok(false);
-    }
-
-    Ok(true)
-}
-
 pub fn init_recipes_directory(path: &Path) -> AppResult<()> {
     if !is_empty_or_safe_to_initialize(path)? {
         let message = format!(
@@ -43,6 +22,27 @@ pub fn init_recipes_directory(path: &Path) -> AppResult<()> {
     println!("📄 Created schemas, recipes, and ingredients files");
     println!("🍽️  Ready to use!");
     Ok(())
+}
+
+fn is_empty_or_safe_to_initialize(path: &Path) -> AppResult<bool> {
+    if !path.exists() {
+        return Ok(true);
+    }
+
+    let entries = std::fs::read_dir(path)?;
+    for entry in entries {
+        let entry = entry?;
+        let filename = entry.file_name();
+        let filename_str = filename.to_string_lossy();
+
+        if filename_str.starts_with('.') {
+            continue;
+        }
+
+        return Ok(false);
+    }
+
+    Ok(true)
 }
 
 fn create_example_recipes_file(path: &Path) -> AppResult<()> {

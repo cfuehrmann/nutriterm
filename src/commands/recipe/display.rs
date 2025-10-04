@@ -101,6 +101,38 @@ pub fn render_nutrition_table<W: Write>(
     Ok(())
 }
 
+// Low-level formatting utilities (bottom of call chain)
+fn add_thousand_separators(s: &str) -> String {
+    let parts: Vec<&str> = s.split('.').collect();
+    let integer_part = parts[0];
+    let decimal_part = if parts.len() > 1 { parts[1] } else { "" };
+
+    let mut result = String::new();
+    for (i, c) in integer_part.chars().rev().enumerate() {
+        if i > 0 && i % 3 == 0 {
+            result.push(',');
+        }
+        result.push(c);
+    }
+
+    let formatted_integer: String = result.chars().rev().collect();
+    if decimal_part.is_empty() || decimal_part == "0" {
+        formatted_integer
+    } else {
+        format!("{}.{}", formatted_integer, decimal_part)
+    }
+}
+
+fn format_large_number(value: f64) -> String {
+    if value >= 1000.0 {
+        let formatted = format!("{:.1}", value);
+        add_thousand_separators(&formatted)
+    } else {
+        format!("{:.1}", value)
+    }
+}
+
+// Mid-level formatting functions (using above utilities)
 fn format_number_with_unit(value: f64, unit: &str) -> String {
     if value <= 0.01 {
         format!("0 {}", unit)
@@ -121,35 +153,5 @@ fn format_calories(calories: f64) -> String {
         )
     } else {
         format!("{:.0} kcal", calories)
-    }
-}
-
-fn format_large_number(value: f64) -> String {
-    if value >= 1000.0 {
-        let formatted = format!("{:.1}", value);
-        add_thousand_separators(&formatted)
-    } else {
-        format!("{:.1}", value)
-    }
-}
-
-fn add_thousand_separators(s: &str) -> String {
-    let parts: Vec<&str> = s.split('.').collect();
-    let integer_part = parts[0];
-    let decimal_part = if parts.len() > 1 { parts[1] } else { "" };
-
-    let mut result = String::new();
-    for (i, c) in integer_part.chars().rev().enumerate() {
-        if i > 0 && i % 3 == 0 {
-            result.push(',');
-        }
-        result.push(c);
-    }
-
-    let formatted_integer: String = result.chars().rev().collect();
-    if decimal_part.is_empty() || decimal_part == "0" {
-        formatted_integer
-    } else {
-        format!("{}.{}", formatted_integer, decimal_part)
     }
 }
