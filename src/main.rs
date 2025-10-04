@@ -31,6 +31,13 @@ enum Commands {
     KitchenRef,
 }
 
+fn main() {
+    if let Err(e) = run_app() {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
+}
+
 fn run_app() -> AppResult<()> {
     let cli = Cli::parse();
 
@@ -50,11 +57,4 @@ fn run_app() -> AppResult<()> {
         }
     }
     Ok(())
-}
-
-fn main() {
-    if let Err(e) = run_app() {
-        eprintln!("Error: {}", e);
-        std::process::exit(1);
-    }
 }
