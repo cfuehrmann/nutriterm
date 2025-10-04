@@ -44,8 +44,7 @@ fn test_init_in_empty_directory() {
         std::fs::read_to_string(catalog_dir.join("ingredients.schema.json")).unwrap();
     assert_snapshot!("ingredients_schema", ingredients_schema);
 
-    let recipes_schema =
-        std::fs::read_to_string(catalog_dir.join("recipes.schema.json")).unwrap();
+    let recipes_schema = std::fs::read_to_string(catalog_dir.join("recipes.schema.json")).unwrap();
     assert_snapshot!("recipes_schema", recipes_schema);
 }
 

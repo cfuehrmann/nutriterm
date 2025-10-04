@@ -1,7 +1,7 @@
 mod common;
 
 use assert_cmd::Command;
-use common::{normalize_temp_paths, temp_dir, catalog_dir};
+use common::{catalog_dir, normalize_temp_paths, temp_dir};
 use insta::assert_snapshot;
 use std::fs;
 

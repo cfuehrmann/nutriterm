@@ -5,7 +5,7 @@ use tempfile::TempDir;
 
 mod common;
 use common::{
-    create_catalog_files, format_test_snapshot, normalize_temp_paths, temp_dir, catalog_dir,
+    catalog_dir, create_catalog_files, format_test_snapshot, normalize_temp_paths, temp_dir,
     write_files,
 };
 
@@ -77,7 +77,11 @@ fn test_view_with_broken_catalog_dir() {
     // User tries to view recipe with missing ingredients file
     let broken_catalog_dir = temp_dir.path().join("broken-recipe");
     fs::create_dir_all(&broken_catalog_dir).unwrap();
-    std::fs::write(broken_catalog_dir.join("recipes.jsonc"), r#"{"recipes": []}"#).unwrap();
+    std::fs::write(
+        broken_catalog_dir.join("recipes.jsonc"),
+        r#"{"recipes": []}"#,
+    )
+    .unwrap();
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
