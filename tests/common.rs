@@ -52,12 +52,12 @@ pub fn temp_dir() -> TempDir {
     TempDir::new().unwrap()
 }
 
-/// Create a workspace directory within a temp directory
+/// Create a catalog directory within a temp directory
 #[allow(dead_code)]
-pub fn workspace_dir(temp_dir: &TempDir, name: &str) -> PathBuf {
-    let workspace_dir = temp_dir.path().join(name);
-    fs::create_dir_all(&workspace_dir).unwrap();
-    workspace_dir
+pub fn catalog_dir(temp_dir: &TempDir, name: &str) -> PathBuf {
+    let catalog_dir = temp_dir.path().join(name);
+    fs::create_dir_all(&catalog_dir).unwrap();
+    catalog_dir
 }
 
 /// Run nutriterm command with args in a directory
@@ -73,17 +73,17 @@ pub fn run_cmd(args: &[&str], working_dir: &Path) -> Output {
 
 /// Write test files for schema validation tests
 #[allow(dead_code)]
-pub fn write_files(workspace: &Path, ingredients_content: &str, recipes_content: &str) {
-    fs::write(workspace.join("ingredients.jsonc"), ingredients_content).unwrap();
-    fs::write(workspace.join("recipes.jsonc"), recipes_content).unwrap();
+pub fn write_files(catalog_dir: &Path, ingredients_content: &str, recipes_content: &str) {
+    fs::write(catalog_dir.join("ingredients.jsonc"), ingredients_content).unwrap();
+    fs::write(catalog_dir.join("recipes.jsonc"), recipes_content).unwrap();
 }
 
-/// Helper function to manually create workspace files (without running init command)
+/// Helper function to manually create catalog files (without running init command)
 #[allow(dead_code)] // Used across multiple test modules, but Rust can't track cross-module test usage
-pub fn create_workspace_files(workspace_dir: &std::path::Path) {
+pub fn create_catalog_files(catalog_dir: &std::path::Path) {
     // Avoids running init command in test helpers to prevent coupling test setup to command implementation
     std::fs::write(
-        workspace_dir.join("recipes.jsonc"),
+        catalog_dir.join("recipes.jsonc"),
         r#"{
   "$schema": "./recipes.schema.json",
   
@@ -112,7 +112,7 @@ pub fn create_workspace_files(workspace_dir: &std::path::Path) {
     .unwrap();
 
     std::fs::write(
-        workspace_dir.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{
   "$schema": "./ingredients.schema.json",
   

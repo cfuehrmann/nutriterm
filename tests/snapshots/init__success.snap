@@ -2,6 +2,6 @@
 source: tests/init.rs
 expression: normalized_stdout
 ---
-✅ Initialized recipe workspace in [TEMP_DIR]/recipes
+✅ Initialized recipe catalog in [TEMP_DIR]/recipes
 📄 Created schemas, recipes, and ingredients files
 🍽️  Ready to use!

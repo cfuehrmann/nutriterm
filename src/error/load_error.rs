@@ -1,12 +1,6 @@
 use std::path::PathBuf;
 
 #[derive(Debug)]
-pub struct DuplicateGroup {
-    pub key: String,
-    pub items: Vec<String>,
-}
-
-#[derive(Debug)]
 pub enum LoadError {
     FileError {
         path: PathBuf,
@@ -37,13 +31,19 @@ pub enum LoadError {
     },
 }
 
+#[derive(Debug)]
+pub struct DuplicateGroup {
+    pub key: String,
+    pub items: Vec<String>,
+}
+
 impl std::fmt::Display for LoadError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             LoadError::FileError { path, source } => {
                 write!(
                     f,
-                    "Cannot read file {}: {}\n\nTip: Make sure the file exists and you have read permissions. Run 'nutriterm init' to create missing workspace files.",
+                    "Cannot read file {}: {}\n\nTip: Make sure the file exists and you have read permissions. Run 'nutriterm init' to create missing catalog files.",
                     path.display(),
                     source
                 )
@@ -119,51 +119,3 @@ impl std::fmt::Display for LoadError {
 }
 
 impl std::error::Error for LoadError {}
-
-#[derive(Debug)]
-pub enum AppError {
-    Data(LoadError),
-    DirectoryNotEmpty {
-        path: PathBuf,
-        message: String,
-    },
-    WorkspaceNotFound {
-        searched: Vec<PathBuf>,
-        message: String,
-    },
-    RecipeNotFound {
-        name: String,
-        available: Vec<String>,
-        message: String,
-    },
-
-    Other(String),
-    Io(std::io::Error),
-}
-
-impl std::fmt::Display for AppError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            AppError::Data(error) => write!(f, "{}", error),
-            AppError::Io(error) => write!(f, "{}", error),
-            AppError::DirectoryNotEmpty { message, .. }
-            | AppError::WorkspaceNotFound { message, .. }
-            | AppError::RecipeNotFound { message, .. }
-            | AppError::Other(message) => write!(f, "{}", message),
-        }
-    }
-}
-
-impl From<LoadError> for AppError {
-    fn from(err: LoadError) -> Self {
-        AppError::Data(err)
-    }
-}
-
-impl From<std::io::Error> for AppError {
-    fn from(err: std::io::Error) -> Self {
-        AppError::Io(err)
-    }
-}
-
-pub type AppResult<T> = Result<T, AppError>;

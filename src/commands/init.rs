@@ -1,6 +1,29 @@
 use crate::error::{AppError, AppResult};
 use std::path::Path;
 
+pub fn run(path: &Path) -> AppResult<()> {
+    if !is_empty_or_safe_to_initialize(path)? {
+        let message = format!(
+            "Directory '{}' is not empty. Please run init in an empty directory.",
+            path.display()
+        );
+        return Err(AppError::DirectoryNotEmpty {
+            path: path.to_path_buf(),
+            message,
+        });
+    }
+
+    std::fs::create_dir_all(path)?;
+    crate::catalog::generate_all_schemas(path)?;
+    create_example_recipes_file(path)?;
+    create_example_ingredients_file(path)?;
+
+    println!("✅ Initialized recipe catalog in {}", path.display());
+    println!("📄 Created schemas, recipes, and ingredients files");
+    println!("🍽️  Ready to use!");
+    Ok(())
+}
+
 fn is_empty_or_safe_to_initialize(path: &Path) -> AppResult<bool> {
     if !path.exists() {
         return Ok(true);
@@ -20,29 +43,6 @@ fn is_empty_or_safe_to_initialize(path: &Path) -> AppResult<bool> {
     }
 
     Ok(true)
-}
-
-pub fn init_recipes_directory(path: &Path) -> AppResult<()> {
-    if !is_empty_or_safe_to_initialize(path)? {
-        let message = format!(
-            "Directory '{}' is not empty. Please run init in an empty directory.",
-            path.display()
-        );
-        return Err(AppError::DirectoryNotEmpty {
-            path: path.to_path_buf(),
-            message,
-        });
-    }
-
-    std::fs::create_dir_all(path)?;
-    crate::schema::generate_all_schemas(path)?;
-    create_example_recipes_file(path)?;
-    create_example_ingredients_file(path)?;
-
-    println!("✅ Initialized recipe workspace in {}", path.display());
-    println!("📄 Created schemas, recipes, and ingredients files");
-    println!("🍽️  Ready to use!");
-    Ok(())
 }
 
 fn create_example_recipes_file(path: &Path) -> AppResult<()> {

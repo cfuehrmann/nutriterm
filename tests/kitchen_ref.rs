@@ -1,14 +1,14 @@
 mod common;
 
 use assert_cmd::Command;
-use common::{normalize_temp_paths, temp_dir, workspace_dir};
+use common::{catalog_dir, normalize_temp_paths, temp_dir};
 use insta::assert_snapshot;
 use std::fs;
 
 #[test]
-fn test_kitchen_ref_outside_workspace() {
+fn test_kitchen_ref_outside_catalog_dir() {
     let temp = temp_dir();
-    let outside_dir = workspace_dir(&temp, "outside");
+    let outside_dir = catalog_dir(&temp, "outside");
 
     let mut cmd = Command::cargo_bin("nutriterm").unwrap();
     let assert = cmd
@@ -20,12 +20,12 @@ fn test_kitchen_ref_outside_workspace() {
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);
     let normalized_stderr = normalize_temp_paths(&stderr, temp.path());
-    assert_snapshot!("no_workspace", normalized_stderr);
+    assert_snapshot!("no_catalog", normalized_stderr);
 }
 
-fn create_kitchen_ref_workspace(workspace_dir: &std::path::Path) {
+fn create_kitchen_ref_catalog_dir(catalog_dir: &std::path::Path) {
     fs::write(
-        workspace_dir.join("recipes.jsonc"),
+        catalog_dir.join("recipes.jsonc"),
         r#"{
   "$schema": "./recipes.schema.json",
   
@@ -74,7 +74,7 @@ fn create_kitchen_ref_workspace(workspace_dir: &std::path::Path) {
     .unwrap();
 
     fs::write(
-        workspace_dir.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{
   "$schema": "./ingredients.schema.json",
   
@@ -144,12 +144,12 @@ fn create_kitchen_ref_workspace(workspace_dir: &std::path::Path) {
 #[test]
 fn test_kitchen_ref_success() {
     let temp = temp_dir();
-    let workspace = workspace_dir(&temp, "workspace");
-    create_kitchen_ref_workspace(&workspace);
+    let catalog_dir = catalog_dir(&temp, "catalog_dir");
+    create_kitchen_ref_catalog_dir(&catalog_dir);
 
     let mut cmd = Command::cargo_bin("nutriterm").unwrap();
     let assert = cmd
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .arg("kitchen-ref")
         .assert()
         .success();

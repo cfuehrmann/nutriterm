@@ -1,3 +1,4 @@
+use crate::error::AppResult;
 use serde_json::Value;
 use std::path::Path;
 
@@ -12,8 +13,6 @@ pub fn generate_ingredient_schema() -> Value {
     serde_json::from_str(INGREDIENT_SCHEMA)
         .expect("Embedded ingredient schema should be valid JSON")
 }
-
-use crate::error::AppResult;
 
 pub fn generate_all_schemas(output_dir: &Path) -> AppResult<()> {
     std::fs::create_dir_all(output_dir)?;

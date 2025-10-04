@@ -37,20 +37,20 @@ fn test_user_runs_without_command() {
 fn test_improved_file_error_unreadable_recipes_file() {
     let temp_dir = TempDir::new().unwrap();
 
-    // Test error handling when workspace files are corrupted by external tools
-    let workspace = temp_dir.path().join("test-workspace");
-    fs::create_dir_all(&workspace).unwrap();
+    // Test error handling when catalog_dir files are corrupted by external tools
+    let catalog_dir = temp_dir.path().join("test-catalog_dir");
+    fs::create_dir_all(&catalog_dir).unwrap();
     std::fs::write(
-        workspace.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{"ingredients": []}"#,
     )
     .unwrap();
-    fs::create_dir_all(workspace.join("recipes.jsonc")).unwrap();
+    fs::create_dir_all(catalog_dir.join("recipes.jsonc")).unwrap();
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["list-recipes"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -64,16 +64,16 @@ fn test_improved_file_error_unreadable_recipes_file() {
 fn test_improved_file_error_unreadable_ingredients_file() {
     let temp_dir = TempDir::new().unwrap();
 
-    // Test error handling when workspace files are corrupted by external tools
-    let workspace = temp_dir.path().join("test-workspace");
-    fs::create_dir_all(&workspace).unwrap();
-    std::fs::write(workspace.join("recipes.jsonc"), r#"{"recipes": []}"#).unwrap();
-    fs::create_dir_all(workspace.join("ingredients.jsonc")).unwrap();
+    // Test error handling when catalog_dir files are corrupted by external tools
+    let catalog_dir = temp_dir.path().join("test-catalog_dir");
+    fs::create_dir_all(&catalog_dir).unwrap();
+    std::fs::write(catalog_dir.join("recipes.jsonc"), r#"{"recipes": []}"#).unwrap();
+    fs::create_dir_all(catalog_dir.join("ingredients.jsonc")).unwrap();
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["list-recipes"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
@@ -91,19 +91,19 @@ fn test_early_return_error_propagation_consistency() {
     let temp_dir = TempDir::new().unwrap();
 
     // Ensures error message consistency across commands for better user experience
-    let workspace = temp_dir.path().join("test-workspace");
-    fs::create_dir_all(&workspace).unwrap();
+    let catalog_dir = temp_dir.path().join("test-catalog_dir");
+    fs::create_dir_all(&catalog_dir).unwrap();
     std::fs::write(
-        workspace.join("ingredients.jsonc"),
+        catalog_dir.join("ingredients.jsonc"),
         r#"{"ingredients": []}"#,
     )
     .unwrap();
-    std::fs::write(workspace.join("recipes.jsonc"), "{ invalid json").unwrap();
+    std::fs::write(catalog_dir.join("recipes.jsonc"), "{ invalid json").unwrap();
 
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "test"])
-        .current_dir(&workspace)
+        .current_dir(&catalog_dir)
         .assert()
         .failure();
 
