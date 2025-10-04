@@ -1,12 +1,6 @@
 use std::path::PathBuf;
 
 #[derive(Debug)]
-pub struct DuplicateGroup {
-    pub key: String,
-    pub items: Vec<String>,
-}
-
-#[derive(Debug)]
 pub enum LoadError {
     FileError {
         path: PathBuf,
@@ -35,6 +29,12 @@ pub enum LoadError {
         suggestion: Option<String>,
         available_ids: Vec<String>,
     },
+}
+
+#[derive(Debug)]
+pub struct DuplicateGroup {
+    pub key: String,
+    pub items: Vec<String>,
 }
 
 impl std::fmt::Display for LoadError {

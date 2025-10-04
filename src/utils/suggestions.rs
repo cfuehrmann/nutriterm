@@ -1,9 +1,3 @@
-/// Calculate Levenshtein distance between two strings using the strsim crate
-fn levenshtein_distance(a: &str, b: &str) -> usize {
-    // Use the battle-tested strsim implementation
-    strsim::levenshtein(a, b)
-}
-
 /// Find the best suggestion for a given string from a list of candidates
 pub fn find_best_suggestion(target: &str, candidates: &[String]) -> Option<String> {
     if candidates.is_empty() {
@@ -27,6 +21,12 @@ pub fn find_best_suggestion(target: &str, candidates: &[String]) -> Option<Strin
     }
 
     best_suggestion
+}
+
+/// Calculate Levenshtein distance between two strings using the strsim crate
+fn levenshtein_distance(a: &str, b: &str) -> usize {
+    // Use the battle-tested strsim implementation
+    strsim::levenshtein(a, b)
 }
 
 #[cfg(test)]
