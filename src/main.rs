@@ -37,16 +37,16 @@ fn run_app() -> AppResult<()> {
     match &cli.command {
         Commands::Init => {
             let current_dir = std::env::current_dir()?;
-            commands::init::init_recipes_directory(&current_dir)?;
+            commands::init::run(&current_dir)?;
         }
         Commands::Recipe { name } => {
             let workspace = find_workspace()?;
-            commands::recipe::handle_recipe_command(&workspace, name)?;
+            commands::recipe::run(&workspace, name)?;
         }
 
         Commands::KitchenRef => {
             let workspace = find_workspace()?;
-            commands::kitchen_ref::handle_kitchen_ref_command(&workspace)?;
+            commands::kitchen_ref::run(&workspace)?;
         }
     }
     Ok(())

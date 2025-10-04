@@ -1,7 +1,7 @@
 use crate::error::{AppError, AppResult};
 use std::path::Path;
 
-pub fn init_recipes_directory(path: &Path) -> AppResult<()> {
+pub fn run(path: &Path) -> AppResult<()> {
     if !is_empty_or_safe_to_initialize(path)? {
         let message = format!(
             "Directory '{}' is not empty. Please run init in an empty directory.",
