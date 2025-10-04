@@ -22,6 +22,8 @@ pub enum AppError {
     Io(std::io::Error),
 }
 
+pub type AppResult<T> = Result<T, AppError>;
+
 impl std::fmt::Display for AppError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -48,5 +50,3 @@ impl From<std::io::Error> for AppError {
 }
 
 impl std::error::Error for AppError {}
-
-pub type AppResult<T> = Result<T, AppError>;
