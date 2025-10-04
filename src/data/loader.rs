@@ -97,13 +97,6 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
     Ok(recipes)
 }
 
-fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, LoadError> {
-    let ingredients: JsonIngredients =
-        load_jsonc_file(data_dir, "ingredients.jsonc", generate_ingredient_schema)?;
-    validate_ingredient_uniqueness(&ingredients.ingredients)?;
-    Ok(ingredients)
-}
-
 fn load_jsonc_file<T: DeserializeOwned>(
     data_dir: &Path,
     filename: &str,
@@ -139,6 +132,19 @@ fn load_jsonc_file<T: DeserializeOwned>(
     })
 }
 
+fn validate_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
+    validate_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
+        (&recipe.name, format!("recipe '{}'", recipe.name))
+    })
+}
+
+fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, LoadError> {
+    let ingredients: JsonIngredients =
+        load_jsonc_file(data_dir, "ingredients.jsonc", generate_ingredient_schema)?;
+    validate_ingredient_uniqueness(&ingredients.ingredients)?;
+    Ok(ingredients)
+}
+
 fn validate_with_schema(
     json_value: &Value,
     schema: &Validator,
@@ -160,12 +166,6 @@ fn validate_with_schema(
     }
 
     Ok(())
-}
-
-fn validate_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
-    validate_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
-        (&recipe.name, format!("recipe '{}'", recipe.name))
-    })
 }
 
 fn validate_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), LoadError> {
