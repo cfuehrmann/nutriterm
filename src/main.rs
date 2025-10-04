@@ -3,9 +3,9 @@ pub mod commands;
 pub mod error;
 pub mod utils;
 
+use catalog::find_workspace;
 use clap::{Parser, Subcommand};
 use error::AppResult;
-use catalog::find_workspace;
 
 #[derive(Parser)]
 #[command(name = "nutriterm")]

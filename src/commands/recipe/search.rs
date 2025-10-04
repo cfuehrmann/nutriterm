@@ -4,7 +4,10 @@ pub(super) fn find_exact_match<'a>(recipes: &'a [Recipe], name: &str) -> Option<
     recipes.iter().find(|r| r.name == name)
 }
 
-pub(super) fn find_substring_matches<'a>(recipes: &'a [Recipe], search_terms: &[&str]) -> Vec<&'a Recipe> {
+pub(super) fn find_substring_matches<'a>(
+    recipes: &'a [Recipe],
+    search_terms: &[&str],
+) -> Vec<&'a Recipe> {
     recipes
         .iter()
         .filter(|recipe| {
