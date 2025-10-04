@@ -23,7 +23,7 @@ struct NutritionRow {
     calories: String,
 }
 
-pub fn render_nutrition_table<W: Write>(
+pub(super) fn render_nutrition_table<W: Write>(
     recipe: &[WeightedIngredient],
     writer: &mut W,
 ) -> std::io::Result<()> {

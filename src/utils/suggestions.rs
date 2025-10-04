@@ -1,5 +1,5 @@
 /// Calculate Levenshtein distance between two strings using the strsim crate
-pub fn levenshtein_distance(a: &str, b: &str) -> usize {
+fn levenshtein_distance(a: &str, b: &str) -> usize {
     // Use the battle-tested strsim implementation
     strsim::levenshtein(a, b)
 }
