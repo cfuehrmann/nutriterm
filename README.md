@@ -253,12 +253,14 @@ cargo fmt
 
 - `src/main.rs` - CLI argument parsing and application coordination
 - `src/models/` - Core data structures (Ingredient, WeightedIngredient, Recipe)
-- `src/data/loader.rs` - JSONC loading, parsing, and validation with comprehensive error handling
+- `src/catalog/` - Recipe catalog loading, workspace discovery, and validation
+  - `loader.rs` - JSONC loading, parsing, and validation with comprehensive error handling
+  - `discovery.rs` - Workspace detection and validation logic
 - `src/schema/generator.rs` - JSON schema generation for IDE autocompletion support
-- `src/workspace.rs` - Workspace detection and validation logic
-- `src/commands/` - Command implementations (init, recipe, list-recipes, kitchen-ref)
-- `src/display/nutrition.rs` - Nutrition table formatting and display logic
-- `src/error.rs` - Centralized error handling and user-friendly error messages
+- `src/commands/` - Command implementations (init, recipe, kitchen-ref)
+  - `recipe/` - Recipe command with search and nutrition display
+- `src/error/` - Centralized error handling and user-friendly error messages
+- `src/utils/` - Utility functions (suggestions, etc.)
 
 #### Tests
 

@@ -1,14 +1,13 @@
+pub mod catalog;
 pub mod commands;
-pub mod data;
 pub mod error;
 pub mod models;
 pub mod schema;
 pub mod utils;
-pub mod workspace;
 
 use clap::{Parser, Subcommand};
 use error::AppResult;
-use workspace::find_workspace;
+use catalog::find_workspace;
 
 #[derive(Parser)]
 #[command(name = "nutriterm")]
