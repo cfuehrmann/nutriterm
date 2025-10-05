@@ -6,10 +6,10 @@ use crate::error::AppResult;
 use display::render_nutrition_table;
 use search::{find_exact_match, find_substring_matches, parse_search_terms};
 use std::io;
-use std::path::Path;
 
-pub fn run(data_dir: &Path, recipe_name: &str) -> AppResult<()> {
-    let recipes = catalog::load_recipes(data_dir)?;
+pub fn run(recipe_name: &str) -> AppResult<()> {
+    let catalog_dir = catalog::find_dir()?;
+    let recipes = catalog::load_recipes(&catalog_dir)?;
 
     if let Some(recipe) = find_exact_match(&recipes, recipe_name) {
         println!("Recipe: {}", recipe.name);

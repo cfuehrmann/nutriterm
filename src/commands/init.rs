@@ -1,22 +1,24 @@
 use crate::error::{AppError, AppResult};
 use std::path::Path;
 
-pub fn run(path: &Path) -> AppResult<()> {
-    if !is_empty_or_safe_to_initialize(path)? {
+pub fn run() -> AppResult<()> {
+    let current_dir = std::env::current_dir()?;
+
+    if !is_empty_or_safe_to_initialize(&current_dir)? {
         let message = format!(
             "Directory '{}' is not empty. Please run init in an empty directory.",
-            path.display()
+            current_dir.display()
         );
         return Err(AppError::DirectoryNotEmpty {
-            path: path.to_path_buf(),
+            path: current_dir,
             message,
         });
     }
 
-    std::fs::create_dir_all(path)?;
-    crate::catalog::initialize(path)?;
+    std::fs::create_dir_all(&current_dir)?;
+    crate::catalog::initialize(&current_dir)?;
 
-    println!("✅ Initialized recipe catalog in {}", path.display());
+    println!("✅ Initialized recipe catalog in {}", current_dir.display());
     println!("📄 Created schemas, recipes, and ingredients files");
     println!("🍽️  Ready to use!");
     Ok(())
