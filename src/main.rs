@@ -3,7 +3,7 @@ pub mod commands;
 pub mod error;
 pub mod utils;
 
-use catalog::find_catalog_dir;
+
 use clap::{Parser, Subcommand};
 use error::AppResult;
 
@@ -44,12 +44,12 @@ fn run_app() -> AppResult<()> {
             commands::init::run(&current_dir)?;
         }
         Commands::Recipe { name } => {
-            let catalog_dir = find_catalog_dir()?;
+            let catalog_dir = catalog::find_dir()?;
             commands::recipe::run(&catalog_dir, name)?;
         }
 
         Commands::KitchenRef => {
-            let catalog_dir = find_catalog_dir()?;
+            let catalog_dir = catalog::find_dir()?;
             commands::kitchen_ref::run(&catalog_dir)?;
         }
     }

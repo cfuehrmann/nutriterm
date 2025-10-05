@@ -1,11 +1,22 @@
-mod discovery;
 pub mod items;
-mod loader;
-mod schema;
+mod storage;
 
-pub use discovery::{find_catalog_dir, is_catalog_dir};
-pub use loader::load_recipes;
-pub use schema::{
-    create_example_files, generate_all_schemas, generate_ingredient_schema, generate_recipe_schema,
-    get_ingredient_template, get_recipe_template,
-};
+use crate::error::{AppResult, LoadError};
+use std::path::{Path, PathBuf};
+
+// Domain layer functions (orchestrate storage layer)
+
+/// Find the catalog directory
+pub fn find_dir() -> AppResult<PathBuf> {
+    storage::find_dir()
+}
+
+/// Initialize a complete catalog
+pub fn initialize(path: &Path) -> AppResult<()> {
+    storage::initialize(path)
+}
+
+/// Load recipes from catalog
+pub fn load_recipes(path: &Path) -> Result<Vec<items::Recipe>, LoadError> {
+    storage::load_recipes(path)
+}

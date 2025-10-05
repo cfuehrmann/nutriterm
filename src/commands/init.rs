@@ -14,8 +14,7 @@ pub fn run(path: &Path) -> AppResult<()> {
     }
 
     std::fs::create_dir_all(path)?;
-    crate::catalog::generate_all_schemas(path)?;
-    crate::catalog::create_example_files(path)?;
+    crate::catalog::initialize(path)?;
 
     println!("✅ Initialized recipe catalog in {}", path.display());
     println!("📄 Created schemas, recipes, and ingredients files");

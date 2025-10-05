@@ -1,19 +1,19 @@
 use crate::error::{AppError, AppResult};
 use std::path::{Path, PathBuf};
 
-/// Find the catalog directory by searching current directory and parent directories
-pub fn find_catalog_dir() -> AppResult<PathBuf> {
+/// Find the data directory by searching current directory and parent directories
+pub fn find_dir() -> AppResult<PathBuf> {
     let current_dir = std::env::current_dir()?;
     let mut searched = vec![current_dir.clone()];
 
-    if is_catalog_dir(&current_dir) {
+    if has_required_files(&current_dir) {
         return Ok(current_dir);
     }
 
     let mut dir = current_dir.as_path();
     while let Some(parent) = dir.parent() {
         searched.push(parent.to_path_buf());
-        if is_catalog_dir(parent) {
+        if has_required_files(parent) {
             return Ok(parent.to_path_buf());
         }
         dir = parent;
@@ -32,7 +32,7 @@ pub fn find_catalog_dir() -> AppResult<PathBuf> {
     Err(AppError::CatalogNotFound { searched, message })
 }
 
-/// Check if a directory is a valid catalog (contains both required files)
-pub fn is_catalog_dir(path: &Path) -> bool {
+/// Check if a directory has the required data files
+pub fn has_required_files(path: &Path) -> bool {
     path.join("ingredients.jsonc").exists() && path.join("recipes.jsonc").exists()
 }
