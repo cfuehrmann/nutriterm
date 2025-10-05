@@ -1,15 +1,15 @@
-/// JSONC format-specific errors
+/// JSONC format-specific errors (internal to catalog/jsonc module)
 #[derive(Debug)]
-pub enum JsoncError {
-    ParseError {
+pub(super) enum JsoncError {
+    Parsing {
         filename: String,
         message: String,
     },
-    ProcessingError {
+    Deserializing {
         filename: String,
         message: String,
     },
-    SchemaViolationError {
+    SchemaValidation {
         filename: String,
         errors: Vec<String>,
     },
@@ -18,17 +18,17 @@ pub enum JsoncError {
 impl std::fmt::Display for JsoncError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            JsoncError::ParseError { filename, message } => {
+            JsoncError::Parsing { filename, message } => {
                 write!(
                     f,
                     "Invalid JSONC syntax in {}: {}\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
                     filename, message
                 )
             }
-            JsoncError::ProcessingError { filename, message } => {
+            JsoncError::Deserializing { filename, message } => {
                 write!(f, "Invalid {} structure: {}", filename, message)
             }
-            JsoncError::SchemaViolationError { filename, errors } => {
+            JsoncError::SchemaValidation { filename, errors } => {
                 write!(
                     f,
                     "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",

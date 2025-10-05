@@ -1,5 +1,10 @@
-use super::{DuplicateGroup, JsoncError, LoadError};
 use std::path::PathBuf;
+
+#[derive(Debug)]
+pub struct DuplicateGroup {
+    pub key: String,
+    pub items: Vec<String>,
+}
 
 #[derive(Debug)]
 pub enum AppError {
@@ -35,11 +40,7 @@ pub enum AppError {
         source: std::io::Error,
     },
 
-    // Format-specific wrapper
-    FormatError(JsoncError),
-
     // Legacy/other
-    Data(LoadError),
     Other(String),
     Io(std::io::Error),
 }
@@ -110,27 +111,14 @@ impl std::fmt::Display for AppError {
                 )
             }
 
-            AppError::FormatError(jsonc_error) => write!(f, "{}", jsonc_error),
-
             // Legacy variants
-            AppError::Data(error) => write!(f, "{}", error),
             AppError::Io(error) => write!(f, "{}", error),
             AppError::Other(message) => write!(f, "{}", message),
         }
     }
 }
 
-impl From<LoadError> for AppError {
-    fn from(err: LoadError) -> Self {
-        AppError::Data(err)
-    }
-}
 
-impl From<JsoncError> for AppError {
-    fn from(err: JsoncError) -> Self {
-        AppError::FormatError(err)
-    }
-}
 
 impl From<std::io::Error> for AppError {
     fn from(err: std::io::Error) -> Self {

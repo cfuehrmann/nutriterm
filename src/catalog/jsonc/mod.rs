@@ -1,3 +1,4 @@
+mod error;
 mod initialization;
 mod loader;
 
