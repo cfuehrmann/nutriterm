@@ -15,8 +15,7 @@ pub fn run(path: &Path) -> AppResult<()> {
 
     std::fs::create_dir_all(path)?;
     crate::catalog::generate_all_schemas(path)?;
-    create_example_recipes_file(path)?;
-    create_example_ingredients_file(path)?;
+    crate::catalog::create_example_files(path)?;
 
     println!("✅ Initialized recipe catalog in {}", path.display());
     println!("📄 Created schemas, recipes, and ingredients files");
@@ -43,18 +42,4 @@ fn is_empty_or_safe_to_initialize(path: &Path) -> AppResult<bool> {
     }
 
     Ok(true)
-}
-
-fn create_example_recipes_file(path: &Path) -> AppResult<()> {
-    let recipes_content = include_str!("../templates/recipes.template.jsonc");
-    let recipes_path = path.join("recipes.jsonc");
-    std::fs::write(recipes_path, recipes_content)?;
-    Ok(())
-}
-
-fn create_example_ingredients_file(path: &Path) -> AppResult<()> {
-    let ingredients_content = include_str!("../templates/ingredients.template.jsonc");
-    let ingredients_path = path.join("ingredients.jsonc");
-    std::fs::write(ingredients_path, ingredients_content)?;
-    Ok(())
 }
