@@ -8,7 +8,7 @@ Terminal-based nutrition calculator for recipes. A Rust CLI application that cal
 - **Multiple Ingredients** - Create recipes with multiple ingredients and see combined nutritional values
 - **Recipe Analysis** - View detailed nutrition for any recipe with smart search
 - **Kitchen Reference** - Generate a printable HTML reference with all recipes and ingredient weights
-- **Smart Workspace** - Works from any directory - automatically finds your recipe data like git does
+- **Smart Catalog Discovery** - Works from any directory - automatically finds your recipe data like git does
 - **Human-Readable Format** - Uses JSONC (JSON with comments) so you can easily read and edit your data files
 
 ## Getting Started
@@ -23,7 +23,7 @@ cargo install --git https://github.com/cfuehrmann/nutriterm
 
 ### First Steps
 
-1. **Create a workspace** in a new directory:
+1. **Create a catalog** in a new directory:
    ```bash
    mkdir my-recipes
    cd my-recipes
@@ -160,7 +160,7 @@ This is perfect for:
 
 ## Data Format Reference
 
-Your recipe workspace contains two main files that you'll edit:
+Your recipe catalog contains two main files that you'll edit:
 
 ### `ingredients.jsonc` - Your Ingredient Database
 
@@ -252,13 +252,15 @@ cargo fmt
 #### Source Code
 
 - `src/main.rs` - CLI argument parsing and application coordination
-- `src/models/` - Core data structures (Ingredient, WeightedIngredient, Recipe)
-- `src/data/loader.rs` - JSONC loading, parsing, and validation with comprehensive error handling
-- `src/schema/generator.rs` - JSON schema generation for IDE autocompletion support
-- `src/workspace.rs` - Workspace detection and validation logic
-- `src/commands/` - Command implementations (init, recipe, list-recipes, kitchen-ref)
-- `src/display/nutrition.rs` - Nutrition table formatting and display logic
-- `src/error.rs` - Centralized error handling and user-friendly error messages
+- `src/catalog/` - Recipe catalog operations (read-only data access)
+  - `items/` - Core data structures (Ingredient, WeightedIngredient, Recipe)
+  - `schema/` - JSON schema generation for IDE autocompletion support
+  - `loader.rs` - JSONC loading, parsing, and validation with comprehensive error handling
+  - `discovery.rs` - Catalog directory detection and validation logic
+- `src/commands/` - Command implementations (init, recipe, kitchen-ref)
+  - `recipe/` - Recipe command with search and nutrition display
+- `src/error/` - Centralized error handling and user-friendly error messages
+- `src/utils/` - Utility functions (suggestions, etc.)
 
 #### Tests
 

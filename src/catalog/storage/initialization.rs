@@ -1,21 +1,42 @@
+use crate::error::AppResult;
 use serde_json::Value;
 use std::path::Path;
 
 const RECIPE_SCHEMA: &str = include_str!("recipes.schema.json");
 const INGREDIENT_SCHEMA: &str = include_str!("ingredients.schema.json");
+const RECIPE_TEMPLATE: &str = include_str!("recipes.template.jsonc");
+const INGREDIENT_TEMPLATE: &str = include_str!("ingredients.template.jsonc");
 
-pub fn generate_recipe_schema() -> Value {
+/// Initialize a complete catalog with all required files and editor support
+pub fn initialize(output_dir: &Path) -> AppResult<()> {
+    create_required_files(output_dir)?;
+    generate_all_schemas(output_dir)?;
+    Ok(())
+}
+
+/// Schema generators for loader validation (exported to storage module)
+pub(super) fn generate_recipe_schema() -> Value {
     serde_json::from_str(RECIPE_SCHEMA).expect("Embedded recipe schema should be valid JSON")
 }
 
-pub fn generate_ingredient_schema() -> Value {
+pub(super) fn generate_ingredient_schema() -> Value {
     serde_json::from_str(INGREDIENT_SCHEMA)
         .expect("Embedded ingredient schema should be valid JSON")
 }
 
-use crate::error::AppResult;
+/// Create the required data files with starter content
+fn create_required_files(output_dir: &Path) -> AppResult<()> {
+    let recipes_path = output_dir.join("recipes.jsonc");
+    std::fs::write(recipes_path, get_recipe_template())?;
 
-pub fn generate_all_schemas(output_dir: &Path) -> AppResult<()> {
+    let ingredients_path = output_dir.join("ingredients.jsonc");
+    std::fs::write(ingredients_path, get_ingredient_template())?;
+
+    Ok(())
+}
+
+/// Generate editor support files (JSON Schema files)
+fn generate_all_schemas(output_dir: &Path) -> AppResult<()> {
     std::fs::create_dir_all(output_dir)?;
 
     let recipe_schema = generate_recipe_schema();
@@ -41,4 +62,13 @@ pub fn generate_all_schemas(output_dir: &Path) -> AppResult<()> {
     std::fs::write(ingredient_path, ingredient_json)?;
 
     Ok(())
+}
+
+/// Template accessors (private - only used internally)
+fn get_recipe_template() -> &'static str {
+    RECIPE_TEMPLATE
+}
+
+fn get_ingredient_template() -> &'static str {
+    INGREDIENT_TEMPLATE
 }

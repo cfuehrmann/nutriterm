@@ -1,4 +1,4 @@
-use crate::models::WeightedIngredient;
+use crate::catalog::items::WeightedIngredient;
 use std::io::Write;
 use tabled::{
     Table, Tabled,
@@ -23,7 +23,7 @@ struct NutritionRow {
     calories: String,
 }
 
-pub fn render_nutrition_table<W: Write>(
+pub(super) fn render_nutrition_table<W: Write>(
     recipe: &[WeightedIngredient],
     writer: &mut W,
 ) -> std::io::Result<()> {

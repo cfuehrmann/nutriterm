@@ -3,7 +3,7 @@ use insta::assert_snapshot;
 mod common;
 use common::{run_cmd, strip_ansi_codes, temp_dir, write_files};
 
-fn create_test_workspace(ingredients_content: &str, recipes_content: &str) -> tempfile::TempDir {
+fn create_test_catalog_dir(ingredients_content: &str, recipes_content: &str) -> tempfile::TempDir {
     let temp = temp_dir();
     write_files(temp.path(), ingredients_content, recipes_content);
     temp
@@ -72,7 +72,7 @@ fn test_long_ingredient_names() {
   ]
 }"#;
 
-    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+    let temp_dir = create_test_catalog_dir(ingredients_content, recipes_content);
 
     let output = run_cmd(&["recipe", "long-names-test"], temp_dir.path());
 
@@ -136,7 +136,7 @@ fn test_extreme_numerical_values() {
   ]
 }"#;
 
-    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+    let temp_dir = create_test_catalog_dir(ingredients_content, recipes_content);
 
     let output = run_cmd(&["recipe", "extreme-values-test"], temp_dir.path());
 
@@ -190,7 +190,7 @@ fn test_comma_formatting_boundary() {
   ]
 }"#;
 
-    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+    let temp_dir = create_test_catalog_dir(ingredients_content, recipes_content);
 
     let output = run_cmd(&["recipe", "comma-boundary-test"], temp_dir.path());
 
@@ -232,7 +232,7 @@ fn test_precision_levels() {
   ]
 }"#;
 
-    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+    let temp_dir = create_test_catalog_dir(ingredients_content, recipes_content);
 
     let output = run_cmd(&["recipe", "precision-test"], temp_dir.path());
 
@@ -284,7 +284,7 @@ fn test_zero_values_formatting() {
   ]
 }"#;
 
-    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+    let temp_dir = create_test_catalog_dir(ingredients_content, recipes_content);
 
     let output = run_cmd(&["recipe", "zero-values-test"], temp_dir.path());
 
@@ -336,7 +336,7 @@ fn test_mixed_extreme_scenarios() {
   ]
 }"#;
 
-    let temp_dir = create_test_workspace(ingredients_content, recipes_content);
+    let temp_dir = create_test_catalog_dir(ingredients_content, recipes_content);
 
     let output = run_cmd(&["recipe", "mixed-extreme-test"], temp_dir.path());
 

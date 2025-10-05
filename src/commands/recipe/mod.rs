@@ -1,15 +1,15 @@
 mod display;
 mod search;
 
-use crate::data::loader;
+use crate::catalog;
 use crate::error::AppResult;
 use display::render_nutrition_table;
 use search::{find_exact_match, find_substring_matches, parse_search_terms};
 use std::io;
 use std::path::Path;
 
-pub fn handle_recipe_command(data_dir: &Path, recipe_name: &str) -> AppResult<()> {
-    let recipes = loader::load_recipes(data_dir)?;
+pub fn run(data_dir: &Path, recipe_name: &str) -> AppResult<()> {
+    let recipes = catalog::load_recipes(data_dir)?;
 
     if let Some(recipe) = find_exact_match(&recipes, recipe_name) {
         println!("Recipe: {}", recipe.name);

@@ -1,14 +1,10 @@
+pub mod catalog;
 pub mod commands;
-pub mod data;
 pub mod error;
-pub mod models;
-pub mod schema;
 pub mod utils;
-pub mod workspace;
 
 use clap::{Parser, Subcommand};
 use error::AppResult;
-use workspace::find_workspace;
 
 #[derive(Parser)]
 #[command(name = "nutriterm")]
@@ -20,7 +16,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    #[command(about = "Initialize current directory as a recipe workspace")]
+    #[command(about = "Initialize current directory as a recipe catalog")]
     Init,
     #[command(about = "Display nutrition for a specific recipe")]
     Recipe {
@@ -31,30 +27,30 @@ enum Commands {
     KitchenRef,
 }
 
+fn main() {
+    if let Err(e) = run_app() {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
+}
+
 fn run_app() -> AppResult<()> {
     let cli = Cli::parse();
 
     match &cli.command {
         Commands::Init => {
             let current_dir = std::env::current_dir()?;
-            commands::init::init_recipes_directory(&current_dir)?;
+            commands::init::run(&current_dir)?;
         }
         Commands::Recipe { name } => {
-            let workspace = find_workspace()?;
-            commands::recipe::handle_recipe_command(&workspace, name)?;
+            let catalog_dir = catalog::find_dir()?;
+            commands::recipe::run(&catalog_dir, name)?;
         }
 
         Commands::KitchenRef => {
-            let workspace = find_workspace()?;
-            commands::kitchen_ref::handle_kitchen_ref_command(&workspace)?;
+            let catalog_dir = catalog::find_dir()?;
+            commands::kitchen_ref::run(&catalog_dir)?;
         }
     }
     Ok(())
-}
-
-fn main() {
-    if let Err(e) = run_app() {
-        eprintln!("Error: {}", e);
-        std::process::exit(1);
-    }
 }
