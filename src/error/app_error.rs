@@ -6,16 +6,11 @@ pub struct DuplicateGroup {
     pub items: Vec<String>,
 }
 
+// Errors not specific to the storage format
 #[derive(Debug)]
 pub enum AppError {
-    // Domain business rules
     CatalogNotFound {
         searched: Vec<PathBuf>,
-        message: String,
-    },
-    RecipeNotFound {
-        name: String,
-        available: Vec<String>,
         message: String,
     },
     DirectoryNotEmpty {
@@ -34,22 +29,17 @@ pub enum AppError {
         duplicates: Vec<DuplicateGroup>,
     },
 
-    // Infrastructure errors
-    FileError {
-        path: PathBuf,
-        source: std::io::Error,
-    },
-
-    // Legacy/other
-    Other(String),
     Io(std::io::Error),
+
+    // E.g. for errors specific to the storage format. To keep types of such
+    // errors from leaking into the domain.
+    Other(String),
 }
 
 impl std::fmt::Display for AppError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             AppError::CatalogNotFound { message, .. }
-            | AppError::RecipeNotFound { message, .. }
             | AppError::DirectoryNotEmpty { message, .. } => write!(f, "{}", message),
 
             AppError::UnknownIngredientError {
@@ -102,23 +92,12 @@ impl std::fmt::Display for AppError {
                 )
             }
 
-            AppError::FileError { path, source } => {
-                write!(
-                    f,
-                    "Cannot read file {}: {}\n\nTip: Make sure the file exists and you have read permissions. Run 'nutriterm init' to create missing catalog files.",
-                    path.display(),
-                    source
-                )
-            }
-
             // Legacy variants
             AppError::Io(error) => write!(f, "{}", error),
             AppError::Other(message) => write!(f, "{}", message),
         }
     }
 }
-
-
 
 impl From<std::io::Error> for AppError {
     fn from(err: std::io::Error) -> Self {
