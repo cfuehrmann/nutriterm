@@ -1,4 +1,4 @@
-use super::initialization::{generate_ingredient_schema, generate_recipe_schema};
+use super::initialization::{create_ingredient_schema, create_recipe_schema};
 use crate::catalog::items::{Ingredient, Recipe, WeightedIngredient};
 use crate::error::{DuplicateGroup, LoadError};
 use crate::utils::suggestions::find_best_suggestion;
@@ -42,9 +42,9 @@ struct JsonIngredient {
 
 pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
     let json_recipes: JsonRecipes =
-        load_jsonc_file(data_dir, "recipes.jsonc", generate_recipe_schema)?;
+        load_jsonc_file(data_dir, "recipes.jsonc", create_recipe_schema)?;
 
-    validate_recipe_uniqueness(&json_recipes.recipes)?;
+    check_recipe_uniqueness(&json_recipes.recipes)?;
 
     let json_ingredients = load_json_ingredients(data_dir)?;
     let ingredient_map: HashMap<String, Ingredient> = json_ingredients
@@ -124,7 +124,7 @@ fn load_jsonc_file<T: DeserializeOwned>(
         message: format!("Failed to compile schema: {}", e),
     })?;
 
-    validate_with_schema(&json_value, &schema, filename)?;
+    check_with_schema(&json_value, &schema, filename)?;
 
     serde_json::from_value(json_value).map_err(|e| LoadError::ProcessingError {
         filename: filename.to_string(),
@@ -132,20 +132,20 @@ fn load_jsonc_file<T: DeserializeOwned>(
     })
 }
 
-fn validate_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
-    validate_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
+fn check_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
+    check_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
         (&recipe.name, format!("recipe '{}'", recipe.name))
     })
 }
 
 fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, LoadError> {
     let ingredients: JsonIngredients =
-        load_jsonc_file(data_dir, "ingredients.jsonc", generate_ingredient_schema)?;
-    validate_ingredient_uniqueness(&ingredients.ingredients)?;
+        load_jsonc_file(data_dir, "ingredients.jsonc", create_ingredient_schema)?;
+    check_ingredient_uniqueness(&ingredients.ingredients)?;
     Ok(ingredients)
 }
 
-fn validate_with_schema(
+fn check_with_schema(
     json_value: &Value,
     schema: &Validator,
     filename: &str,
@@ -168,8 +168,8 @@ fn validate_with_schema(
     Ok(())
 }
 
-fn validate_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), LoadError> {
-    validate_uniqueness(
+fn check_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), LoadError> {
+    check_uniqueness(
         ingredients,
         "ingredients.jsonc",
         "ingredient ID",
@@ -177,7 +177,7 @@ fn validate_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), 
     )
 }
 
-fn validate_uniqueness<T, K, F>(
+fn check_uniqueness<T, K, F>(
     items: &[T],
     filename: &str,
     key_type: &str,
