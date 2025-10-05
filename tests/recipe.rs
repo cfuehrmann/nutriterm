@@ -773,3 +773,43 @@ fn test_duplicate_ingredient_ids_validation() {
     let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
     assert_snapshot!("duplicate_ingredient_ids_validation", normalized_stderr);
 }
+
+#[test]
+fn test_jsonc_parsing_syntax_error() {
+    let temp_dir = temp_dir();
+    let catalog_dir = catalog_dir(&temp_dir, "parsing-test");
+
+    // Create valid ingredients file
+    write_files(
+        &catalog_dir,
+        r#"{
+        "ingredients": [{
+            "id": "chicken_breast",
+            "name": "Chicken Breast",
+            "carbs_per_100g": 0,
+            "protein_per_100g": 25,
+            "fat_per_100g": 1,
+            "fiber_per_100g": 0
+        }]
+    }"#,
+        // Invalid JSONC with syntax error - missing closing quote and brace
+        r#"{
+        "recipes": [{
+            "name": "test-recipe",
+            "ingredients": [{"id": "chicken_breast", "grams": 100}]
+        }
+    "#,
+    );
+
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(["recipe", "test-recipe"])
+        .current_dir(&catalog_dir)
+        .assert()
+        .failure();
+
+    let output = assert.get_output();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
+    assert_snapshot!("jsonc_parsing_syntax_error", normalized_stderr);
+}

@@ -17,26 +17,7 @@ pub(super) enum JsoncError {
 
 impl std::fmt::Display for JsoncError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            JsoncError::Parsing { filename, message } => {
-                write!(
-                    f,
-                    "Invalid JSONC syntax in {}: {}\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
-                    filename, message
-                )
-            }
-            JsoncError::Deserializing { filename, message } => {
-                write!(f, "Invalid {} structure: {}", filename, message)
-            }
-            JsoncError::SchemaValidation { filename, errors } => {
-                write!(
-                    f,
-                    "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",
-                    filename,
-                    errors.join("\n")
-                )
-            }
-        }
+        write!(f, "JSONC format error")
     }
 }
 
