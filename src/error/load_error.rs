@@ -29,6 +29,10 @@ pub enum LoadError {
         suggestion: Option<String>,
         available_ids: Vec<String>,
     },
+    CatalogNotFound {
+        searched: Vec<PathBuf>,
+        message: String,
+    },
 }
 
 #[derive(Debug)]
@@ -113,6 +117,9 @@ impl std::fmt::Display for LoadError {
                     f,
                     "\n\nTip: Fix ingredient references in recipes.jsonc before running commands."
                 )
+            }
+            LoadError::CatalogNotFound { message, .. } => {
+                write!(f, "{}", message)
             }
         }
     }

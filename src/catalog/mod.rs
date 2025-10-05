@@ -1,15 +1,10 @@
 pub mod items;
 mod storage;
 
-use crate::error::{AppResult, LoadError};
-use std::path::{Path, PathBuf};
+use crate::error::AppResult;
+use std::path::Path;
 
 // Domain layer functions (orchestrate storage layer)
-
-/// Find the catalog directory
-pub fn find_dir() -> AppResult<PathBuf> {
-    storage::find_dir()
-}
 
 /// Initialize a complete catalog
 pub fn initialize(path: &Path) -> AppResult<()> {
@@ -17,6 +12,6 @@ pub fn initialize(path: &Path) -> AppResult<()> {
 }
 
 /// Load recipes from catalog
-pub fn load_recipes(path: &Path) -> Result<Vec<items::Recipe>, LoadError> {
-    storage::load_recipes(path)
+pub fn load_recipes() -> AppResult<Vec<items::Recipe>> {
+    storage::load_recipes().map_err(Into::into)
 }

@@ -1,12 +1,12 @@
 use super::initialization::{create_ingredient_schema, create_recipe_schema};
 use crate::catalog::items::{Ingredient, Recipe, WeightedIngredient};
-use crate::error::{DuplicateGroup, LoadError};
+use crate::error::{AppError, DuplicateGroup, LoadError};
 use crate::utils::suggestions::find_best_suggestion;
 use jsonschema::Validator;
 use serde::{Deserialize, de::DeserializeOwned};
 use serde_json::Value;
 use std::collections::HashMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 #[derive(Deserialize)]
 struct JsonRecipes {
@@ -40,7 +40,64 @@ struct JsonIngredient {
     fiber_per_100g: f64,
 }
 
-pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
+// Public API
+
+pub fn load_recipes() -> Result<Vec<Recipe>, LoadError> {
+    let data_dir = find_dir().map_err(|app_error| match app_error {
+        AppError::CatalogNotFound { searched, message } => {
+            LoadError::CatalogNotFound { searched, message }
+        }
+        AppError::Io(io_error) => LoadError::FileError {
+            path: std::env::current_dir().unwrap_or_default(),
+            source: io_error,
+        },
+        other => LoadError::ProcessingError {
+            filename: "catalog discovery".to_string(),
+            message: other.to_string(),
+        },
+    })?;
+    load_recipes_from_dir(&data_dir)
+}
+
+// Directory discovery
+
+fn find_dir() -> Result<PathBuf, AppError> {
+    let current_dir = std::env::current_dir()?;
+    let mut searched = vec![current_dir.clone()];
+
+    if has_required_files(&current_dir) {
+        return Ok(current_dir);
+    }
+
+    let mut dir = current_dir.as_path();
+    while let Some(parent) = dir.parent() {
+        searched.push(parent.to_path_buf());
+        if has_required_files(parent) {
+            return Ok(parent.to_path_buf());
+        }
+        dir = parent;
+    }
+
+    let message = format!(
+        "Not in a nutrition calculator catalog (or any parent directory)\n\
+         Searched: {}\n\
+         Run 'nutriterm init' to create a catalog.",
+        searched
+            .iter()
+            .map(|p| p.display().to_string())
+            .collect::<Vec<_>>()
+            .join(", ")
+    );
+    Err(AppError::CatalogNotFound { searched, message })
+}
+
+fn has_required_files(path: &Path) -> bool {
+    path.join("ingredients.jsonc").exists() && path.join("recipes.jsonc").exists()
+}
+
+// Recipe loading
+
+fn load_recipes_from_dir(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
     let json_recipes: JsonRecipes =
         load_jsonc_file(data_dir, "recipes.jsonc", create_recipe_schema)?;
 
@@ -97,6 +154,15 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
     Ok(recipes)
 }
 
+fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, LoadError> {
+    let ingredients: JsonIngredients =
+        load_jsonc_file(data_dir, "ingredients.jsonc", create_ingredient_schema)?;
+    check_ingredient_uniqueness(&ingredients.ingredients)?;
+    Ok(ingredients)
+}
+
+// File parsing
+
 fn load_jsonc_file<T: DeserializeOwned>(
     data_dir: &Path,
     filename: &str,
@@ -132,25 +198,13 @@ fn load_jsonc_file<T: DeserializeOwned>(
     })
 }
 
-fn check_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
-    check_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
-        (&recipe.name, format!("recipe '{}'", recipe.name))
-    })
-}
-
-fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, LoadError> {
-    let ingredients: JsonIngredients =
-        load_jsonc_file(data_dir, "ingredients.jsonc", create_ingredient_schema)?;
-    check_ingredient_uniqueness(&ingredients.ingredients)?;
-    Ok(ingredients)
-}
+// Validation
 
 fn check_with_schema(
     json_value: &Value,
     schema: &Validator,
     filename: &str,
 ) -> Result<(), LoadError> {
-    // Use iter_errors to get all validation errors at once
     let validation_errors: Vec<_> = schema.iter_errors(json_value).collect();
 
     if !validation_errors.is_empty() {
@@ -166,6 +220,12 @@ fn check_with_schema(
     }
 
     Ok(())
+}
+
+fn check_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
+    check_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
+        (&recipe.name, format!("recipe '{}'", recipe.name))
+    })
 }
 
 fn check_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), LoadError> {
@@ -204,7 +264,6 @@ where
         }
     }
 
-    // Sort duplicates by key for deterministic output
     duplicates.sort_by(|a, b| a.key.cmp(&b.key));
 
     if !duplicates.is_empty() {
