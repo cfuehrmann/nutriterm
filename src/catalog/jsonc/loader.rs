@@ -41,18 +41,12 @@ struct JsonIngredient {
 }
 
 pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, AppError> {
-    load_recipes_from_dir_jsonc(data_dir)
-}
-
-// Recipe loading
-
-fn load_recipes_from_dir_jsonc(data_dir: &Path) -> Result<Vec<Recipe>, AppError> {
     let json_recipes: JsonRecipes =
-        load_jsonc_file_app(data_dir, "recipes.jsonc", create_recipe_schema)?;
+        load_jsonc_file(data_dir, "recipes.jsonc", create_recipe_schema)?;
 
-    check_recipe_uniqueness_app(&json_recipes.recipes)?;
+    check_recipe_uniqueness(&json_recipes.recipes)?;
 
-    let json_ingredients = load_json_ingredients_app(data_dir)?;
+    let json_ingredients = load_json_ingredients(data_dir)?;
     let ingredient_map: HashMap<String, Ingredient> = json_ingredients
         .ingredients
         .into_iter()
@@ -103,16 +97,14 @@ fn load_recipes_from_dir_jsonc(data_dir: &Path) -> Result<Vec<Recipe>, AppError>
     Ok(recipes)
 }
 
-fn load_json_ingredients_app(data_dir: &Path) -> Result<JsonIngredients, AppError> {
+fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, AppError> {
     let ingredients: JsonIngredients =
-        load_jsonc_file_app(data_dir, "ingredients.jsonc", create_ingredient_schema)?;
-    check_ingredient_uniqueness_app(&ingredients.ingredients)?;
+        load_jsonc_file(data_dir, "ingredients.jsonc", create_ingredient_schema)?;
+    check_ingredient_uniqueness(&ingredients.ingredients)?;
     Ok(ingredients)
 }
 
-// File parsing
-
-fn load_jsonc_file_app<T: DeserializeOwned>(
+fn load_jsonc_file<T: DeserializeOwned>(
     data_dir: &Path,
     filename: &str,
     schema_generator: fn() -> Value,
@@ -145,7 +137,7 @@ fn load_jsonc_file_app<T: DeserializeOwned>(
         })
     })?;
 
-    check_with_schema_app(&json_value, &schema, filename)?;
+    check_with_schema(&json_value, &schema, filename)?;
 
     serde_json::from_value(json_value).map_err(|e| {
         AppError::FormatError(JsoncError::ProcessingError {
@@ -157,7 +149,7 @@ fn load_jsonc_file_app<T: DeserializeOwned>(
 
 // Validation
 
-fn check_with_schema_app(
+fn check_with_schema(
     json_value: &Value,
     schema: &Validator,
     filename: &str,
@@ -179,14 +171,14 @@ fn check_with_schema_app(
     Ok(())
 }
 
-fn check_recipe_uniqueness_app(recipes: &[JsonRecipe]) -> Result<(), AppError> {
-    check_uniqueness_app(recipes, "recipes.jsonc", "recipe name", |recipe| {
+fn check_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), AppError> {
+    check_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
         (&recipe.name, format!("recipe '{}'", recipe.name))
     })
 }
 
-fn check_ingredient_uniqueness_app(ingredients: &[JsonIngredient]) -> Result<(), AppError> {
-    check_uniqueness_app(
+fn check_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), AppError> {
+    check_uniqueness(
         ingredients,
         "ingredients.jsonc",
         "ingredient ID",
@@ -194,7 +186,7 @@ fn check_ingredient_uniqueness_app(ingredients: &[JsonIngredient]) -> Result<(),
     )
 }
 
-fn check_uniqueness_app<T, K, F>(
+fn check_uniqueness<T, K, F>(
     items: &[T],
     filename: &str,
     key_type: &str,
