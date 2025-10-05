@@ -33,14 +33,17 @@ pub enum AppError {
 
     // E.g. for errors specific to the storage format. To keep types of such
     // errors from leaking into the domain.
-    Other(String),
+    Other {
+        message: String,
+    },
 }
 
 impl std::fmt::Display for AppError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             AppError::CatalogNotFound { message, .. }
-            | AppError::DirectoryNotEmpty { message, .. } => write!(f, "{}", message),
+            | AppError::DirectoryNotEmpty { message, .. }
+            | AppError::Other { message, .. } => write!(f, "{}", message),
 
             AppError::UnknownIngredientError {
                 recipe,
@@ -94,7 +97,6 @@ impl std::fmt::Display for AppError {
 
             // Legacy variants
             AppError::Io(error) => write!(f, "{}", error),
-            AppError::Other(message) => write!(f, "{}", message),
         }
     }
 }

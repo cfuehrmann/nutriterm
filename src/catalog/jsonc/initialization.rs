@@ -42,22 +42,26 @@ fn create_all_schemas(output_dir: &Path) -> AppResult<()> {
     let recipe_schema = create_recipe_schema();
     let recipe_schema_path = output_dir.join("recipes.schema.json");
     let recipe_json = serde_json::to_string_pretty(&recipe_schema).map_err(|e| {
-        crate::error::AppError::Other(format!(
-            "Failed to serialize recipe schema to JSON for file '{}': {}",
-            recipe_schema_path.display(),
-            e
-        ))
+        crate::error::AppError::Other {
+            message: format!(
+                "Failed to serialize recipe schema to JSON for file '{}': {}",
+                recipe_schema_path.display(),
+                e
+            ),
+        }
     })?;
     std::fs::write(&recipe_schema_path, recipe_json)?;
 
     let ingredient_schema = create_ingredient_schema();
     let ingredient_path = output_dir.join("ingredients.schema.json");
     let ingredient_json = serde_json::to_string_pretty(&ingredient_schema).map_err(|e| {
-        crate::error::AppError::Other(format!(
-            "Failed to serialize ingredient schema to JSON for file '{}': {}",
-            ingredient_path.display(),
-            e
-        ))
+        crate::error::AppError::Other {
+            message: format!(
+                "Failed to serialize ingredient schema to JSON for file '{}': {}",
+                ingredient_path.display(),
+                e
+            ),
+        }
     })?;
     std::fs::write(ingredient_path, ingredient_json)?;
 

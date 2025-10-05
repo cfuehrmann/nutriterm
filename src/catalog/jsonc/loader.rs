@@ -224,17 +224,21 @@ where
 // Convert JsoncError to AppError at the boundary
 fn convert_jsonc_error(jsonc_error: JsoncError) -> AppError {
     match jsonc_error {
-        JsoncError::Parsing { filename, message } => AppError::Other(format!(
-            "Invalid JSONC syntax in {}: {}\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
-            filename, message
-        )),
-        JsoncError::SchemaValidation { filename, errors } => AppError::Other(format!(
-            "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",
-            filename,
-            errors.join("\n")
-        )),
-        JsoncError::Deserializing { filename, message } => {
-            AppError::Other(format!("Invalid {} structure: {}", filename, message))
-        }
+        JsoncError::Parsing { filename, message } => AppError::Other {
+            message: format!(
+                "Invalid JSONC syntax in {}: {}\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
+                filename, message
+            ),
+        },
+        JsoncError::SchemaValidation { filename, errors } => AppError::Other {
+            message: format!(
+                "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",
+                filename,
+                errors.join("\n")
+            ),
+        },
+        JsoncError::Deserializing { filename, message } => AppError::Other {
+            message: format!("Invalid {} structure: {}", filename, message),
+        },
     }
 }
