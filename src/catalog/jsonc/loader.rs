@@ -1,12 +1,12 @@
 use super::initialization::{create_ingredient_schema, create_recipe_schema};
 use crate::catalog::items::{Ingredient, Recipe, WeightedIngredient};
-use crate::error::{AppError, DuplicateGroup, LoadError};
+use crate::error::{DuplicateGroup, LoadError};
 use crate::utils::suggestions::find_best_suggestion;
 use jsonschema::Validator;
 use serde::{Deserialize, de::DeserializeOwned};
 use serde_json::Value;
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 #[derive(Deserialize)]
 struct JsonRecipes {
@@ -40,59 +40,8 @@ struct JsonIngredient {
     fiber_per_100g: f64,
 }
 
-// Public API
-
-pub fn load_recipes() -> Result<Vec<Recipe>, LoadError> {
-    let data_dir = find_dir().map_err(|app_error| match app_error {
-        AppError::CatalogNotFound { searched, message } => {
-            LoadError::CatalogNotFound { searched, message }
-        }
-        AppError::Io(io_error) => LoadError::FileError {
-            path: std::env::current_dir().unwrap_or_default(),
-            source: io_error,
-        },
-        other => LoadError::ProcessingError {
-            filename: "catalog discovery".to_string(),
-            message: other.to_string(),
-        },
-    })?;
-    load_recipes_from_dir(&data_dir)
-}
-
-// Directory discovery
-
-fn find_dir() -> Result<PathBuf, AppError> {
-    let current_dir = std::env::current_dir()?;
-    let mut searched = vec![current_dir.clone()];
-
-    if has_required_files(&current_dir) {
-        return Ok(current_dir);
-    }
-
-    let mut dir = current_dir.as_path();
-    while let Some(parent) = dir.parent() {
-        searched.push(parent.to_path_buf());
-        if has_required_files(parent) {
-            return Ok(parent.to_path_buf());
-        }
-        dir = parent;
-    }
-
-    let message = format!(
-        "Not in a nutrition calculator catalog (or any parent directory)\n\
-         Searched: {}\n\
-         Run 'nutriterm init' to create a catalog.",
-        searched
-            .iter()
-            .map(|p| p.display().to_string())
-            .collect::<Vec<_>>()
-            .join(", ")
-    );
-    Err(AppError::CatalogNotFound { searched, message })
-}
-
-fn has_required_files(path: &Path) -> bool {
-    path.join("ingredients.jsonc").exists() && path.join("recipes.jsonc").exists()
+pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
+    load_recipes_from_dir(data_dir)
 }
 
 // Recipe loading

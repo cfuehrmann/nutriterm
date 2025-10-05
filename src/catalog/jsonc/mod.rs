@@ -1,6 +1,6 @@
 mod initialization;
 mod loader;
 
-// Storage operations (implementation layer)
+// JSONC file format implementation
 pub use initialization::initialize;
 pub use loader::load_recipes;
