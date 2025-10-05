@@ -1,6 +1,6 @@
 use super::initialization::{create_ingredient_schema, create_recipe_schema};
 use crate::catalog::items::{Ingredient, Recipe, WeightedIngredient};
-use crate::error::{DuplicateGroup, LoadError};
+use crate::error::{AppError, DuplicateGroup, JsoncError};
 use crate::utils::suggestions::find_best_suggestion;
 use jsonschema::Validator;
 use serde::{Deserialize, de::DeserializeOwned};
@@ -40,19 +40,19 @@ struct JsonIngredient {
     fiber_per_100g: f64,
 }
 
-pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
-    load_recipes_from_dir(data_dir)
+pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, AppError> {
+    load_recipes_from_dir_jsonc(data_dir)
 }
 
 // Recipe loading
 
-fn load_recipes_from_dir(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
+fn load_recipes_from_dir_jsonc(data_dir: &Path) -> Result<Vec<Recipe>, AppError> {
     let json_recipes: JsonRecipes =
-        load_jsonc_file(data_dir, "recipes.jsonc", create_recipe_schema)?;
+        load_jsonc_file_app(data_dir, "recipes.jsonc", create_recipe_schema)?;
 
-    check_recipe_uniqueness(&json_recipes.recipes)?;
+    check_recipe_uniqueness_app(&json_recipes.recipes)?;
 
-    let json_ingredients = load_json_ingredients(data_dir)?;
+    let json_ingredients = load_json_ingredients_app(data_dir)?;
     let ingredient_map: HashMap<String, Ingredient> = json_ingredients
         .ingredients
         .into_iter()
@@ -80,7 +80,7 @@ fn load_recipes_from_dir(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
                 let available_ids: Vec<String> = ingredient_map.keys().cloned().collect();
                 let suggestion = find_best_suggestion(&json_ingredient.id, &available_ids);
 
-                LoadError::UnknownIngredientError {
+                AppError::UnknownIngredientError {
                     recipe: json_recipe.name.clone(),
                     ingredient: json_ingredient.id.clone(),
                     suggestion,
@@ -103,57 +103,65 @@ fn load_recipes_from_dir(data_dir: &Path) -> Result<Vec<Recipe>, LoadError> {
     Ok(recipes)
 }
 
-fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, LoadError> {
+fn load_json_ingredients_app(data_dir: &Path) -> Result<JsonIngredients, AppError> {
     let ingredients: JsonIngredients =
-        load_jsonc_file(data_dir, "ingredients.jsonc", create_ingredient_schema)?;
-    check_ingredient_uniqueness(&ingredients.ingredients)?;
+        load_jsonc_file_app(data_dir, "ingredients.jsonc", create_ingredient_schema)?;
+    check_ingredient_uniqueness_app(&ingredients.ingredients)?;
     Ok(ingredients)
 }
 
 // File parsing
 
-fn load_jsonc_file<T: DeserializeOwned>(
+fn load_jsonc_file_app<T: DeserializeOwned>(
     data_dir: &Path,
     filename: &str,
     schema_generator: fn() -> Value,
-) -> Result<T, LoadError> {
+) -> Result<T, AppError> {
     let file_path = data_dir.join(filename);
-    let content = std::fs::read_to_string(&file_path).map_err(|e| LoadError::FileError {
+    let content = std::fs::read_to_string(&file_path).map_err(|e| AppError::FileError {
         path: file_path.clone(),
         source: e,
     })?;
 
     let json_value = jsonc_parser::parse_to_serde_value(&content, &Default::default())
-        .map_err(|e| LoadError::ParseError {
-            filename: filename.to_string(),
-            message: format!("{}", e),
+        .map_err(|e| {
+            AppError::FormatError(JsoncError::ParseError {
+                filename: filename.to_string(),
+                message: format!("{}", e),
+            })
         })?
-        .ok_or_else(|| LoadError::ParseError {
-            filename: filename.to_string(),
-            message: "Empty file".to_string(),
+        .ok_or_else(|| {
+            AppError::FormatError(JsoncError::ParseError {
+                filename: filename.to_string(),
+                message: "Empty file".to_string(),
+            })
         })?;
 
     let schema_json = schema_generator();
-    let schema = Validator::new(&schema_json).map_err(|e| LoadError::ProcessingError {
-        filename: filename.to_string(),
-        message: format!("Failed to compile schema: {}", e),
+    let schema = Validator::new(&schema_json).map_err(|e| {
+        AppError::FormatError(JsoncError::ProcessingError {
+            filename: filename.to_string(),
+            message: format!("Failed to compile schema: {}", e),
+        })
     })?;
 
-    check_with_schema(&json_value, &schema, filename)?;
+    check_with_schema_app(&json_value, &schema, filename)?;
 
-    serde_json::from_value(json_value).map_err(|e| LoadError::ProcessingError {
-        filename: filename.to_string(),
-        message: format!("{}", e),
+    serde_json::from_value(json_value).map_err(|e| {
+        AppError::FormatError(JsoncError::ProcessingError {
+            filename: filename.to_string(),
+            message: format!("{}", e),
+        })
     })
 }
 
 // Validation
 
-fn check_with_schema(
+fn check_with_schema_app(
     json_value: &Value,
     schema: &Validator,
     filename: &str,
-) -> Result<(), LoadError> {
+) -> Result<(), AppError> {
     let validation_errors: Vec<_> = schema.iter_errors(json_value).collect();
 
     if !validation_errors.is_empty() {
@@ -162,23 +170,23 @@ fn check_with_schema(
             .map(|error| format!("- {}: {}", error.instance_path, error))
             .collect();
 
-        return Err(LoadError::SchemaViolationError {
+        return Err(AppError::FormatError(JsoncError::SchemaViolationError {
             filename: filename.to_string(),
             errors: error_messages,
-        });
+        }));
     }
 
     Ok(())
 }
 
-fn check_recipe_uniqueness(recipes: &[JsonRecipe]) -> Result<(), LoadError> {
-    check_uniqueness(recipes, "recipes.jsonc", "recipe name", |recipe| {
+fn check_recipe_uniqueness_app(recipes: &[JsonRecipe]) -> Result<(), AppError> {
+    check_uniqueness_app(recipes, "recipes.jsonc", "recipe name", |recipe| {
         (&recipe.name, format!("recipe '{}'", recipe.name))
     })
 }
 
-fn check_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), LoadError> {
-    check_uniqueness(
+fn check_ingredient_uniqueness_app(ingredients: &[JsonIngredient]) -> Result<(), AppError> {
+    check_uniqueness_app(
         ingredients,
         "ingredients.jsonc",
         "ingredient ID",
@@ -186,12 +194,12 @@ fn check_ingredient_uniqueness(ingredients: &[JsonIngredient]) -> Result<(), Loa
     )
 }
 
-fn check_uniqueness<T, K, F>(
+fn check_uniqueness_app<T, K, F>(
     items: &[T],
     filename: &str,
     key_type: &str,
     key_extractor: F,
-) -> Result<(), LoadError>
+) -> Result<(), AppError>
 where
     F: Fn(&T) -> (&K, String),
     K: Eq + std::hash::Hash + Clone + std::fmt::Display,
@@ -216,7 +224,7 @@ where
     duplicates.sort_by(|a, b| a.key.cmp(&b.key));
 
     if !duplicates.is_empty() {
-        return Err(LoadError::DuplicateKeyError {
+        return Err(AppError::DuplicateKeyError {
             filename: filename.to_string(),
             key_type: key_type.to_string(),
             duplicates,

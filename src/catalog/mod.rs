@@ -3,14 +3,9 @@ pub mod items;
 mod jsonc;
 
 use crate::error::AppResult;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 // Domain layer functions (orchestrate discovery and JSONC implementation)
-
-/// Find the catalog directory
-pub fn find_dir() -> AppResult<PathBuf> {
-    discovery::find_dir()
-}
 
 /// Initialize a complete catalog
 pub fn initialize(path: &Path) -> AppResult<()> {
@@ -20,5 +15,5 @@ pub fn initialize(path: &Path) -> AppResult<()> {
 /// Load recipes from catalog
 pub fn load_recipes() -> AppResult<Vec<items::Recipe>> {
     let catalog_dir = discovery::find_dir()?;
-    jsonc::load_recipes(&catalog_dir).map_err(Into::into)
+    jsonc::load_recipes(&catalog_dir)
 }
