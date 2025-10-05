@@ -29,7 +29,7 @@ pub fn find_catalog_dir() -> AppResult<PathBuf> {
             .collect::<Vec<_>>()
             .join(", ")
     );
-    Err(AppError::WorkspaceNotFound { searched, message })
+    Err(AppError::CatalogNotFound { searched, message })
 }
 
 /// Check if a directory is a valid catalog (contains both required files)

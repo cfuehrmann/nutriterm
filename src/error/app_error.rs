@@ -8,7 +8,7 @@ pub enum AppError {
         path: PathBuf,
         message: String,
     },
-    WorkspaceNotFound {
+    CatalogNotFound {
         searched: Vec<PathBuf>,
         message: String,
     },
@@ -28,7 +28,7 @@ impl std::fmt::Display for AppError {
             AppError::Data(error) => write!(f, "{}", error),
             AppError::Io(error) => write!(f, "{}", error),
             AppError::DirectoryNotEmpty { message, .. }
-            | AppError::WorkspaceNotFound { message, .. }
+            | AppError::CatalogNotFound { message, .. }
             | AppError::RecipeNotFound { message, .. }
             | AppError::Other(message) => write!(f, "{}", message),
         }

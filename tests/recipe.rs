@@ -57,7 +57,7 @@ fn test_view_invalid_recipe() {
 
 #[test]
 fn test_view_outside_catalog_dir() {
-    // User tries to view recipe outside workspace
+    // User tries to view recipe outside catalog
     let assert = Command::cargo_bin("nutriterm")
         .unwrap()
         .args(["recipe", "anything"])
