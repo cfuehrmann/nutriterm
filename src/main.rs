@@ -39,17 +39,13 @@ fn run_app() -> AppResult<()> {
 
     match &cli.command {
         Commands::Init => {
-            let current_dir = std::env::current_dir()?;
-            commands::init::run(&current_dir)?;
+            commands::init::run()?;
         }
         Commands::Recipe { name } => {
-            let catalog_dir = catalog::find_dir()?;
-            commands::recipe::run(&catalog_dir, name)?;
+            commands::recipe::run(name)?;
         }
-
         Commands::KitchenRef => {
-            let catalog_dir = catalog::find_dir()?;
-            commands::kitchen_ref::run(&catalog_dir)?;
+            commands::kitchen_ref::run()?;
         }
     }
     Ok(())

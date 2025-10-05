@@ -1,9 +1,9 @@
 use crate::catalog;
 use crate::error::AppResult;
-use std::path::Path;
 
-pub fn run(data_dir: &Path) -> AppResult<()> {
-    let recipes = catalog::load_recipes(data_dir)?;
+pub fn run() -> AppResult<()> {
+    let catalog_dir = catalog::find_dir()?;
+    let recipes = catalog::load_recipes(&catalog_dir)?;
 
     println!("<!DOCTYPE html>");
     println!("<html>");
