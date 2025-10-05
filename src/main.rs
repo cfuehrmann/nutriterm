@@ -3,7 +3,6 @@ pub mod commands;
 pub mod error;
 pub mod utils;
 
-
 use clap::{Parser, Subcommand};
 use error::AppResult;
 
