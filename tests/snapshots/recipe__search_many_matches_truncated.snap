@@ -1,0 +1,13 @@
+---
+source: tests/recipe.rs
+expression: snapshot_content
+---
+Available recipes: Chicken Rice Bowl, Chicken Salad, Spicy Chicken Curry, Chicken Sandwich, Chicken Stir Fry
+$ nutriterm recipe chicken
+Multiple recipes found for 'chicken' (5 matches):
+- Chicken Rice Bowl
+- Chicken Salad
+- Spicy Chicken Curry
+... and 2 more
+
+Please be more specific with your search term.

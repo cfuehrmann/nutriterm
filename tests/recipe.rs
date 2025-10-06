@@ -773,3 +773,71 @@ fn test_duplicate_ingredient_ids_validation() {
     let normalized_stderr = normalize_temp_paths(&stderr, temp_dir.path());
     assert_snapshot!("duplicate_ingredient_ids_validation", normalized_stderr);
 }
+
+#[test]
+fn test_search_many_matches_shows_truncated_list() {
+    // Test that search with many matches shows truncated list with "... and X more"
+    let temp_dir = temp_dir();
+    let catalog_dir = catalog_dir(&temp_dir, "many-matches-test");
+
+    write_files(
+        &catalog_dir,
+        r#"{
+        "ingredients": [{
+            "id": "chicken_breast",
+            "name": "Chicken Breast",
+            "carbs_per_100g": 0,
+            "protein_per_100g": 31,
+            "fat_per_100g": 3.6,
+            "fiber_per_100g": 0
+        }]
+    }"#,
+        r#"{
+        "recipes": [
+            {
+                "name": "Chicken Rice Bowl",
+                "ingredients": [{"id": "chicken_breast", "grams": 150}]
+            },
+            {
+                "name": "Chicken Salad", 
+                "ingredients": [{"id": "chicken_breast", "grams": 120}]
+            },
+            {
+                "name": "Spicy Chicken Curry",
+                "ingredients": [{"id": "chicken_breast", "grams": 200}]
+            },
+            {
+                "name": "Chicken Sandwich",
+                "ingredients": [{"id": "chicken_breast", "grams": 100}]
+            },
+            {
+                "name": "Chicken Stir Fry",
+                "ingredients": [{"id": "chicken_breast", "grams": 180}]
+            }
+        ]
+    }"#,
+    );
+
+    // Search for "chicken" - should match 5 recipes but only show first 3 with "... and 2 more"
+    let assert = Command::cargo_bin("nutriterm")
+        .unwrap()
+        .args(["recipe", "chicken"])
+        .current_dir(&catalog_dir)
+        .assert()
+        .success();
+
+    let output = assert.get_output();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let snapshot_content = format_test_snapshot(
+        &[
+            "Chicken Rice Bowl",
+            "Chicken Salad",
+            "Spicy Chicken Curry",
+            "Chicken Sandwich",
+            "Chicken Stir Fry",
+        ],
+        "chicken",
+        &stdout,
+    );
+    assert_snapshot!("search_many_matches_truncated", snapshot_content);
+}
