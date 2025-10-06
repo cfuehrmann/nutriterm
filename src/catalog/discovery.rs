@@ -33,6 +33,6 @@ pub fn find_dir() -> AppResult<PathBuf> {
 }
 
 /// Check if a directory has the required catalog files
-pub fn has_required_files(path: &Path) -> bool {
+fn has_required_files(path: &Path) -> bool {
     path.join("ingredients.jsonc").exists() && path.join("recipes.jsonc").exists()
 }
