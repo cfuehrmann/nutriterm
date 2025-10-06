@@ -1,4 +1,3 @@
-use super::error::JsoncError;
 use super::initialization::{create_ingredient_schema, create_recipe_schema};
 use crate::catalog::items::{Ingredient, Recipe, WeightedIngredient};
 use crate::error::{AppError, DuplicateGroup};
@@ -43,12 +42,11 @@ struct JsonIngredient {
 
 pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, AppError> {
     let json_recipes: JsonRecipes =
-        load_jsonc_file(data_dir, "recipes.jsonc", create_recipe_schema)
-            .map_err(convert_jsonc_error)?;
+        load_jsonc_file(data_dir, "recipes.jsonc", create_recipe_schema)?;
 
     check_recipe_uniqueness(&json_recipes.recipes)?;
 
-    let json_ingredients = load_json_ingredients(data_dir).map_err(convert_jsonc_error)?;
+    let json_ingredients = load_json_ingredients(data_dir)?;
     check_ingredient_uniqueness(&json_ingredients.ingredients)?;
     let ingredient_map: HashMap<String, Ingredient> = json_ingredients
         .ingredients
@@ -100,7 +98,7 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, AppError> {
     Ok(recipes)
 }
 
-fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, JsoncError> {
+fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, AppError> {
     let ingredients: JsonIngredients =
         load_jsonc_file(data_dir, "ingredients.jsonc", create_ingredient_schema)?;
     // Note: duplicates will be handled at domain level, not here
@@ -111,34 +109,35 @@ fn load_jsonc_file<T: DeserializeOwned>(
     data_dir: &Path,
     filename: &str,
     schema_generator: fn() -> Value,
-) -> Result<T, JsoncError> {
+) -> Result<T, AppError> {
     let file_path = data_dir.join(filename);
-    let content = std::fs::read_to_string(&file_path).map_err(|e| JsoncError::Deserializing {
-        filename: filename.to_string(),
-        message: format!("Cannot read file {}: {}", file_path.display(), e),
+    let content = std::fs::read_to_string(&file_path).map_err(|e| AppError::Other {
+        message: format!("Invalid {} structure: Cannot read file {}: {}", filename, file_path.display(), e),
     })?;
 
     let json_value = jsonc_parser::parse_to_serde_value(&content, &Default::default())
-        .map_err(|e| JsoncError::Parsing {
-            filename: filename.to_string(),
-            message: format!("{}", e),
+        .map_err(|e| AppError::Other {
+            message: format!(
+                "Invalid JSONC syntax in {}: {}\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
+                filename, e
+            ),
         })?
-        .ok_or_else(|| JsoncError::Parsing {
-            filename: filename.to_string(),
-            message: "Empty file".to_string(),
+        .ok_or_else(|| AppError::Other {
+            message: format!(
+                "Invalid JSONC syntax in {}: Empty file\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
+                filename
+            ),
         })?;
 
     let schema_json = schema_generator();
-    let schema = Validator::new(&schema_json).map_err(|e| JsoncError::Deserializing {
-        filename: filename.to_string(),
-        message: format!("Failed to compile schema: {}", e),
+    let schema = Validator::new(&schema_json).map_err(|e| AppError::Other {
+        message: format!("Invalid {} structure: Failed to compile schema: {}", filename, e),
     })?;
 
     check_with_schema(&json_value, &schema, filename)?;
 
-    serde_json::from_value(json_value).map_err(|e| JsoncError::Deserializing {
-        filename: filename.to_string(),
-        message: format!("{}", e),
+    serde_json::from_value(json_value).map_err(|e| AppError::Other {
+        message: format!("Invalid {} structure: {}", filename, e),
     })
 }
 
@@ -148,7 +147,7 @@ fn check_with_schema(
     json_value: &Value,
     schema: &Validator,
     filename: &str,
-) -> Result<(), JsoncError> {
+) -> Result<(), AppError> {
     let validation_errors: Vec<_> = schema.iter_errors(json_value).collect();
 
     if !validation_errors.is_empty() {
@@ -157,9 +156,12 @@ fn check_with_schema(
             .map(|error| format!("- {}: {}", error.instance_path, error))
             .collect();
 
-        return Err(JsoncError::SchemaValidation {
-            filename: filename.to_string(),
-            errors: error_messages,
+        return Err(AppError::Other {
+            message: format!(
+                "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",
+                filename,
+                error_messages.join("\n")
+            ),
         });
     }
 
@@ -221,24 +223,4 @@ where
     Ok(())
 }
 
-// Convert JsoncError to AppError at the boundary
-fn convert_jsonc_error(jsonc_error: JsoncError) -> AppError {
-    match jsonc_error {
-        JsoncError::Parsing { filename, message } => AppError::Other {
-            message: format!(
-                "Invalid JSONC syntax in {}: {}\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
-                filename, message
-            ),
-        },
-        JsoncError::SchemaValidation { filename, errors } => AppError::Other {
-            message: format!(
-                "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",
-                filename,
-                errors.join("\n")
-            ),
-        },
-        JsoncError::Deserializing { filename, message } => AppError::Other {
-            message: format!("Invalid {} structure: {}", filename, message),
-        },
-    }
-}
+
