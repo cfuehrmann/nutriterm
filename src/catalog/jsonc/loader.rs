@@ -135,7 +135,10 @@ fn load_jsonc_file<T: DeserializeOwned>(
     check_with_schema(&json_value, &schema, filename)?;
 
     serde_json::from_value(json_value).map_err(|e| AppError::TypeMappingError {
-        message: format!("Failed to map {} data to expected structure: {}", filename, e),
+        message: format!(
+            "Failed to map {} data to expected structure: {}",
+            filename, e
+        ),
     })
 }
 
@@ -220,5 +223,3 @@ where
 
     Ok(())
 }
-
-
