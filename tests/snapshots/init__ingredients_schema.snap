@@ -4,67 +4,56 @@ expression: ingredients_schema
 ---
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "definitions": {
-    "ingredient": {
-      "description": "Nutritional information for an ingredient per 100g",
-      "properties": {
-        "carbs_per_100g": {
-          "description": "Carbohydrates per 100g",
-          "maximum": 100,
-          "minimum": 0,
-          "type": "number"
-        },
-        "fat_per_100g": {
-          "description": "Fat per 100g",
-          "maximum": 100,
-          "minimum": 0,
-          "type": "number"
-        },
-        "fiber_per_100g": {
-          "description": "Fiber per 100g",
-          "maximum": 100,
-          "minimum": 0,
-          "type": "number"
-        },
-        "id": {
-          "description": "Stable ingredient identifier (used in recipes)",
-          "type": "string"
-        },
-        "name": {
-          "description": "Human-readable ingredient name (for display)",
-          "type": "string"
-        },
-        "protein_per_100g": {
-          "description": "Protein per 100g",
-          "maximum": 100,
-          "minimum": 0,
-          "type": "number"
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "carbs_per_100g",
-        "protein_per_100g",
-        "fat_per_100g",
-        "fiber_per_100g"
-      ],
-      "type": "object"
-    }
-  },
+  "title": "Nutriterm Ingredients",
   "description": "Schema for nutriterm ingredient definition files",
+  "type": "object",
+  "required": ["ingredients"],
   "properties": {
     "ingredients": {
+      "type": "array",
       "description": "List of ingredient definitions",
-      "items": {
-        "$ref": "#/definitions/ingredient"
-      },
-      "type": "array"
+      "items": { "$ref": "#/definitions/ingredient" }
     }
   },
-  "required": [
-    "ingredients"
-  ],
-  "title": "Nutriterm Ingredients",
-  "type": "object"
+  "definitions": {
+    "ingredient": {
+      "type": "object",
+      "description": "Nutritional information for an ingredient per 100g",
+      "required": ["id", "name", "carbs_per_100g", "protein_per_100g", "fat_per_100g", "fiber_per_100g"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable ingredient identifier (used in recipes)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable ingredient name (for display)"
+        },
+        "carbs_per_100g": {
+          "type": "number",
+          "description": "Carbohydrates per 100g",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "protein_per_100g": {
+          "type": "number",
+          "description": "Protein per 100g",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fat_per_100g": {
+          "type": "number",
+          "description": "Fat per 100g",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fiber_per_100g": {
+          "type": "number",
+          "description": "Fiber per 100g",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    }
+  }
 }

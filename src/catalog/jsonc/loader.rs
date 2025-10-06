@@ -75,7 +75,7 @@ pub fn load_recipes(data_dir: &Path) -> Result<Vec<Recipe>, AppError> {
                 let available_ids: Vec<String> = ingredient_map.keys().cloned().collect();
                 let suggestion = find_best_suggestion(&json_ingredient.id, &available_ids);
 
-                AppError::UnknownIngredientError {
+                AppError::UnknownIngredient {
                     recipe: json_recipe.name.clone(),
                     ingredient: json_ingredient.id.clone(),
                     suggestion,
@@ -108,11 +108,12 @@ fn load_json_ingredients(data_dir: &Path) -> Result<JsonIngredients, AppError> {
 fn load_jsonc_file<T: DeserializeOwned>(
     data_dir: &Path,
     filename: &str,
-    schema_generator: fn() -> Value,
+    schema_generator: fn() -> Result<Value, AppError>,
 ) -> Result<T, AppError> {
     let file_path = data_dir.join(filename);
     let content = std::fs::read_to_string(&file_path).map_err(|e| AppError::FileUnreadable {
-        message: format!("Cannot read file {}: {}", file_path.display(), e),
+        path: file_path.clone(),
+        io_error: e.to_string(),
     })?;
 
     let json_value = jsonc_parser::parse_to_serde_value(&content, &Default::default())
@@ -126,15 +127,15 @@ fn load_jsonc_file<T: DeserializeOwned>(
             message: format!("Empty file: {}", filename),
         })?;
 
-    let schema_json = schema_generator();
-    let schema = Validator::new(&schema_json).map_err(|e| AppError::Other {
-        message: format!("Invalid {} structure: Failed to compile schema: {}", filename, e),
+    let schema_json = schema_generator()?;
+    let schema = Validator::new(&schema_json).map_err(|e| AppError::InvalidSchema {
+        message: format!("Failed to compile schema for {}: {}", filename, e),
     })?;
 
     check_with_schema(&json_value, &schema, filename)?;
 
-    serde_json::from_value(json_value).map_err(|e| AppError::Other {
-        message: format!("Invalid {} structure: {}", filename, e),
+    serde_json::from_value(json_value).map_err(|e| AppError::TypeMappingError {
+        message: format!("Failed to map {} data to expected structure: {}", filename, e),
     })
 }
 
@@ -153,7 +154,7 @@ fn check_with_schema(
             .map(|error| format!("- {}: {}", error.instance_path, error))
             .collect();
 
-        return Err(AppError::Other {
+        return Err(AppError::SchemaComplianceError {
             message: format!(
                 "Schema validation failed for {}:\n{}\n\nTip: Check the values against the expected data types and ranges. Use 'nutriterm init' to see example file formats.",
                 filename,
@@ -210,7 +211,7 @@ where
     duplicates.sort_by(|a, b| a.key.cmp(&b.key));
 
     if !duplicates.is_empty() {
-        return Err(AppError::DuplicateKeyError {
+        return Err(AppError::DuplicateKey {
             filename: filename.to_string(),
             key_type: key_type.to_string(),
             duplicates,

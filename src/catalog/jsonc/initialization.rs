@@ -15,13 +15,16 @@ pub fn initialize(output_dir: &Path) -> AppResult<()> {
 }
 
 /// Schema generators for loader validation (exported to storage module)
-pub(super) fn create_recipe_schema() -> Value {
-    serde_json::from_str(RECIPE_SCHEMA).expect("Embedded recipe schema should be valid JSON")
+pub(super) fn create_recipe_schema() -> Result<Value, crate::error::AppError> {
+    serde_json::from_str(RECIPE_SCHEMA).map_err(|e| crate::error::AppError::InvalidSchema {
+        message: format!("Failed to parse embedded recipe schema: {}", e),
+    })
 }
 
-pub(super) fn create_ingredient_schema() -> Value {
-    serde_json::from_str(INGREDIENT_SCHEMA)
-        .expect("Embedded ingredient schema should be valid JSON")
+pub(super) fn create_ingredient_schema() -> Result<Value, crate::error::AppError> {
+    serde_json::from_str(INGREDIENT_SCHEMA).map_err(|e| crate::error::AppError::InvalidSchema {
+        message: format!("Failed to parse embedded ingredient schema: {}", e),
+    })
 }
 
 /// Create the required data files with starter content
@@ -39,31 +42,11 @@ fn create_required_files(output_dir: &Path) -> AppResult<()> {
 fn create_all_schemas(output_dir: &Path) -> AppResult<()> {
     std::fs::create_dir_all(output_dir)?;
 
-    let recipe_schema = create_recipe_schema();
     let recipe_schema_path = output_dir.join("recipes.schema.json");
-    let recipe_json = serde_json::to_string_pretty(&recipe_schema).map_err(|e| {
-        crate::error::AppError::Other {
-            message: format!(
-                "Failed to serialize recipe schema to JSON for file '{}': {}",
-                recipe_schema_path.display(),
-                e
-            ),
-        }
-    })?;
-    std::fs::write(&recipe_schema_path, recipe_json)?;
+    std::fs::write(&recipe_schema_path, RECIPE_SCHEMA)?;
 
-    let ingredient_schema = create_ingredient_schema();
-    let ingredient_path = output_dir.join("ingredients.schema.json");
-    let ingredient_json = serde_json::to_string_pretty(&ingredient_schema).map_err(|e| {
-        crate::error::AppError::Other {
-            message: format!(
-                "Failed to serialize ingredient schema to JSON for file '{}': {}",
-                ingredient_path.display(),
-                e
-            ),
-        }
-    })?;
-    std::fs::write(ingredient_path, ingredient_json)?;
+    let ingredient_schema_path = output_dir.join("ingredients.schema.json");
+    std::fs::write(&ingredient_schema_path, INGREDIENT_SCHEMA)?;
 
     Ok(())
 }

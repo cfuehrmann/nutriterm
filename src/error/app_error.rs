@@ -17,31 +17,35 @@ pub enum AppError {
         path: PathBuf,
         message: String,
     },
-    UnknownIngredientError {
+    UnknownIngredient {
         recipe: String,
         ingredient: String,
         suggestion: Option<String>,
         available_ids: Vec<String>,
     },
-    DuplicateKeyError {
+    DuplicateKey {
         filename: String,
         key_type: String,
         duplicates: Vec<DuplicateGroup>,
     },
     FileUnreadable {
-        message: String,
+        path: PathBuf,
+        io_error: String,
     },
     ParsingError {
         message: String,
     },
-
-    Io(std::io::Error),
-
-    // E.g. for errors specific to the storage format. To keep types of such
-    // errors from leaking into the domain.
-    Other {
+    SchemaComplianceError {
         message: String,
     },
+    InvalidSchema {
+        message: String,
+    },
+    TypeMappingError {
+        message: String,
+    },
+
+    Io(std::io::Error),
 }
 
 impl std::fmt::Display for AppError {
@@ -49,11 +53,16 @@ impl std::fmt::Display for AppError {
         match self {
             AppError::CatalogNotFound { message, .. }
             | AppError::DirectoryNotEmpty { message, .. }
-            | AppError::FileUnreadable { message, .. }
             | AppError::ParsingError { message, .. }
-            | AppError::Other { message, .. } => write!(f, "{}", message),
+            | AppError::SchemaComplianceError { message, .. }
+            | AppError::InvalidSchema { message, .. }
+            | AppError::TypeMappingError { message, .. } => write!(f, "{}", message),
 
-            AppError::UnknownIngredientError {
+            AppError::FileUnreadable { path, io_error } => {
+                write!(f, "Cannot read file {}: {}", path.display(), io_error)
+            }
+
+            AppError::UnknownIngredient {
                 recipe,
                 ingredient,
                 suggestion,
@@ -83,7 +92,7 @@ impl std::fmt::Display for AppError {
                 )
             }
 
-            AppError::DuplicateKeyError {
+            AppError::DuplicateKey {
                 filename,
                 key_type,
                 duplicates,
