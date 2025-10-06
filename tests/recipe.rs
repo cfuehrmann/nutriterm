@@ -829,7 +829,13 @@ fn test_search_many_matches_shows_truncated_list() {
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let snapshot_content = format_test_snapshot(
-        &["Chicken Rice Bowl", "Chicken Salad", "Spicy Chicken Curry", "Chicken Sandwich", "Chicken Stir Fry"],
+        &[
+            "Chicken Rice Bowl",
+            "Chicken Salad",
+            "Spicy Chicken Curry",
+            "Chicken Sandwich",
+            "Chicken Stir Fry",
+        ],
         "chicken",
         &stdout,
     );
