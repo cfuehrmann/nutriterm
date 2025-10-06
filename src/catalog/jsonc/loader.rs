@@ -111,22 +111,19 @@ fn load_jsonc_file<T: DeserializeOwned>(
     schema_generator: fn() -> Value,
 ) -> Result<T, AppError> {
     let file_path = data_dir.join(filename);
-    let content = std::fs::read_to_string(&file_path).map_err(|e| AppError::Other {
-        message: format!("Invalid {} structure: Cannot read file {}: {}", filename, file_path.display(), e),
+    let content = std::fs::read_to_string(&file_path).map_err(|e| AppError::FileUnreadable {
+        message: format!("Cannot read file {}: {}", file_path.display(), e),
     })?;
 
     let json_value = jsonc_parser::parse_to_serde_value(&content, &Default::default())
-        .map_err(|e| AppError::Other {
+        .map_err(|e| AppError::ParsingError {
             message: format!(
                 "Invalid JSONC syntax in {}: {}\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
                 filename, e
             ),
         })?
-        .ok_or_else(|| AppError::Other {
-            message: format!(
-                "Invalid JSONC syntax in {}: Empty file\n\nTip: Check for missing commas, brackets, or quotes. Most editors highlight syntax errors when you save the file with a .jsonc extension.",
-                filename
-            ),
+        .ok_or_else(|| AppError::ParsingError {
+            message: format!("Empty file: {}", filename),
         })?;
 
     let schema_json = schema_generator();

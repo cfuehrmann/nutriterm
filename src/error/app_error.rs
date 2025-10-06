@@ -28,6 +28,12 @@ pub enum AppError {
         key_type: String,
         duplicates: Vec<DuplicateGroup>,
     },
+    FileUnreadable {
+        message: String,
+    },
+    ParsingError {
+        message: String,
+    },
 
     Io(std::io::Error),
 
@@ -43,6 +49,8 @@ impl std::fmt::Display for AppError {
         match self {
             AppError::CatalogNotFound { message, .. }
             | AppError::DirectoryNotEmpty { message, .. }
+            | AppError::FileUnreadable { message, .. }
+            | AppError::ParsingError { message, .. }
             | AppError::Other { message, .. } => write!(f, "{}", message),
 
             AppError::UnknownIngredientError {
