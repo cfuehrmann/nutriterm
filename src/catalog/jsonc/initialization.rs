@@ -30,10 +30,10 @@ pub(super) fn create_ingredient_schema() -> Result<Value, crate::error::AppError
 /// Create the required data files with starter content
 fn create_data_files(output_dir: &Path) -> AppResult<()> {
     let recipes_path = output_dir.join("recipes.jsonc");
-    std::fs::write(recipes_path, get_recipe_template())?;
+    std::fs::write(recipes_path, RECIPE_TEMPLATE)?;
 
     let ingredients_path = output_dir.join("ingredients.jsonc");
-    std::fs::write(ingredients_path, get_ingredient_template())?;
+    std::fs::write(ingredients_path, INGREDIENT_TEMPLATE)?;
 
     Ok(())
 }
@@ -47,13 +47,4 @@ fn create_schemas(output_dir: &Path) -> AppResult<()> {
     std::fs::write(&ingredient_schema_path, INGREDIENT_SCHEMA)?;
 
     Ok(())
-}
-
-/// Template accessors (private - only used internally)
-fn get_recipe_template() -> &'static str {
-    RECIPE_TEMPLATE
-}
-
-fn get_ingredient_template() -> &'static str {
-    INGREDIENT_TEMPLATE
 }
