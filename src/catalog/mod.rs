@@ -1,22 +1,19 @@
+mod discovery;
 pub mod items;
-mod storage;
+mod jsonc;
 
-use crate::error::{AppResult, LoadError};
-use std::path::{Path, PathBuf};
+use crate::error::AppResult;
+use std::path::Path;
 
-// Domain layer functions (orchestrate storage layer)
-
-/// Find the catalog directory
-pub fn find_dir() -> AppResult<PathBuf> {
-    storage::find_dir()
-}
+// Domain layer functions (orchestrate discovery and JSONC implementation)
 
 /// Initialize a complete catalog
 pub fn initialize(path: &Path) -> AppResult<()> {
-    storage::initialize(path)
+    jsonc::initialize(path)
 }
 
 /// Load recipes from catalog
-pub fn load_recipes(path: &Path) -> Result<Vec<items::Recipe>, LoadError> {
-    storage::load_recipes(path)
+pub fn load_recipes() -> AppResult<Vec<items::Recipe>> {
+    let catalog_dir = discovery::find_dir()?;
+    jsonc::load_recipes(&catalog_dir)
 }

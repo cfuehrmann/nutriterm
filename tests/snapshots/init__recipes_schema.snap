@@ -4,62 +4,51 @@ expression: recipes_schema
 ---
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "definitions": {
-    "recipe": {
-      "description": "A single recipe with ingredients",
-      "properties": {
-        "ingredients": {
-          "description": "List of ingredients with amounts",
-          "items": {
-            "$ref": "#/definitions/recipeIngredient"
-          },
-          "type": "array"
-        },
-        "name": {
-          "description": "Recipe name",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name",
-        "ingredients"
-      ],
-      "type": "object"
-    },
-    "recipeIngredient": {
-      "description": "An ingredient with amount in grams",
-      "properties": {
-        "grams": {
-          "description": "Amount in grams",
-          "exclusiveMinimum": 0,
-          "type": "number"
-        },
-        "id": {
-          "description": "Ingredient ID (must match an ingredient id in ingredients file)",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "id",
-        "grams"
-      ],
-      "type": "object"
-    }
-  },
+  "title": "Nutriterm Recipes",
   "description": "Schema for nutriterm recipe files",
+  "type": "object",
+  "required": ["recipes"],
   "properties": {
     "recipes": {
+      "type": "array",
       "description": "List of recipes",
-      "items": {
-        "$ref": "#/definitions/recipe"
-      },
-      "type": "array"
+      "items": { "$ref": "#/definitions/recipe" }
     }
   },
-  "required": [
-    "recipes"
-  ],
-  "title": "Nutriterm Recipes",
-  "type": "object"
+  "definitions": {
+    "recipe": {
+      "type": "object",
+      "description": "A single recipe with ingredients",
+      "required": ["name", "ingredients"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Recipe name"
+        },
+
+        "ingredients": {
+          "type": "array",
+          "description": "List of ingredients with amounts",
+          "items": { "$ref": "#/definitions/recipeIngredient" }
+        }
+      }
+    },
+    "recipeIngredient": {
+      "type": "object",
+      "description": "An ingredient with amount in grams",
+      "required": ["id", "grams"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ingredient ID (must match an ingredient id in ingredients file)",
+          "minLength": 1
+        },
+        "grams": {
+          "type": "number",
+          "description": "Amount in grams",
+          "exclusiveMinimum": 0
+        }
+      }
+    }
+  }
 }

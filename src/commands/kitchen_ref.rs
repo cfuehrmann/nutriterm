@@ -2,8 +2,7 @@ use crate::catalog;
 use crate::error::AppResult;
 
 pub fn run() -> AppResult<()> {
-    let catalog_dir = catalog::find_dir()?;
-    let recipes = catalog::load_recipes(&catalog_dir)?;
+    let recipes = catalog::load_recipes()?;
 
     println!("<!DOCTYPE html>");
     println!("<html>");
