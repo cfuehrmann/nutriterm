@@ -9,8 +9,8 @@ const INGREDIENT_TEMPLATE: &str = include_str!("ingredients.template.jsonc");
 
 /// Initialize a complete catalog with all required files and editor support
 pub fn initialize(output_dir: &Path) -> AppResult<()> {
-    create_required_files(output_dir)?;
-    create_all_schemas(output_dir)?;
+    create_data_files(output_dir)?;
+    create_schemas(output_dir)?;
     Ok(())
 }
 
@@ -28,7 +28,7 @@ pub(super) fn create_ingredient_schema() -> Result<Value, crate::error::AppError
 }
 
 /// Create the required data files with starter content
-fn create_required_files(output_dir: &Path) -> AppResult<()> {
+fn create_data_files(output_dir: &Path) -> AppResult<()> {
     let recipes_path = output_dir.join("recipes.jsonc");
     std::fs::write(recipes_path, get_recipe_template())?;
 
@@ -39,9 +39,7 @@ fn create_required_files(output_dir: &Path) -> AppResult<()> {
 }
 
 /// Create editor support files (JSON Schema files)
-fn create_all_schemas(output_dir: &Path) -> AppResult<()> {
-    std::fs::create_dir_all(output_dir)?;
-
+fn create_schemas(output_dir: &Path) -> AppResult<()> {
     let recipe_schema_path = output_dir.join("recipes.schema.json");
     std::fs::write(&recipe_schema_path, RECIPE_SCHEMA)?;
 
