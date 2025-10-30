@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Output;
@@ -63,8 +63,7 @@ pub fn catalog_dir(temp_dir: &TempDir, name: &str) -> PathBuf {
 /// Run nutriterm command with args in a directory
 #[allow(dead_code)]
 pub fn run_cmd(args: &[&str], working_dir: &Path) -> Output {
-    Command::cargo_bin("nutriterm")
-        .unwrap()
+    cargo_bin_cmd!("nutriterm")
         .args(args)
         .current_dir(working_dir)
         .output()

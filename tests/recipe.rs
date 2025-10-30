@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use insta::assert_snapshot;
 use std::fs;
 use tempfile::TempDir;
@@ -22,8 +22,7 @@ fn test_view_valid_recipe() {
     let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User views nutrition for valid recipe
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "Chicken Rice Bowl"])
         .current_dir(&catalog_dir)
         .assert()
@@ -41,8 +40,7 @@ fn test_view_invalid_recipe() {
     let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User tries to view nutrition for invalid recipe and gets helpful suggestions
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "nonexistent-recipe"])
         .current_dir(&catalog_dir)
         .assert()
@@ -58,8 +56,7 @@ fn test_view_invalid_recipe() {
 #[test]
 fn test_view_outside_catalog_dir() {
     // User tries to view recipe outside catalog
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "anything"])
         .current_dir("/tmp")
         .assert()
@@ -83,8 +80,7 @@ fn test_view_with_broken_catalog_dir() {
     )
     .unwrap();
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "anything"])
         .current_dir(&broken_catalog_dir)
         .assert()
@@ -101,8 +97,7 @@ fn test_search_exact_match() {
     let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User searches with exact recipe name - should work as before
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "Chicken Rice Bowl"])
         .current_dir(&catalog_dir)
         .assert()
@@ -120,8 +115,7 @@ fn test_search_substring_match() {
     let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User searches with partial term - should find unique match
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "chicken"])
         .current_dir(&catalog_dir)
         .assert()
@@ -176,8 +170,7 @@ fn test_search_multiple_terms() {
     .unwrap();
 
     // User searches with multiple terms - should find only recipes with ALL terms
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "chicken rice"])
         .current_dir(&catalog_dir)
         .assert()
@@ -236,8 +229,7 @@ fn test_search_multiple_matches() {
     .unwrap();
 
     // User searches with term that matches multiple recipes
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "chicken"])
         .current_dir(&catalog_dir)
         .assert()
@@ -258,8 +250,7 @@ fn test_search_no_matches() {
     let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User searches for non-existent recipe
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "pizza"])
         .current_dir(&catalog_dir)
         .assert()
@@ -276,8 +267,7 @@ fn test_search_case_insensitive() {
     let (_temp_dir, catalog_dir) = recipe_catalog_dir();
 
     // User searches with different case - should still match
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "CHICKEN"])
         .current_dir(&catalog_dir)
         .assert()
@@ -316,8 +306,7 @@ fn test_view_with_invalid_ingredient_data() {
     }"#,
     );
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "test-recipe"])
         .current_dir(&catalog_dir)
         .assert()
@@ -357,8 +346,7 @@ fn test_view_with_invalid_recipe_data() {
     }"#,
     );
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "invalid-recipe"])
         .current_dir(&catalog_dir)
         .assert()
@@ -408,8 +396,7 @@ fn test_recipe_validates_unknown_ingredient() {
     .unwrap();
 
     // Try to view the recipe - should fail with validation error, not "recipe not found"
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "test-recipe"])
         .current_dir(&catalog_dir)
         .assert()
@@ -452,8 +439,7 @@ fn test_recipe_validates_with_any_recipe_name() {
     .unwrap();
 
     // Try to view a DIFFERENT recipe name - should still fail validation before recipe lookup
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "completely-different-recipe"])
         .current_dir(&catalog_dir)
         .assert()
@@ -506,8 +492,7 @@ fn test_recipe_validates_schema_errors() {
     .unwrap();
 
     // Try to view any recipe - should fail schema validation first
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "any-recipe"])
         .current_dir(&catalog_dir)
         .assert()
@@ -564,8 +549,7 @@ fn test_recipe_command_comprehensive_validation_coverage() {
     .unwrap();
 
     // Try to access any recipe - validation should catch unknown ingredient before recipe processing
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "valid-recipe"]) // Even requesting valid recipe should fail validation
         .current_dir(&catalog_dir)
         .assert()
@@ -641,8 +625,7 @@ fn test_exact_match_disambiguates_substring_conflicts() {
 
     // User searches for exact "rice" - should find "rice" recipe, not be ambiguous
     // This test would fail if exact match were removed (would show "Multiple recipes found")
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "rice"])
         .current_dir(&catalog_dir)
         .assert()
@@ -691,8 +674,7 @@ fn test_duplicate_recipe_names_search_behavior() {
     }"#,
     );
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "rice-bowl"])
         .current_dir(&catalog_dir)
         .assert()
@@ -761,8 +743,7 @@ fn test_duplicate_ingredient_ids_validation() {
     );
 
     // User tries to view recipe with duplicate ingredient IDs - should get validation error
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "Test Recipe"])
         .current_dir(&catalog_dir)
         .assert()
@@ -819,8 +800,7 @@ fn test_search_many_matches_shows_truncated_list() {
     );
 
     // Search for "chicken" - should match 5 recipes but only show first 3 with "... and 2 more"
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "chicken"])
         .current_dir(&catalog_dir)
         .assert()

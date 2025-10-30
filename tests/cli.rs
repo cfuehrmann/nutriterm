@@ -1,6 +1,4 @@
-// Integration tests focused on general CLI behavior and error handling
-// Each test represents one complete user action (vertically sliced)
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use insta::assert_snapshot;
 use std::fs;
 
@@ -12,11 +10,7 @@ use common::normalize_temp_paths;
 #[test]
 fn test_user_requests_help() {
     // User runs --help to understand available commands
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
-        .arg("--help")
-        .assert()
-        .success();
+    let assert = cargo_bin_cmd!("nutriterm").arg("--help").assert().success();
 
     let output = assert.get_output();
     let stdout = String::from_utf8_lossy(&output.stdout);
@@ -26,7 +20,7 @@ fn test_user_requests_help() {
 #[test]
 fn test_user_runs_without_command() {
     // User runs command without arguments and gets usage guidance
-    let assert = Command::cargo_bin("nutriterm").unwrap().assert().failure();
+    let assert = cargo_bin_cmd!("nutriterm").assert().failure();
 
     let output = assert.get_output();
     let stderr = String::from_utf8_lossy(&output.stderr);
@@ -47,8 +41,7 @@ fn test_improved_file_error_unreadable_recipes_file() {
     .unwrap();
     fs::create_dir_all(catalog_dir.join("recipes.jsonc")).unwrap();
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["list-recipes"])
         .current_dir(&catalog_dir)
         .assert()
@@ -70,8 +63,7 @@ fn test_improved_file_error_unreadable_ingredients_file() {
     std::fs::write(catalog_dir.join("recipes.jsonc"), r#"{"recipes": []}"#).unwrap();
     fs::create_dir_all(catalog_dir.join("ingredients.jsonc")).unwrap();
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["list-recipes"])
         .current_dir(&catalog_dir)
         .assert()
@@ -100,8 +92,7 @@ fn test_early_return_error_propagation_consistency() {
     .unwrap();
     std::fs::write(catalog_dir.join("recipes.jsonc"), "{ invalid json").unwrap();
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["recipe", "test"])
         .current_dir(&catalog_dir)
         .assert()

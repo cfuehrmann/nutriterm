@@ -1,6 +1,6 @@
 mod common;
+use assert_cmd::cargo::cargo_bin_cmd;
 
-use assert_cmd::Command;
 use common::{catalog_dir, normalize_temp_paths, temp_dir};
 use insta::assert_snapshot;
 use std::fs;
@@ -10,7 +10,7 @@ fn test_kitchen_ref_outside_catalog_dir() {
     let temp = temp_dir();
     let outside_dir = catalog_dir(&temp, "outside");
 
-    let mut cmd = Command::cargo_bin("nutriterm").unwrap();
+    let mut cmd = cargo_bin_cmd!("nutriterm");
     let assert = cmd
         .current_dir(&outside_dir)
         .arg("kitchen-ref")
@@ -147,7 +147,7 @@ fn test_kitchen_ref_success() {
     let catalog_dir = catalog_dir(&temp, "catalog_dir");
     create_kitchen_ref_catalog_dir(&catalog_dir);
 
-    let mut cmd = Command::cargo_bin("nutriterm").unwrap();
+    let mut cmd = cargo_bin_cmd!("nutriterm");
     let assert = cmd
         .current_dir(&catalog_dir)
         .arg("kitchen-ref")
