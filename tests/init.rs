@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use insta::assert_snapshot;
 use std::fs;
 use tempfile::TempDir;
@@ -14,8 +14,7 @@ fn test_init_in_empty_directory() {
     let catalog_dir = temp_dir.path().join("recipes");
     fs::create_dir_all(&catalog_dir).unwrap();
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["init"])
         .current_dir(&catalog_dir)
         .assert()
@@ -57,8 +56,7 @@ fn test_init_in_non_empty_directory() {
     fs::create_dir_all(&non_empty_dir).unwrap();
     fs::write(non_empty_dir.join("existing_file.txt"), "content").unwrap();
 
-    let assert = Command::cargo_bin("nutriterm")
-        .unwrap()
+    let assert = cargo_bin_cmd!("nutriterm")
         .args(["init"])
         .current_dir(&non_empty_dir)
         .assert()
