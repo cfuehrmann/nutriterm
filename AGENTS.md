@@ -5,7 +5,7 @@
 Run `just --list` to see all available commands.
 
 - **Iterating on code:** `just test` - Fast feedback loop for logic changes
-- **Before committing:** `just check` - All quality gates (fmt -> clippy -> test)
+- **Before committing:** `just check` - All quality gates (fmt -> clippy -> spell -> test)
 - **Fix formatting:** `just fix` - Auto-format code
 
 ## Core Practices (Priority Order)

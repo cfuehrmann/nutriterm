@@ -77,6 +77,15 @@ jobs:
       - name: Run clippy
         run: just clippy
 
+  spelling:
+    name: Spelling
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check spelling
+        uses: crate-ci/typos@v1
+
   build:
     name: Check Build
     runs-on: ubuntu-latest
