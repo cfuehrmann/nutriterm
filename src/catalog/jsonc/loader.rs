@@ -154,7 +154,7 @@ fn check_with_schema(
     if !validation_errors.is_empty() {
         let error_messages: Vec<String> = validation_errors
             .into_iter()
-            .map(|error| format!("- {}: {}", error.instance_path, error))
+            .map(|error| format!("- {}: {}", error.instance_path(), error))
             .collect();
 
         return Err(AppError::SchemaComplianceError {
