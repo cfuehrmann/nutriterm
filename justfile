@@ -5,12 +5,16 @@
 #   Fix formatting:     just fix
 # ==============================================================================
 
-# Run all quality gates: fmt -> clippy -> test (for pre-commit)
-check: fmt clippy test
+# Run all quality gates: fmt -> clippy -> spell -> test (for pre-commit)
+check: fmt clippy spell test
 
 # Run tests
 test:
     cargo test
+
+# Check spelling
+spell:
+    typos
 
 # Run clippy lints
 clippy:

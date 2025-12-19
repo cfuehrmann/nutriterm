@@ -234,7 +234,7 @@ cargo install just
 # Iterating on code (fast feedback on logic)
 just test
 
-# Before committing (all quality gates: fmt -> clippy -> test)
+# Before committing (all quality gates: fmt -> clippy -> spell -> test)
 just check
 
 # Fix formatting issues
