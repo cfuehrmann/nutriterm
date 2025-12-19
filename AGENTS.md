@@ -1,18 +1,23 @@
 # Repository Agent Instructions
 
+## Development Commands
+
+Run `just --list` to see all available commands.
+
+- **Iterating on code:** `just test` - Fast feedback loop for logic changes
+- **Before committing:** `just check` - All quality gates (fmt -> clippy -> test)
+- **Fix formatting:** `just fix` - Auto-format code
+
 ## Core Practices (Priority Order)
 
 1. **Write tests first** - Add comprehensive tests before implementing features
-2. **Run `cargo test`** before committing to ensure all tests pass
-3. **Format code** using `cargo fmt` for consistency
-4. **Follow PR workflow** - All changes to main branch must go through pull requests with CI validation
-5. **NEVER commit automatically** - Only create commits when explicitly asked by the user
-6. **Run `cargo clippy -- -D warnings`** to ensure no lint warnings
-7. **Check for unused dependencies** when reviewing code changes
-8. **Check module structure and organization** for coherence and proper separation of concerns
-9. **Keep README.md up to date** - always verify README accuracy and completeness
-10. **Review snapshot updates** with `cargo insta review` when needed
-11. **Check for orphaned snapshots** when reorganizing tests or renaming test functions
+2. **Run `just check`** before committing to ensure all quality gates pass
+3. **Follow PR workflow** - All changes to main branch must go through pull requests with CI validation
+4. **NEVER commit automatically** - Only create commits when explicitly asked by the user
+5. **Check for unused dependencies** when reviewing code changes
+6. **Check module structure and organization** for coherence and proper separation of concerns
+7. **Keep README.md up to date** - always verify README accuracy and completeness
+8. **Review snapshot updates** with `cargo insta review` when needed
 
 ## Testing (Critical)
 
@@ -41,15 +46,6 @@
 
 <details>
 <summary>Detailed Guidelines (Reference)</summary>
-
-### Test Architecture
-- **Integration tests over unit tests** - Test complete user workflows end-to-end
-- **Vertical test slicing** - Each test covers one complete user story from input to output
-- **Test organization by user workflow** - Group tests by command, not by technical concern
-- **One command per test** - Never execute the same command multiple times within a single test
-- **Unique test scenarios** - The same command with identical preconditions should never appear in multiple tests
-- **Platform-independent** - Code must work identically across all supported platforms
-- **Snapshot testing extensively** - Capture and validate all user-facing output for regression prevention
 
 ### Code Comments
 - **Avoid "what" comments** that simply echo what the code does (e.g., `// Set x to 5`)
