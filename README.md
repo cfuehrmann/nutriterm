@@ -217,6 +217,33 @@ This file defines your recipes using ingredients from the database:
 
 The following sections contain information for developers working on this project.
 
+### Development Commands
+
+This project uses [`just`](https://just.systems/) as a command runner. Run `just --list` to see all available commands.
+
+```bash
+# Install just (recommended)
+cargo install just
+
+# Or see justfile for the underlying cargo commands
+```
+
+**Development workflow:**
+
+```bash
+# Iterating on code (fast feedback on logic)
+just test
+
+# Before committing (all quality gates: fmt -> clippy -> test)
+just check
+
+# Fix formatting issues
+just fix
+
+# Build release binary
+just release
+```
+
 ### Architecture & Quality
 
 This project emphasizes:
@@ -224,28 +251,6 @@ This project emphasizes:
 - **Comprehensive Testing** - Integration tests with snapshot validation for reliable behavior
 - **Platform Independence** - Works identically across all operating systems
 - **Performance** - Zero-allocation design for recipe calculations
-
-### Development
-
-#### Running Tests
-
-```bash
-cargo test
-```
-
-#### Checking with Clippy
-
-```bash
-cargo clippy -- -D warnings
-```
-
-Ensure there are no linter warnings before committing.
-
-#### Formatting Code
-
-```bash
-cargo fmt
-```
 
 ### Project Structure
 
@@ -272,14 +277,7 @@ cargo fmt
 
 ## Testing Approach
 
-This project uses **snapshot testing** with the `insta` crate to ensure consistent CLI behavior across all user scenarios. Tests focus on integration testing of complete user workflows rather than unit testing.
-
-### Testing Principles
-
-- **Integration over unit tests** - Test complete user journeys end-to-end
-- **One command per test** - Each test executes exactly one command with unique preconditions
-- **Comprehensive coverage** - Every user-facing feature and error condition is tested
-- **Platform independence** - All tests work identically across operating systems
+This project uses **snapshot testing** with the `insta` crate to ensure consistent CLI behavior. Tests focus on integration testing of complete user workflows rather than unit testing.
 
 ### Working with Insta
 
@@ -301,33 +299,11 @@ For more information, visit the [insta documentation](https://insta.rs/docs/).
 
 ## Contributing
 
-### Quality Gates
+All changes must go through pull requests. Before submitting:
 
-All changes to the main branch must go through pull requests and pass automated quality gates:
+```bash
+just check              # Run all quality gates
+cargo insta review      # Review any snapshot changes
+```
 
-- **Tests**: `cargo test` - All 37 tests must pass
-- **Formatting**: `cargo fmt --check` - Code must be properly formatted  
-- **Linting**: `cargo clippy -- -D warnings` - No lint warnings allowed
-- **Build**: `cargo check` and `cargo build --release` - Must build successfully
-
-### Development Workflow
-
-1. **Create feature branch**: `git checkout -b feature/your-change`
-2. **Make changes** and ensure quality gates pass locally:
-   ```bash
-   cargo test
-   cargo fmt --check
-   cargo clippy -- -D warnings
-   cargo insta review  # for snapshot changes
-   ```
-3. **Create pull request**: All CI checks must pass before merging
-4. **Automated checks**: GitHub Actions runs all quality gates
-5. **Merge**: Only possible when all required status checks pass
-
-### Branch Protection
-
-The main branch is protected with:
-- ✅ Required status checks (tests, formatting, linting, build)
-- ✅ No direct pushes allowed - PRs only
-- ✅ Strict status checks - branches must be up to date
-- ✅ Applies to administrators
+CI runs the same checks via `just`. The main branch is protected with required status checks.
