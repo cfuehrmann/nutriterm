@@ -78,7 +78,7 @@ jobs:
         run: just clippy
 
   build:
-    name: Build
+    name: Check Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
